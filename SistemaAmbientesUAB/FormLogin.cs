@@ -53,9 +53,8 @@ namespace SistemaAmbientesUAB
                         string nombre = dr["nombre_completo"].ToString();
                         bool esAdmin = Convert.ToBoolean(dr["es_admin"]);
 
-                        FormMenu menu = new FormMenu(idUsuario, nombre, esAdmin);
-                        menu.Show();
-                        this.Hide();
+                        MessageBox.Show("Bienvenido, " + nombre, "✅ Acceso correcto",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
                     {
@@ -69,11 +68,6 @@ namespace SistemaAmbientesUAB
                 MessageBox.Show("Error de conexión: " + ex.Message, "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-
         }
     }
 }
