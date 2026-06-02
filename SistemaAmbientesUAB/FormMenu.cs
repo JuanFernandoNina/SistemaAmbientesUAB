@@ -61,30 +61,30 @@ namespace SistemaAmbientesUAB
 
         private void btnNuevaReserva_Click(object sender, EventArgs e)
         {
-            // FormNuevaReserva frm = new FormNuevaReserva(_idUsuario);
-            // AbrirEnPanel(frm);
-            MessageBox.Show("Próximamente: Nueva Reserva");
+            FormNuevaReserva frm = new FormNuevaReserva(_idUsuario);
+            frm.ShowDialog();
+ 
         }
 
         private void btnReservas_Click(object sender, EventArgs e)
         {
             FormMisReservas frm = new FormMisReservas(_idUsuario);
             frm.ShowDialog();
-            //MessageBox.Show("Próximamente: Mis Reservas");
+
         }
 
         private void btnAmbientes_Click(object sender, EventArgs e)
         {
-            // FormAmbientes frm = new FormAmbientes();
-            // AbrirEnPanel(frm);
-            MessageBox.Show("Próximamente: Ambientes");
+            FormAmbientes frm = new FormAmbientes();
+            frm.ShowDialog();
+
         }
 
         private void btnUsuarios_Click(object sender, EventArgs e)
         {
-            // FormUsuarios frm = new FormUsuarios();
-            // AbrirEnPanel(frm);
-            MessageBox.Show("Próximamente: Usuarios");
+            FormUsuarios frm = new FormUsuarios();
+            frm.ShowDialog();
+
         }
 
         private void btnReportes_Click(object sender, EventArgs e)
