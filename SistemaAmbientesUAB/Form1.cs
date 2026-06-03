@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace SistemaAmbientesUAB
@@ -15,6 +16,23 @@ namespace SistemaAmbientesUAB
         private void Form1_Load(object sender, EventArgs e)
         {
             this.Text = "Login - AmbientesUAB";
+            AplicarTema();
+        }
+
+        private void AplicarTema()
+        {
+            this.BackColor = TemaManager.FondoPrincipal;
+
+            lblTitulo.ForeColor = TemaManager.TextoPrincipal;
+            lblUsuario.ForeColor = TemaManager.TextoSecundario;
+            lblPassword.ForeColor = TemaManager.TextoSecundario;
+
+            txtUsuario.BackColor = TemaManager.FondoGrid;
+            txtUsuario.ForeColor = TemaManager.TextoPrincipal;
+            txtPassword.BackColor = TemaManager.FondoGrid;
+            txtPassword.ForeColor = TemaManager.TextoPrincipal;
+
+            TemaManager.AplicarBoton(btnIngresar, TemaManager.Acento);
         }
 
         private void btnIngresar_Click(object sender, EventArgs e)
@@ -34,27 +52,22 @@ namespace SistemaAmbientesUAB
                 using (SqlConnection con = Conexion.ObtenerConexion())
                 {
                     con.Open();
-
                     string query = @"SELECT id_usuario, nombre_completo, es_admin
                                      FROM Usuario
-                                     WHERE username = @user
-                                       AND password_hash = @pass
-                                       AND estado = 'activo'";
+                                     WHERE username=@user AND password_hash=@pass AND estado='activo'";
 
                     SqlCommand cmd = new SqlCommand(query, con);
                     cmd.Parameters.AddWithValue("@user", usuario);
                     cmd.Parameters.AddWithValue("@pass", password);
 
                     SqlDataReader dr = cmd.ExecuteReader();
-
                     if (dr.Read())
                     {
                         int idUsuario = Convert.ToInt32(dr["id_usuario"]);
                         string nombre = dr["nombre_completo"].ToString();
                         bool esAdmin = Convert.ToBoolean(dr["es_admin"]);
 
-                        FormMenu menu = new FormMenu(idUsuario, nombre, esAdmin);
-                        menu.Show();
+                        new FormMenu(idUsuario, nombre, esAdmin).Show();
                         this.Hide();
                     }
                     else
@@ -69,11 +82,6 @@ namespace SistemaAmbientesUAB
                 MessageBox.Show("Error de conexión: " + ex.Message, "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-
         }
     }
 }

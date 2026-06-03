@@ -21,77 +21,109 @@ namespace SistemaAmbientesUAB
         private void FormMenu_Load(object sender, EventArgs e)
         {
             lblNombreUsuario.Text = "👤 " + _nombre;
-
-            // Estilo de botones del menú
-            EstilarBoton(btnReservas);
-            EstilarBoton(btnNuevaReserva);
-            EstilarBoton(btnAmbientes);
-            EstilarBoton(btnUsuarios);
-            EstilarBoton(btnReportes);
-            EstilarBoton(btnCerrarSesion);
-
-            // Color especial para cerrar sesión
-            btnCerrarSesion.BackColor = Color.FromArgb(180, 50, 50);
+            AplicarTema();
+            CargarFormulario(new FormHome(_idUsuario, _nombre));
         }
 
-        private void EstilarBoton(Button btn)
+        // ── TEMA ──────────────────────────────────────────────
+        public void AplicarTema()
         {
-            btn.FlatStyle = FlatStyle.Flat;
-            btn.FlatAppearance.BorderSize = 0;
-            btn.BackColor = Color.FromArgb(64, 64, 64);
-            btn.ForeColor = Color.White;
-            btn.Font = new Font("Segoe UI", 11F);
-            btn.TextAlign = ContentAlignment.MiddleLeft;
-            btn.Padding = new Padding(15, 0, 0, 0);
-            btn.Cursor = Cursors.Hand;
+            this.BackColor = TemaManager.FondoPrincipal;
+            panelMenu.BackColor = TemaManager.FondoMenu;
+            panelContenido.BackColor = TemaManager.FondoContenido;
 
-            // Efecto hover
-            btn.MouseEnter += (s, e) =>
-                ((Button)s).BackColor = Color.FromArgb(100, 100, 100);
-            btn.MouseLeave += (s, e) =>
+            lblNombreUsuario.ForeColor = Color.White;
+            lblNombreUsuario.BackColor = TemaManager.FondoMenu;
+
+            // Estilo de todos los botones del menú
+            Button[] botones = { btnHome, btnReservas, btnNuevaReserva,
+                                  btnAmbientes, btnUsuarios, btnReportes,
+                                  btnTema, btnCerrarSesion };
+
+            foreach (var btn in botones)
             {
-                if ((Button)s == btnCerrarSesion)
-                    ((Button)s).BackColor = Color.FromArgb(180, 50, 50);
-                else
-                    ((Button)s).BackColor = Color.FromArgb(64, 64, 64);
-            };
+                btn.BackColor = TemaManager.BotonMenu;
+                btn.ForeColor = Color.White;
+                btn.FlatStyle = FlatStyle.Flat;
+                btn.FlatAppearance.BorderSize = 0;
+            }
+
+            // Colores especiales
+            btnCerrarSesion.BackColor = Color.FromArgb(160, 40, 40);
+            btnTema.BackColor = TemaManager.TemaActual == TipoTema.Claro
+                ? Color.FromArgb(50, 70, 120)
+                : Color.FromArgb(80, 60, 20);
+            btnTema.Text = TemaManager.TemaActual == TipoTema.Claro
+                ? "🌙  Modo Oscuro"
+                : "☀️  Modo Claro";
+
+            // Registrar hover en todos
+            foreach (var btn in botones)
+                RegistrarHover(btn);
         }
 
-        // ── Navegación ──────────────────────────────────────
-
-        private void btnNuevaReserva_Click(object sender, EventArgs e)
+        private void RegistrarHover(Button btn)
         {
-            FormNuevaReserva frm = new FormNuevaReserva(_idUsuario);
-            frm.ShowDialog();
- 
+            btn.MouseEnter -= OnBotonEnter;
+            btn.MouseLeave -= OnBotonLeave;
+            btn.MouseEnter += OnBotonEnter;
+            btn.MouseLeave += OnBotonLeave;
         }
 
-        private void btnReservas_Click(object sender, EventArgs e)
+        private void OnBotonEnter(object sender, EventArgs e)
         {
-            FormMisReservas frm = new FormMisReservas(_idUsuario);
-            frm.ShowDialog();
-
+            var btn = (Button)sender;
+            if (btn != btnCerrarSesion && btn != btnTema)
+                btn.BackColor = TemaManager.BotonHover;
         }
 
-        private void btnAmbientes_Click(object sender, EventArgs e)
+        private void OnBotonLeave(object sender, EventArgs e)
         {
-            FormAmbientes frm = new FormAmbientes();
-            frm.ShowDialog();
-
+            var btn = (Button)sender;
+            if (btn == btnCerrarSesion)
+                btn.BackColor = Color.FromArgb(160, 40, 40);
+            else if (btn == btnTema)
+                btn.BackColor = TemaManager.TemaActual == TipoTema.Claro
+                    ? Color.FromArgb(50, 70, 120)
+                    : Color.FromArgb(80, 60, 20);
+            else
+                btn.BackColor = TemaManager.BotonMenu;
         }
 
-        private void btnUsuarios_Click(object sender, EventArgs e)
+        // ── NAVEGACIÓN ────────────────────────────────────────
+        private void CargarFormulario(Form frm)
         {
-            FormUsuarios frm = new FormUsuarios();
-            frm.ShowDialog();
-
+            panelContenido.Controls.Clear();
+            frm.TopLevel = false;
+            frm.FormBorderStyle = FormBorderStyle.None;
+            frm.Dock = DockStyle.Fill;
+            panelContenido.Controls.Add(frm);
+            frm.Show();
         }
 
-        private void btnReportes_Click(object sender, EventArgs e)
+        private void btnHome_Click(object sender, EventArgs e) =>
+            CargarFormulario(new FormHome(_idUsuario, _nombre));
+
+        private void btnReservas_Click(object sender, EventArgs e) =>
+            CargarFormulario(new FormMisReservas(_idUsuario));
+
+        private void btnNuevaReserva_Click(object sender, EventArgs e) =>
+            CargarFormulario(new FormNuevaReserva(_idUsuario));
+
+        private void btnAmbientes_Click(object sender, EventArgs e) =>
+            CargarFormulario(new FormAmbientes());
+
+        private void btnUsuarios_Click(object sender, EventArgs e) =>
+            CargarFormulario(new FormUsuarios());
+
+        private void btnReportes_Click(object sender, EventArgs e) =>
+            CargarFormulario(new FormReportes());
+
+        private void btnTema_Click(object sender, EventArgs e)
         {
-            // FormReportes frm = new FormReportes();
-            // AbrirEnPanel(frm);
-            MessageBox.Show("Próximamente: Reportes");
+            TemaManager.CambiarTema();
+            AplicarTema();
+            CargarFormulario(new FormHome(_idUsuario, _nombre));
         }
 
         private void btnCerrarSesion_Click(object sender, EventArgs e)

@@ -14,7 +14,28 @@ namespace SistemaAmbientesUAB
 
         private void FormUsuarios_Load(object sender, EventArgs e)
         {
+            AplicarTema();
             CargarUsuarios();
+        }
+
+        private void AplicarTema()
+        {
+            this.BackColor = TemaManager.FondoPrincipal;
+            TemaManager.AplicarLabel(lblTitulo);
+            TemaManager.AplicarLabel(lblBuscar, true);
+            TemaManager.AplicarLabel(lblTipoFiltro, true);
+            TemaManager.AplicarLabel(lblMensaje, true);
+            TemaManager.AplicarGrid(dgvUsuarios);
+
+            txtBuscar.BackColor = TemaManager.FondoGrid;
+            txtBuscar.ForeColor = TemaManager.TextoPrincipal;
+            cmbTipoFiltro.BackColor = TemaManager.FondoGrid;
+            cmbTipoFiltro.ForeColor = TemaManager.TextoPrincipal;
+
+            TemaManager.AplicarBoton(btnFiltrar, TemaManager.AcentoOscuro);
+            TemaManager.AplicarBoton(btnNuevo, System.Drawing.Color.FromArgb(40, 120, 40));
+            TemaManager.AplicarBoton(btnEditar, System.Drawing.Color.FromArgb(40, 80, 160));
+            TemaManager.AplicarBoton(btnToggleEstado, System.Drawing.Color.FromArgb(160, 100, 0));
         }
 
         private void CargarUsuarios(string buscar = "", string tipo = "Todos")
@@ -24,7 +45,6 @@ namespace SistemaAmbientesUAB
                 using (SqlConnection con = Conexion.ObtenerConexion())
                 {
                     con.Open();
-
                     string filtroBuscar = !string.IsNullOrWhiteSpace(buscar)
                         ? "AND (nombre_completo LIKE @buscar OR codigo LIKE @buscar)" : "";
                     string filtroTipo = tipo != "Todos" ? "AND tipo_usuario = @tipo" : "";
@@ -38,12 +58,10 @@ namespace SistemaAmbientesUAB
                             carrera_area    AS [Carrera/Área],
                             correo          AS Correo,
                             username        AS Usuario,
-                            CASE WHEN es_admin = 1 THEN '✅' ELSE '❌' END AS Admin,
+                            CASE WHEN es_admin=1 THEN '✅' ELSE '❌' END AS Admin,
                             estado          AS Estado
                         FROM Usuario
-                        WHERE 1=1
-                        {filtroBuscar}
-                        {filtroTipo}
+                        WHERE 1=1 {filtroBuscar} {filtroTipo}
                         ORDER BY nombre_completo";
 
                     SqlCommand cmd = new SqlCommand(query, con);
@@ -57,33 +75,26 @@ namespace SistemaAmbientesUAB
                     da.Fill(dt);
                     dgvUsuarios.DataSource = dt;
 
-                    // Colorear según estado
                     foreach (DataGridViewRow row in dgvUsuarios.Rows)
                     {
                         string estado = row.Cells["Estado"].Value?.ToString();
                         row.DefaultCellStyle.ForeColor = estado == "activo"
-                            ? System.Drawing.Color.FromArgb(20, 120, 20)
-                            : System.Drawing.Color.Red;
+                            ? TemaManager.Acento
+                            : System.Drawing.Color.FromArgb(255, 80, 80);
                     }
 
                     lblMensaje.Text = $"Total: {dt.Rows.Count} usuario(s)";
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al cargar usuarios: " + ex.Message);
-            }
+            catch (Exception ex) { MessageBox.Show("Error al cargar usuarios: " + ex.Message); }
         }
 
-        private void btnFiltrar_Click(object sender, EventArgs e)
-        {
+        private void btnFiltrar_Click(object sender, EventArgs e) =>
             CargarUsuarios(txtBuscar.Text.Trim(), cmbTipoFiltro.SelectedItem?.ToString() ?? "Todos");
-        }
 
         private void btnNuevo_Click(object sender, EventArgs e)
         {
-            FormUsuarioDetalle frm = new FormUsuarioDetalle(0);
-            frm.ShowDialog();
+            new FormUsuarioDetalle(0).ShowDialog();
             CargarUsuarios();
         }
 
@@ -95,9 +106,8 @@ namespace SistemaAmbientesUAB
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            int idUsuario = Convert.ToInt32(dgvUsuarios.SelectedRows[0].Cells["ID"].Value);
-            FormUsuarioDetalle frm = new FormUsuarioDetalle(idUsuario);
-            frm.ShowDialog();
+            int id = Convert.ToInt32(dgvUsuarios.SelectedRows[0].Cells["ID"].Value);
+            new FormUsuarioDetalle(id).ShowDialog();
             CargarUsuarios();
         }
 
@@ -110,18 +120,14 @@ namespace SistemaAmbientesUAB
                 return;
             }
 
-            int idUsuario = Convert.ToInt32(dgvUsuarios.SelectedRows[0].Cells["ID"].Value);
+            int id = Convert.ToInt32(dgvUsuarios.SelectedRows[0].Cells["ID"].Value);
             string estadoActual = dgvUsuarios.SelectedRows[0].Cells["Estado"].Value?.ToString();
             string nombre = dgvUsuarios.SelectedRows[0].Cells["Nombre"].Value?.ToString();
             string nuevoEstado = estadoActual == "activo" ? "inactivo" : "activo";
 
-            var confirm = MessageBox.Show(
-                $"¿Cambiar estado de '{nombre}' a '{nuevoEstado}'?",
-                "Cambiar Estado",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
-
-            if (confirm != DialogResult.Yes) return;
+            if (MessageBox.Show($"¿Cambiar estado de '{nombre}' a '{nuevoEstado}'?",
+                    "Cambiar Estado", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                != DialogResult.Yes) return;
 
             try
             {
@@ -129,20 +135,16 @@ namespace SistemaAmbientesUAB
                 {
                     con.Open();
                     SqlCommand cmd = new SqlCommand(
-                        "UPDATE Usuario SET estado = @estado WHERE id_usuario = @id", con);
+                        "UPDATE Usuario SET estado=@estado WHERE id_usuario=@id", con);
                     cmd.Parameters.AddWithValue("@estado", nuevoEstado);
-                    cmd.Parameters.AddWithValue("@id", idUsuario);
+                    cmd.Parameters.AddWithValue("@id", id);
                     cmd.ExecuteNonQuery();
                 }
-
-                lblMensaje.Text = $"✅ Usuario '{nombre}' ahora está {nuevoEstado}.";
-                lblMensaje.ForeColor = System.Drawing.Color.FromArgb(40, 120, 40);
+                lblMensaje.Text = $"✅ '{nombre}' ahora está {nuevoEstado}.";
+                lblMensaje.ForeColor = TemaManager.Acento;
                 CargarUsuarios();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message);
-            }
+            catch (Exception ex) { MessageBox.Show("Error: " + ex.Message); }
         }
     }
 }
