@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace SistemaAmbientesUAB
@@ -22,16 +20,13 @@ namespace SistemaAmbientesUAB
         private void AplicarTema()
         {
             this.BackColor = TemaManager.FondoPrincipal;
-
             lblTitulo.ForeColor = TemaManager.TextoPrincipal;
             lblUsuario.ForeColor = TemaManager.TextoSecundario;
             lblPassword.ForeColor = TemaManager.TextoSecundario;
-
             txtUsuario.BackColor = TemaManager.FondoGrid;
             txtUsuario.ForeColor = TemaManager.TextoPrincipal;
             txtPassword.BackColor = TemaManager.FondoGrid;
             txtPassword.ForeColor = TemaManager.TextoPrincipal;
-
             TemaManager.AplicarBoton(btnIngresar, TemaManager.Acento);
         }
 
@@ -52,9 +47,12 @@ namespace SistemaAmbientesUAB
                 using (SqlConnection con = Conexion.ObtenerConexion())
                 {
                     con.Open();
-                    string query = @"SELECT id_usuario, nombre_completo, es_admin
-                                     FROM Usuario
-                                     WHERE username=@user AND password_hash=@pass AND estado='activo'";
+                    string query = @"
+                        SELECT id_usuario, nombre_completo, tipo_usuario, es_admin
+                        FROM Usuario
+                        WHERE username = @user
+                          AND password_hash = @pass
+                          AND estado = 'activo'";
 
                     SqlCommand cmd = new SqlCommand(query, con);
                     cmd.Parameters.AddWithValue("@user", usuario);
@@ -65,9 +63,24 @@ namespace SistemaAmbientesUAB
                     {
                         int idUsuario = Convert.ToInt32(dr["id_usuario"]);
                         string nombre = dr["nombre_completo"].ToString();
+                        string tipoUsuario = dr["tipo_usuario"].ToString();
                         bool esAdmin = Convert.ToBoolean(dr["es_admin"]);
 
-                        new FormMenu(idUsuario, nombre, esAdmin).Show();
+                        dr.Close();
+
+                        // Construir permisos según tipo_usuario
+                        var permisos = new PermisosUsuario
+                        {
+                            VerHome = true,
+                            VerNuevaReserva = true,
+                            VerMisReservas = true,
+                            VerAmbientes = esAdmin || tipoUsuario == "administrativo",
+                            VerUsuarios = esAdmin || tipoUsuario == "administrativo",
+                            VerReportes = esAdmin || tipoUsuario == "administrativo" || tipoUsuario == "docente",
+                            TipoUsuario = tipoUsuario
+                        };
+
+                        new FormMenu(idUsuario, nombre, tipoUsuario, permisos).Show();
                         this.Hide();
                     }
                     else

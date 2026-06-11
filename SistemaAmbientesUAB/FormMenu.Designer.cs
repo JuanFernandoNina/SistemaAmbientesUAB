@@ -14,8 +14,6 @@
         private void InitializeComponent()
         {
             this.btnHome = new System.Windows.Forms.Button();
-            this.panelMenu = new System.Windows.Forms.Panel();
-            this.lblNombreUsuario = new System.Windows.Forms.Label();
             this.btnReservas = new System.Windows.Forms.Button();
             this.btnNuevaReserva = new System.Windows.Forms.Button();
             this.btnAmbientes = new System.Windows.Forms.Button();
@@ -23,49 +21,86 @@
             this.btnReportes = new System.Windows.Forms.Button();
             this.btnTema = new System.Windows.Forms.Button();
             this.btnCerrarSesion = new System.Windows.Forms.Button();
+            this.panelMenu = new System.Windows.Forms.Panel();
             this.panelContenido = new System.Windows.Forms.Panel();
+            this.lblNombreUsuario = new System.Windows.Forms.Label();
+            this.lblAppName = new System.Windows.Forms.Label();
+            this.lblAvatar = new System.Windows.Forms.Label();
+            this.lblRolBadge = new System.Windows.Forms.Label();   // ← NUEVO
+            this.panelSep = new System.Windows.Forms.Panel();
 
-            // ── FORM ────────────────────────────────────────
-            this.Text = "AmbientesUAB - Menú Principal";
-            this.Size = new System.Drawing.Size(1100, 680);
+            // ── FORM ──────────────────────────────────────────
+            this.Text = "AmbientesUAB";
+            this.Size = new System.Drawing.Size(1160, 720);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
+            this.MinimumSize = new System.Drawing.Size(1000, 620);
+            this.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.Load += new System.EventHandler(this.FormMenu_Load);
 
             // ── PANEL MENÚ ────────────────────────────────────
             this.panelMenu.Location = new System.Drawing.Point(0, 0);
-            this.panelMenu.Size = new System.Drawing.Size(210, 680);
-            this.panelMenu.BackColor = System.Drawing.Color.FromArgb(30, 41, 30);
+            this.panelMenu.Size = new System.Drawing.Size(220, 720);
+            this.panelMenu.BackColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.panelMenu.Anchor = System.Windows.Forms.AnchorStyles.Top |
+                                       System.Windows.Forms.AnchorStyles.Left |
+                                       System.Windows.Forms.AnchorStyles.Bottom;
 
-            // ── LABEL USUARIO ─────────────────────────────────
-            this.lblNombreUsuario.Location = new System.Drawing.Point(0, 15);
-            this.lblNombreUsuario.Size = new System.Drawing.Size(210, 55);
-            this.lblNombreUsuario.Text = "👤 Bienvenido";
-            this.lblNombreUsuario.ForeColor = System.Drawing.Color.White;
-            this.lblNombreUsuario.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            // ── APP NAME ──────────────────────────────────────
+            this.lblAppName.Text = "AmbientesUAB";
+            this.lblAppName.Location = new System.Drawing.Point(0, 18);
+            this.lblAppName.Size = new System.Drawing.Size(220, 28);
+            this.lblAppName.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold);
+            this.lblAppName.ForeColor = System.Drawing.Color.White;
+            this.lblAppName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblAppName.BackColor = System.Drawing.Color.Transparent;
+
+            // ── SEPARADOR ─────────────────────────────────────
+            this.panelSep.Location = new System.Drawing.Point(20, 52);
+            this.panelSep.Size = new System.Drawing.Size(180, 1);
+            this.panelSep.BackColor = System.Drawing.Color.FromArgb(40, 60, 100);
+
+            // ── AVATAR CÍRCULO ────────────────────────────────
+            this.lblAvatar.Text = "A";
+            this.lblAvatar.Location = new System.Drawing.Point(84, 64);
+            this.lblAvatar.Size = new System.Drawing.Size(52, 52);
+            this.lblAvatar.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
+            this.lblAvatar.ForeColor = System.Drawing.Color.White;
+            this.lblAvatar.BackColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            this.lblAvatar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+
+            // ── NOMBRE USUARIO ────────────────────────────────
+            this.lblNombreUsuario.Text = "Usuario";
+            this.lblNombreUsuario.Location = new System.Drawing.Point(0, 122);
+            this.lblNombreUsuario.Size = new System.Drawing.Size(220, 22);
+            this.lblNombreUsuario.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblNombreUsuario.ForeColor = System.Drawing.Color.FromArgb(148, 163, 184);
             this.lblNombreUsuario.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblNombreUsuario.BackColor = System.Drawing.Color.FromArgb(30, 41, 30);
+            this.lblNombreUsuario.BackColor = System.Drawing.Color.Transparent;
 
-            // ── SEPARADOR visual (label vacío como línea) ─────
-            var sep = new System.Windows.Forms.Label();
-            sep.Size = new System.Drawing.Size(170, 1);
-            sep.Location = new System.Drawing.Point(20, 72);
-            sep.BackColor = System.Drawing.Color.FromArgb(60, 80, 60);
-            this.panelMenu.Controls.Add(sep);
+            // ── BADGE DE ROL ──────────────────────────────────
+            this.lblRolBadge.Text = "";
+            this.lblRolBadge.Location = new System.Drawing.Point(60, 148);
+            this.lblRolBadge.Size = new System.Drawing.Size(100, 20);
+            this.lblRolBadge.Font = new System.Drawing.Font("Segoe UI", 7.5F, System.Drawing.FontStyle.Bold);
+            this.lblRolBadge.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblRolBadge.Visible = false;
 
-            // ── BOTONES ───────────────────────────────────────
-            ConfigurarBoton(this.btnHome, "🏠  Inicio", 85);
-            ConfigurarBoton(this.btnReservas, "📅  Mis Reservas", 145);
-            ConfigurarBoton(this.btnNuevaReserva, "➕  Nueva Reserva", 205);
-            ConfigurarBoton(this.btnAmbientes, "🏫  Ambientes", 265);
-            ConfigurarBoton(this.btnUsuarios, "👥  Usuarios", 325);
-            ConfigurarBoton(this.btnReportes, "📊  Reportes", 385);
-            ConfigurarBoton(this.btnTema, "🌙  Modo Oscuro", 480);
-            ConfigurarBoton(this.btnCerrarSesion, "🚪  Cerrar Sesión", 560);
+            // ── BOTONES MENÚ  (primer botón desde y=178, bajo el badge) ──
+            SetupBtn(this.btnHome, "   \u2302   Inicio", 178);
+            SetupBtn(this.btnNuevaReserva, "   +   Nueva Reserva", 224);
+            SetupBtn(this.btnReservas, "   \u25A6   Mis Reservas", 270);
+            SetupBtn(this.btnAmbientes, "   \u25A3   Ambientes", 316);
+            SetupBtn(this.btnUsuarios, "   \u25C9   Usuarios", 362);
+            SetupBtn(this.btnReportes, "   \u25AA   Reportes", 408);
 
-            this.btnCerrarSesion.BackColor = System.Drawing.Color.FromArgb(160, 40, 40);
-            this.btnTema.BackColor = System.Drawing.Color.FromArgb(50, 70, 120);
+            // posición inferior
+            SetupBtn(this.btnTema, "   \u25D1   Modo Oscuro", 558);
+            SetupBtn(this.btnCerrarSesion, "   \u2715   Cerrar Sesi\u00F3n", 618);
+
+            this.btnCerrarSesion.BackColor = System.Drawing.Color.FromArgb(185, 28, 28);
+            this.btnCerrarSesion.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnTema.BackColor = System.Drawing.Color.FromArgb(30, 50, 100);
 
             // ── EVENTOS ───────────────────────────────────────
             this.btnHome.Click += new System.EventHandler(this.btnHome_Click);
@@ -78,10 +113,14 @@
             this.btnCerrarSesion.Click += new System.EventHandler(this.btnCerrarSesion_Click);
 
             // ── AGREGAR AL PANEL MENÚ ─────────────────────────
+            this.panelMenu.Controls.Add(this.lblAppName);
+            this.panelMenu.Controls.Add(this.panelSep);
+            this.panelMenu.Controls.Add(this.lblAvatar);
             this.panelMenu.Controls.Add(this.lblNombreUsuario);
+            this.panelMenu.Controls.Add(this.lblRolBadge);
             this.panelMenu.Controls.Add(this.btnHome);
-            this.panelMenu.Controls.Add(this.btnReservas);
             this.panelMenu.Controls.Add(this.btnNuevaReserva);
+            this.panelMenu.Controls.Add(this.btnReservas);
             this.panelMenu.Controls.Add(this.btnAmbientes);
             this.panelMenu.Controls.Add(this.btnUsuarios);
             this.panelMenu.Controls.Add(this.btnReportes);
@@ -89,33 +128,41 @@
             this.panelMenu.Controls.Add(this.btnCerrarSesion);
 
             // ── PANEL CONTENIDO ───────────────────────────────
-            this.panelContenido.Location = new System.Drawing.Point(210, 0);
-            this.panelContenido.Size = new System.Drawing.Size(874, 680);
-            this.panelContenido.BackColor = System.Drawing.Color.FromArgb(240, 242, 245);
+            this.panelContenido.Location = new System.Drawing.Point(220, 0);
+            this.panelContenido.Size = new System.Drawing.Size(924, 720);
+            this.panelContenido.BackColor = System.Drawing.Color.FromArgb(241, 245, 249);
+            this.panelContenido.Anchor = System.Windows.Forms.AnchorStyles.Top |
+                                            System.Windows.Forms.AnchorStyles.Left |
+                                            System.Windows.Forms.AnchorStyles.Right |
+                                            System.Windows.Forms.AnchorStyles.Bottom;
 
             // ── AGREGAR AL FORM ───────────────────────────────
             this.Controls.Add(this.panelMenu);
             this.Controls.Add(this.panelContenido);
         }
 
-        private void ConfigurarBoton(System.Windows.Forms.Button btn, string texto, int posY)
+        private void SetupBtn(System.Windows.Forms.Button btn, string texto, int posY)
         {
             btn.Text = texto;
             btn.Location = new System.Drawing.Point(0, posY);
-            btn.Size = new System.Drawing.Size(210, 50);
+            btn.Size = new System.Drawing.Size(220, 46);
             btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             btn.FlatAppearance.BorderSize = 0;
-            btn.BackColor = System.Drawing.Color.FromArgb(30, 41, 30);
-            btn.ForeColor = System.Drawing.Color.White;
-            btn.Font = new System.Drawing.Font("Segoe UI", 10F);
+            btn.BackColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            btn.ForeColor = System.Drawing.Color.FromArgb(148, 163, 184);
+            btn.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             btn.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            btn.Padding = new System.Windows.Forms.Padding(18, 0, 0, 0);
+            btn.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
             btn.Cursor = System.Windows.Forms.Cursors.Hand;
         }
 
         private System.Windows.Forms.Panel panelMenu;
         private System.Windows.Forms.Panel panelContenido;
+        private System.Windows.Forms.Panel panelSep;
+        private System.Windows.Forms.Label lblAppName;
         private System.Windows.Forms.Label lblNombreUsuario;
+        private System.Windows.Forms.Label lblAvatar;
+        private System.Windows.Forms.Label lblRolBadge;        // ← NUEVO
         private System.Windows.Forms.Button btnHome;
         private System.Windows.Forms.Button btnReservas;
         private System.Windows.Forms.Button btnNuevaReserva;

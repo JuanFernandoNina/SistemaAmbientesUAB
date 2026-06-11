@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace SistemaAmbientesUAB
@@ -10,6 +11,53 @@ namespace SistemaAmbientesUAB
     {
         private int _idUsuario;
         private string _nombre;
+
+        // definición de las 4 tarjetas del diseño
+        private struct CardDef
+        {
+            public string Titulo;
+            public string Query;
+            public Color BgLight;   // fondo claro
+            public Color BgDark;
+            public Color AccLight;  // número + borde izquierdo
+            public Color AccDark;
+        }
+
+        private readonly CardDef[] _cards = new[]
+        {
+            new CardDef {
+                Titulo   = "Ambientes",
+                Query    = "SELECT COUNT(*) FROM Ambiente",
+                BgLight  = Color.FromArgb(239, 246, 255),  // #EFF6FF
+                BgDark   = Color.FromArgb(22, 27, 39),
+                AccLight = Color.FromArgb(37, 99, 235),    // azul
+                AccDark  = Color.FromArgb(59, 158, 255)
+            },
+            new CardDef {
+                Titulo   = "Disponibles",
+                Query    = "SELECT COUNT(*) FROM Ambiente WHERE estado='disponible'",
+                BgLight  = Color.FromArgb(236, 253, 245),  // #ECFDF5
+                BgDark   = Color.FromArgb(22, 27, 39),
+                AccLight = Color.FromArgb(6, 95, 70),      // verde
+                AccDark  = Color.FromArgb(34, 211, 160)
+            },
+            new CardDef {
+                Titulo   = "Mantenimiento",
+                Query    = "SELECT COUNT(*) FROM Ambiente WHERE estado='mantenimiento'",
+                BgLight  = Color.FromArgb(255, 251, 235),  // #FFFBEB
+                BgDark   = Color.FromArgb(22, 27, 39),
+                AccLight = Color.FromArgb(146, 64, 14),    // ámbar
+                AccDark  = Color.FromArgb(245, 158, 11)
+            },
+            new CardDef {
+                Titulo   = "Reservas hoy",
+                Query    = "SELECT COUNT(*) FROM Reserva WHERE estado='activa' AND fecha_inicio=CAST(GETDATE() AS DATE)",
+                BgLight  = Color.FromArgb(239, 246, 255),
+                BgDark   = Color.FromArgb(22, 27, 39),
+                AccLight = Color.FromArgb(37, 99, 235),
+                AccDark  = Color.FromArgb(59, 158, 255)
+            },
+        };
 
         public FormHome(int idUsuario, string nombre)
         {
@@ -21,117 +69,136 @@ namespace SistemaAmbientesUAB
         private void FormHome_Load(object sender, EventArgs e)
         {
             AplicarTema();
-            lblFecha.Text = "📅 " + DateTime.Now.ToString(
+            lblFecha.Text = DateTime.Now.ToString(
                 "dddd, dd 'de' MMMM 'de' yyyy",
                 new System.Globalization.CultureInfo("es-ES"));
             CrearTarjetas();
             CargarUltimasReservas();
         }
 
+        private void FormHome_Resize(object sender, EventArgs e)
+        {
+            // Redibujar tarjetas cuando cambia el tamaño del form
+            if (panelTarjetas != null && panelTarjetas.Width > 0)
+                CrearTarjetas();
+        }
+
+        // ── TEMA ──────────────────────────────────────────────
         private void AplicarTema()
         {
-            this.BackColor = TemaManager.FondoPrincipal;
-            panelTarjetas.BackColor = TemaManager.FondoPrincipal;
-            TemaManager.AplicarLabel(lblTitulo);
-            TemaManager.AplicarLabel(lblFecha, true);
-            TemaManager.AplicarLabel(lblActividad);
+            this.BackColor = TemaManager.FondoContenido;
+            panelTarjetas.BackColor = Color.Transparent;
+
+            lblTitulo.ForeColor = TemaManager.TextoPrincipal;
+            lblTitulo.Font = new Font("Segoe UI", 17F, FontStyle.Bold);
+
+            lblFecha.ForeColor = TemaManager.TextoSecundario;
+            lblFecha.Font = new Font("Segoe UI", 9F);
+
+            lblActividad.ForeColor = TemaManager.TextoPrincipal;
+            lblActividad.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+
             TemaManager.AplicarGrid(dgvActividad);
         }
 
+        // ── TARJETAS MINIMALISTAS (estilo propuesta HTML) ─────
         private void CrearTarjetas()
         {
             panelTarjetas.Controls.Clear();
 
-            int totalAmbientes = ObtenerConteo("SELECT COUNT(*) FROM Ambiente");
-            int disponibles = ObtenerConteo("SELECT COUNT(*) FROM Ambiente WHERE estado='disponible'");
-            int enManten = ObtenerConteo("SELECT COUNT(*) FROM Ambiente WHERE estado='mantenimiento'");
-            int totalReservas = ObtenerConteo("SELECT COUNT(*) FROM Reserva WHERE estado='activa'");
-            int reservasHoy = ObtenerConteo("SELECT COUNT(*) FROM Reserva WHERE estado='activa' AND fecha_inicio=CAST(GETDATE() AS DATE)");
-            int totalUsuarios = ObtenerConteo("SELECT COUNT(*) FROM Usuario WHERE estado='activo'");
-            int cancelaciones = ObtenerConteo("SELECT COUNT(*) FROM Cancelacion");
-            int totalEventos = ObtenerConteo("SELECT COUNT(*) FROM Evento");
+            int total = _cards.Length;
+            int gap = 14;
+            int avail = panelTarjetas.Width;
+            int w = (avail - gap * (total - 1)) / total;
+            int h = panelTarjetas.Height > 0 ? panelTarjetas.Height : 115;
 
-            var colores = TemaManager.ColoresTarjetas;
+            bool oscuro = TemaManager.TemaActual == TipoTema.Oscuro;
 
-            var tarjetas = new[]
+            for (int i = 0; i < total; i++)
             {
-                new { titulo = "Ambientes",       valor = totalAmbientes, icono = "🏫", color = colores[0] },
-                new { titulo = "Disponibles",     valor = disponibles,    icono = "✅", color = colores[1] },
-                new { titulo = "Mantenimiento",   valor = enManten,       icono = "🔧", color = colores[2] },
-                new { titulo = "Reservas hoy",    valor = reservasHoy,    icono = "📅", color = colores[3] },
-                new { titulo = "Reservas activas",valor = totalReservas,  icono = "📋", color = colores[4] },
-                new { titulo = "Usuarios",        valor = totalUsuarios,  icono = "👥", color = colores[5] },
-                new { titulo = "Cancelaciones",   valor = cancelaciones,  icono = "❌", color = colores[6] },
-                new { titulo = "Eventos",         valor = totalEventos,   icono = "🎉", color = colores[7] },
-            };
+                var def = _cards[i];
+                int valor = ObtenerConteo(def.Query);
+                Color bg = oscuro ? def.BgDark : def.BgLight;
+                Color acc = oscuro ? def.AccDark : def.AccLight;
 
-            int ancho = 195;
-            int alto = 110;
-            int gap = 12;
-            int porFila = 4;
+                // Panel con borde redondeado y borde izquierdo de color
+                var card = new Panel
+                {
+                    Size = new Size(w, h),
+                    Location = new Point(i * (w + gap), 0),
+                    BackColor = Color.Transparent
+                };
 
-            for (int i = 0; i < tarjetas.Length; i++)
-            {
-                int fila = i / porFila;
-                int col = i % porFila;
+                Color borderCol = TemaManager.Borde;
+                card.Paint += (s, pe) =>
+                {
+                    var rc = ((Panel)s).ClientRectangle;
+                    int rad = 10;
+                    pe.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-                Panel card = new Panel();
-                card.Size = new Size(ancho, alto);
-                card.Location = new Point(col * (ancho + gap), fila * (alto + gap));
-                card.BackColor = tarjetas[i].color;
+                    // Fondo redondeado
+                    using (var gp = RoundedRect(rc, rad))
+                    using (var br = new SolidBrush(bg))
+                        pe.Graphics.FillPath(br, gp);
 
-                // Esquinas simuladas con padding interno
-                Label lblIcono = new Label();
-                lblIcono.Text = tarjetas[i].icono;
-                lblIcono.Font = new Font("Segoe UI", 20F);
-                lblIcono.ForeColor = Color.FromArgb(255, 255, 255, 180);
-                lblIcono.Location = new Point(12, 8);
-                lblIcono.Size = new Size(45, 45);
-                lblIcono.TextAlign = ContentAlignment.MiddleCenter;
+                    // Borde sutil
+                    using (var gp = RoundedRect(rc, rad))
+                    using (var pen = new Pen(borderCol, 1f))
+                        pe.Graphics.DrawPath(pen, gp);
 
-                Label lblValor = new Label();
-                lblValor.Text = tarjetas[i].valor.ToString();
-                lblValor.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
-                lblValor.ForeColor = Color.White;
-                lblValor.Location = new Point(70, 5);
-                lblValor.Size = new Size(115, 50);
-                lblValor.TextAlign = ContentAlignment.MiddleRight;
+                    // Borde izquierdo acento (3px)
+                    using (var pen = new Pen(acc, 3f))
+                        pe.Graphics.DrawLine(pen, rc.X + 1, rc.Y + rad, rc.X + 1, rc.Bottom - rad);
+                };
 
-                Label lblTit = new Label();
-                lblTit.Text = tarjetas[i].titulo;
-                lblTit.Font = new Font("Segoe UI", 9F);
-                lblTit.ForeColor = Color.FromArgb(230, 230, 230);
-                lblTit.Location = new Point(12, 68);
-                lblTit.Size = new Size(170, 22);
-                lblTit.TextAlign = ContentAlignment.MiddleLeft;
+                // Número grande
+                var lblVal = new Label
+                {
+                    Text = valor.ToString(),
+                    Font = new Font("Segoe UI", 26F, FontStyle.Bold),
+                    ForeColor = acc,
+                    Location = new Point(20, 18),
+                    Size = new Size(w - 24, 44),
+                    BackColor = Color.Transparent,
+                    AutoSize = false,
+                    TextAlign = ContentAlignment.MiddleLeft
+                };
 
-                // Línea decorativa inferior
-                Label linea = new Label();
-                linea.Size = new Size(ancho, 3);
-                linea.Location = new Point(0, alto - 3);
-                linea.BackColor = Color.FromArgb(50, 255, 255, 255);
+                // Título debajo
+                var lblTit = new Label
+                {
+                    Text = def.Titulo,
+                    Font = new Font("Segoe UI", 9F),
+                    ForeColor = TemaManager.TextoSecundario,
+                    Location = new Point(20, 64),
+                    Size = new Size(w - 24, 20),
+                    BackColor = Color.Transparent,
+                    AutoSize = false,
+                    TextAlign = ContentAlignment.MiddleLeft
+                };
 
-                card.Controls.Add(lblIcono);
-                card.Controls.Add(lblValor);
+                card.Controls.Add(lblVal);
                 card.Controls.Add(lblTit);
-                card.Controls.Add(linea);
                 panelTarjetas.Controls.Add(card);
             }
+        }
 
-            panelTarjetas.Height = tarjetas.Length > porFila
-                ? (alto + gap) * 2 + 5
-                : alto + 10;
-
-            lblActividad.Top = panelTarjetas.Bottom + 18;
-            dgvActividad.Top = lblActividad.Bottom + 5;
-            dgvActividad.Height = this.Height - dgvActividad.Top - 20;
+        private GraphicsPath RoundedRect(Rectangle r, int rad)
+        {
+            var gp = new GraphicsPath();
+            gp.AddArc(r.X, r.Y, rad * 2, rad * 2, 180, 90);
+            gp.AddArc(r.Right - rad * 2, r.Y, rad * 2, rad * 2, 270, 90);
+            gp.AddArc(r.Right - rad * 2, r.Bottom - rad * 2, rad * 2, rad * 2, 0, 90);
+            gp.AddArc(r.X, r.Bottom - rad * 2, rad * 2, rad * 2, 90, 90);
+            gp.CloseFigure();
+            return gp;
         }
 
         private int ObtenerConteo(string query)
         {
             try
             {
-                using (SqlConnection con = Conexion.ObtenerConexion())
+                using (var con = Conexion.ObtenerConexion())
                 {
                     con.Open();
                     return Convert.ToInt32(new SqlCommand(query, con).ExecuteScalar());
@@ -140,14 +207,15 @@ namespace SistemaAmbientesUAB
             catch { return 0; }
         }
 
+        // ── GRID ÚLTIMAS RESERVAS ─────────────────────────────
         private void CargarUltimasReservas()
         {
             try
             {
-                using (SqlConnection con = Conexion.ObtenerConexion())
+                using (var con = Conexion.ObtenerConexion())
                 {
                     con.Open();
-                    string query = @"
+                    string q = @"
                         SELECT TOP 10
                             u.nombre_completo                     AS Solicitante,
                             a.codigo                              AS Ambiente,
@@ -159,23 +227,24 @@ namespace SistemaAmbientesUAB
                             r.estado                              AS Estado,
                             CONVERT(VARCHAR,r.fecha_creacion,103) AS Registrado
                         FROM Reserva r
-                        INNER JOIN Usuario u  ON r.id_usuario  = u.id_usuario
+                        INNER JOIN Usuario  u ON r.id_usuario  = u.id_usuario
                         INNER JOIN Ambiente a ON r.id_ambiente = a.id_ambiente
-                        INNER JOIN Bloque b   ON a.id_bloque   = b.id_bloque
+                        INNER JOIN Bloque   b ON a.id_bloque   = b.id_bloque
                         ORDER BY r.fecha_creacion DESC";
 
-                    SqlDataAdapter da = new SqlDataAdapter(query, con);
-                    DataTable dt = new DataTable();
+                    var da = new SqlDataAdapter(q, con);
+                    var dt = new DataTable();
                     da.Fill(dt);
                     dgvActividad.DataSource = dt;
 
+                    // Colores de estado por fila
                     foreach (DataGridViewRow row in dgvActividad.Rows)
                     {
-                        string estado = row.Cells["Estado"].Value?.ToString();
-                        if (estado == "cancelada")
-                            row.DefaultCellStyle.ForeColor = Color.FromArgb(255, 80, 80);
-                        else if (estado == "finalizada")
-                            row.DefaultCellStyle.ForeColor = TemaManager.TextoSecundario;
+                        string st = row.Cells["Estado"].Value?.ToString();
+                        if (st == "cancelada")
+                            row.DefaultCellStyle.ForeColor = TemaManager.Peligro;
+                        else if (st == "finalizada")
+                            row.DefaultCellStyle.ForeColor = TemaManager.TextoMuted;
                         else
                             row.DefaultCellStyle.ForeColor = TemaManager.Acento;
                     }
@@ -183,7 +252,7 @@ namespace SistemaAmbientesUAB
             }
             catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show("Error al cargar actividad: " + ex.Message);
+                MessageBox.Show("Error al cargar actividad: " + ex.Message);
             }
         }
     }

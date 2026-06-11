@@ -8,21 +8,74 @@ namespace SistemaAmbientesUAB
     {
         private int _idUsuario;
         private string _nombre;
-        private bool _esAdmin;
+        private string _tipoUsuario;
+        private PermisosUsuario _permisos;
+        private Button _btnActivo;
 
-        public FormMenu(int idUsuario, string nombre, bool esAdmin)
+        public FormMenu(int idUsuario, string nombre, string tipoUsuario, PermisosUsuario permisos)
         {
             InitializeComponent();
             _idUsuario = idUsuario;
             _nombre = nombre;
-            _esAdmin = esAdmin;
+            _tipoUsuario = tipoUsuario;
+            _permisos = permisos;
         }
 
         private void FormMenu_Load(object sender, EventArgs e)
         {
-            lblNombreUsuario.Text = "👤 " + _nombre;
+            // Avatar inicial
+            string inicial = _nombre.Length > 0 ? _nombre[0].ToString().ToUpper() : "U";
+            lblAvatar.Text = inicial;
+            lblNombreUsuario.Text = _nombre.Length > 20 ? _nombre.Substring(0, 20) + "…" : _nombre;
+
+            // Badge de rol bajo el nombre
+            ConfigurarBadgeRol();
+
+            // Visibilidad de botones según permisos
+            AplicarPermisos();
+
             AplicarTema();
+            SetBtnActivo(btnHome);
             CargarFormulario(new FormHome(_idUsuario, _nombre));
+        }
+
+        // ── Muestra el badge de rol con su color ──────────────
+        private void ConfigurarBadgeRol()
+        {
+            switch (_tipoUsuario)
+            {
+                case "estudiante":
+                    lblRolBadge.Text = "Estudiante";
+                    lblRolBadge.ForeColor = Color.FromArgb(30, 64, 175);
+                    lblRolBadge.BackColor = Color.FromArgb(219, 234, 254);
+                    break;
+                case "docente":
+                    lblRolBadge.Text = "Docente";
+                    lblRolBadge.ForeColor = Color.FromArgb(6, 95, 70);
+                    lblRolBadge.BackColor = Color.FromArgb(209, 250, 229);
+                    break;
+                case "iglesia":
+                    lblRolBadge.Text = "Iglesia";
+                    lblRolBadge.ForeColor = Color.FromArgb(92, 45, 145);
+                    lblRolBadge.BackColor = Color.FromArgb(237, 233, 254);
+                    break;
+                default: // administrativo
+                    lblRolBadge.Text = "Admin";
+                    lblRolBadge.ForeColor = Color.FromArgb(146, 64, 14);
+                    lblRolBadge.BackColor = Color.FromArgb(254, 243, 199);
+                    break;
+            }
+            lblRolBadge.Visible = true;
+        }
+
+        // ── Oculta/muestra botones según permisos ─────────────
+        private void AplicarPermisos()
+        {
+            btnNuevaReserva.Visible = _permisos.VerNuevaReserva;
+            btnReservas.Visible = _permisos.VerMisReservas;
+            btnAmbientes.Visible = _permisos.VerAmbientes;
+            btnUsuarios.Visible = _permisos.VerUsuarios;
+            btnReportes.Visible = _permisos.VerReportes;
         }
 
         // ── TEMA ──────────────────────────────────────────────
@@ -31,11 +84,14 @@ namespace SistemaAmbientesUAB
             this.BackColor = TemaManager.FondoPrincipal;
             panelMenu.BackColor = TemaManager.FondoMenu;
             panelContenido.BackColor = TemaManager.FondoContenido;
+            panelSep.BackColor = TemaManager.TemaActual == TipoTema.Claro
+                                        ? Color.FromArgb(20, 48, 90)
+                                        : Color.FromArgb(14, 22, 40);
 
-            lblNombreUsuario.ForeColor = Color.White;
-            lblNombreUsuario.BackColor = TemaManager.FondoMenu;
+            lblAppName.ForeColor = Color.White;
+            lblNombreUsuario.ForeColor = TemaManager.NavIcono;
+            lblAvatar.BackColor = TemaManager.Acento;
 
-            // Estilo de todos los botones del menú
             Button[] botones = { btnHome, btnReservas, btnNuevaReserva,
                                   btnAmbientes, btnUsuarios, btnReportes,
                                   btnTema, btnCerrarSesion };
@@ -43,51 +99,80 @@ namespace SistemaAmbientesUAB
             foreach (var btn in botones)
             {
                 btn.BackColor = TemaManager.BotonMenu;
-                btn.ForeColor = Color.White;
-                btn.FlatStyle = FlatStyle.Flat;
+                btn.ForeColor = TemaManager.NavIcono;
                 btn.FlatAppearance.BorderSize = 0;
+                RegistrarHover(btn);
             }
 
-            // Colores especiales
-            btnCerrarSesion.BackColor = Color.FromArgb(160, 40, 40);
-            btnTema.BackColor = TemaManager.TemaActual == TipoTema.Claro
-                ? Color.FromArgb(50, 70, 120)
-                : Color.FromArgb(80, 60, 20);
-            btnTema.Text = TemaManager.TemaActual == TipoTema.Claro
-                ? "🌙  Modo Oscuro"
-                : "☀️  Modo Claro";
+            if (_btnActivo != null) AplicarActivo(_btnActivo);
 
-            // Registrar hover en todos
-            foreach (var btn in botones)
-                RegistrarHover(btn);
+            btnCerrarSesion.BackColor = TemaManager.TemaActual == TipoTema.Claro
+                ? Color.FromArgb(185, 28, 28)
+                : Color.FromArgb(127, 29, 29);
+            btnCerrarSesion.ForeColor = Color.White;
+
+            btnTema.BackColor = TemaManager.TemaActual == TipoTema.Claro
+                ? Color.FromArgb(20, 48, 90)
+                : Color.FromArgb(28, 36, 54);
+            btnTema.ForeColor = Color.White;
+            btnTema.Text = TemaManager.TemaActual == TipoTema.Claro
+                ? "   \u25D1   Modo Oscuro"
+                : "   \u263C   Modo Claro";
+        }
+
+        private void SetBtnActivo(Button btn)
+        {
+            if (_btnActivo != null)
+            {
+                _btnActivo.BackColor = TemaManager.BotonMenu;
+                _btnActivo.ForeColor = TemaManager.NavIcono;
+            }
+            _btnActivo = btn;
+            AplicarActivo(btn);
+        }
+
+        private void AplicarActivo(Button btn)
+        {
+            btn.BackColor = TemaManager.BotonActivo;
+            btn.ForeColor = Color.White;
+            btn.FlatAppearance.BorderColor = TemaManager.Acento;
+            btn.FlatAppearance.BorderSize = 0;
         }
 
         private void RegistrarHover(Button btn)
         {
-            btn.MouseEnter -= OnBotonEnter;
-            btn.MouseLeave -= OnBotonLeave;
-            btn.MouseEnter += OnBotonEnter;
-            btn.MouseLeave += OnBotonLeave;
+            btn.MouseEnter -= OnEnter;
+            btn.MouseLeave -= OnLeave;
+            btn.MouseEnter += OnEnter;
+            btn.MouseLeave += OnLeave;
         }
 
-        private void OnBotonEnter(object sender, EventArgs e)
+        private void OnEnter(object sender, EventArgs e)
         {
             var btn = (Button)sender;
-            if (btn != btnCerrarSesion && btn != btnTema)
-                btn.BackColor = TemaManager.BotonHover;
+            if (btn == btnCerrarSesion || btn == btnTema || btn == _btnActivo) return;
+            btn.BackColor = TemaManager.BotonHover;
+            btn.ForeColor = Color.White;
         }
 
-        private void OnBotonLeave(object sender, EventArgs e)
+        private void OnLeave(object sender, EventArgs e)
         {
             var btn = (Button)sender;
             if (btn == btnCerrarSesion)
-                btn.BackColor = Color.FromArgb(160, 40, 40);
-            else if (btn == btnTema)
+            {
                 btn.BackColor = TemaManager.TemaActual == TipoTema.Claro
-                    ? Color.FromArgb(50, 70, 120)
-                    : Color.FromArgb(80, 60, 20);
-            else
-                btn.BackColor = TemaManager.BotonMenu;
+                    ? Color.FromArgb(185, 28, 28) : Color.FromArgb(127, 29, 29);
+                return;
+            }
+            if (btn == btnTema)
+            {
+                btn.BackColor = TemaManager.TemaActual == TipoTema.Claro
+                    ? Color.FromArgb(20, 48, 90) : Color.FromArgb(28, 36, 54);
+                return;
+            }
+            if (btn == _btnActivo) return;
+            btn.BackColor = TemaManager.BotonMenu;
+            btn.ForeColor = TemaManager.NavIcono;
         }
 
         // ── NAVEGACIÓN ────────────────────────────────────────
@@ -101,23 +186,23 @@ namespace SistemaAmbientesUAB
             frm.Show();
         }
 
-        private void btnHome_Click(object sender, EventArgs e) =>
-            CargarFormulario(new FormHome(_idUsuario, _nombre));
+        private void btnHome_Click(object sender, EventArgs e)
+        { SetBtnActivo(btnHome); CargarFormulario(new FormHome(_idUsuario, _nombre)); }
 
-        private void btnReservas_Click(object sender, EventArgs e) =>
-            CargarFormulario(new FormMisReservas(_idUsuario));
+        private void btnReservas_Click(object sender, EventArgs e)
+        { SetBtnActivo(btnReservas); CargarFormulario(new FormMisReservas(_idUsuario)); }
 
-        private void btnNuevaReserva_Click(object sender, EventArgs e) =>
-            CargarFormulario(new FormNuevaReserva(_idUsuario));
+        private void btnNuevaReserva_Click(object sender, EventArgs e)
+        { SetBtnActivo(btnNuevaReserva); CargarFormulario(new FormNuevaReserva(_idUsuario)); }
 
-        private void btnAmbientes_Click(object sender, EventArgs e) =>
-            CargarFormulario(new FormAmbientes());
+        private void btnAmbientes_Click(object sender, EventArgs e)
+        { SetBtnActivo(btnAmbientes); CargarFormulario(new FormAmbientes()); }
 
-        private void btnUsuarios_Click(object sender, EventArgs e) =>
-            CargarFormulario(new FormUsuarios());
+        private void btnUsuarios_Click(object sender, EventArgs e)
+        { SetBtnActivo(btnUsuarios); CargarFormulario(new FormUsuarios()); }
 
-        private void btnReportes_Click(object sender, EventArgs e) =>
-            CargarFormulario(new FormReportes());
+        private void btnReportes_Click(object sender, EventArgs e)
+        { SetBtnActivo(btnReportes); CargarFormulario(new FormReportes()); }
 
         private void btnTema_Click(object sender, EventArgs e)
         {
@@ -128,15 +213,10 @@ namespace SistemaAmbientesUAB
 
         private void btnCerrarSesion_Click(object sender, EventArgs e)
         {
-            var confirm = MessageBox.Show(
-                "¿Seguro que deseas cerrar sesión?",
-                "Cerrar sesión",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
-
-            if (confirm == DialogResult.Yes)
+            if (MessageBox.Show("¿Cerrar sesión?", "Salir",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                new Form1().Show();
+                new FormLogin().Show();
                 this.Close();
             }
         }
