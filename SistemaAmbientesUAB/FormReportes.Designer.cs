@@ -21,12 +21,19 @@
             this.dgvReporte = new System.Windows.Forms.DataGridView();
             this.lblSubtitulo = new System.Windows.Forms.Label();
             this.lblTotal = new System.Windows.Forms.Label();
+            this.panelFiltroFecha = new System.Windows.Forms.Panel();
+            this.lblFiltroFecha = new System.Windows.Forms.Label();
+            this.dtpDesde = new System.Windows.Forms.DateTimePicker();
+            this.lblFiltroFechaGuion = new System.Windows.Forms.Label();
+            this.dtpHasta = new System.Windows.Forms.DateTimePicker();
+            this.btnAplicarFiltroFecha = new System.Windows.Forms.Button();
+            this.btnQuitarFiltroFecha = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReporte)).BeginInit();
             this.SuspendLayout();
 
             // ── FORM ─────────────────────────────────────────
             this.Text = "Reportes y Estadísticas";
-            this.Size = new System.Drawing.Size(950, 600);
+            this.Size = new System.Drawing.Size(950, 650);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.BackColor = System.Drawing.Color.FromArgb(245, 245, 245);
             this.Load += new System.EventHandler(this.FormReportes_Load);
@@ -61,15 +68,63 @@
             this.panelBotones.Controls.Add(this.btnUsoPorCarrera);
             this.panelBotones.Controls.Add(this.btnTodasReservas);
 
+            // ── PANEL FILTRO DE FECHA ──────────────────────────
+            this.panelFiltroFecha.Location = new System.Drawing.Point(20, 128);
+            this.panelFiltroFecha.Size = new System.Drawing.Size(900, 36);
+            this.panelFiltroFecha.BackColor = System.Drawing.Color.White;
+
+            this.lblFiltroFecha.Text = "Rango de fechas:";
+            this.lblFiltroFecha.Location = new System.Drawing.Point(0, 10);
+            this.lblFiltroFecha.Size = new System.Drawing.Size(130, 20);
+            this.lblFiltroFecha.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.lblFiltroFecha.ForeColor = System.Drawing.Color.FromArgb(100, 110, 130);
+
+            this.dtpDesde.Location = new System.Drawing.Point(135, 5);
+            this.dtpDesde.Size = new System.Drawing.Size(110, 27);
+            this.dtpDesde.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dtpDesde.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.dtpDesde.Value = System.DateTime.Today.AddMonths(-1);
+
+            this.lblFiltroFechaGuion.Text = "—";
+            this.lblFiltroFechaGuion.Location = new System.Drawing.Point(250, 10);
+            this.lblFiltroFechaGuion.Size = new System.Drawing.Size(15, 20);
+            this.lblFiltroFechaGuion.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.lblFiltroFechaGuion.ForeColor = System.Drawing.Color.FromArgb(100, 110, 130);
+
+            this.dtpHasta.Location = new System.Drawing.Point(270, 5);
+            this.dtpHasta.Size = new System.Drawing.Size(110, 27);
+            this.dtpHasta.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dtpHasta.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.dtpHasta.Value = System.DateTime.Today;
+
+            this.btnAplicarFiltroFecha.Text = "Aplicar";
+            this.btnAplicarFiltroFecha.Location = new System.Drawing.Point(395, 3);
+            this.btnAplicarFiltroFecha.Size = new System.Drawing.Size(85, 30);
+            this.btnAplicarFiltroFecha.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnAplicarFiltroFecha.Click += new System.EventHandler(this.btnAplicarFiltroFecha_Click);
+
+            this.btnQuitarFiltroFecha.Text = "Quitar filtro";
+            this.btnQuitarFiltroFecha.Location = new System.Drawing.Point(488, 3);
+            this.btnQuitarFiltroFecha.Size = new System.Drawing.Size(110, 30);
+            this.btnQuitarFiltroFecha.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnQuitarFiltroFecha.Click += new System.EventHandler(this.btnQuitarFiltroFecha_Click);
+
+            this.panelFiltroFecha.Controls.Add(this.lblFiltroFecha);
+            this.panelFiltroFecha.Controls.Add(this.dtpDesde);
+            this.panelFiltroFecha.Controls.Add(this.lblFiltroFechaGuion);
+            this.panelFiltroFecha.Controls.Add(this.dtpHasta);
+            this.panelFiltroFecha.Controls.Add(this.btnAplicarFiltroFecha);
+            this.panelFiltroFecha.Controls.Add(this.btnQuitarFiltroFecha);
+
             // ── SUBTÍTULO reporte activo ──────────────────────
             this.lblSubtitulo.Text = "Selecciona un reporte arriba";
-            this.lblSubtitulo.Location = new System.Drawing.Point(20, 130);
+            this.lblSubtitulo.Location = new System.Drawing.Point(20, 174);
             this.lblSubtitulo.Size = new System.Drawing.Size(600, 28);
             this.lblSubtitulo.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.lblSubtitulo.ForeColor = System.Drawing.Color.FromArgb(40, 80, 160);
 
             // ── DATAGRIDVIEW ──────────────────────────────────
-            this.dgvReporte.Location = new System.Drawing.Point(20, 165);
+            this.dgvReporte.Location = new System.Drawing.Point(20, 210);
             this.dgvReporte.Size = new System.Drawing.Size(900, 360);
             this.dgvReporte.BackgroundColor = System.Drawing.Color.White;
             this.dgvReporte.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -91,14 +146,15 @@
 
             // ── LABEL TOTAL ───────────────────────────────────
             this.lblTotal.Text = "";
-            this.lblTotal.Location = new System.Drawing.Point(20, 535);
-            this.lblTotal.Size = new System.Drawing.Size(500, 25);
+            this.lblTotal.Location = new System.Drawing.Point(20, 580);
+            this.lblTotal.Size = new System.Drawing.Size(700, 25);
             this.lblTotal.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.lblTotal.ForeColor = System.Drawing.Color.FromArgb(40, 120, 40);
 
             // ── AGREGAR CONTROLES ─────────────────────────────
             this.Controls.Add(this.lblTitulo);
             this.Controls.Add(this.panelBotones);
+            this.Controls.Add(this.panelFiltroFecha);
             this.Controls.Add(this.lblSubtitulo);
             this.Controls.Add(this.dgvReporte);
             this.Controls.Add(this.lblTotal);
@@ -130,5 +186,12 @@
         private System.Windows.Forms.Button btnUsoPorCarrera;
         private System.Windows.Forms.Button btnTodasReservas;
         private System.Windows.Forms.DataGridView dgvReporte;
+        private System.Windows.Forms.Panel panelFiltroFecha;
+        private System.Windows.Forms.Label lblFiltroFecha;
+        private System.Windows.Forms.DateTimePicker dtpDesde;
+        private System.Windows.Forms.Label lblFiltroFechaGuion;
+        private System.Windows.Forms.DateTimePicker dtpHasta;
+        private System.Windows.Forms.Button btnAplicarFiltroFecha;
+        private System.Windows.Forms.Button btnQuitarFiltroFecha;
     }
 }

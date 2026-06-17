@@ -11,6 +11,10 @@ namespace SistemaAmbientesUAB
     {
         private string _tipoActual = "ambientes";
 
+        // ── Filtro de rango de fechas (null = sin filtro, se muestra todo) ──
+        private DateTime? _fechaDesde = null;
+        private DateTime? _fechaHasta = null;
+
         public FormReportes()
         {
             InitializeComponent();
@@ -41,6 +45,24 @@ namespace SistemaAmbientesUAB
                                btnDisponibilidad, btnUsoPorCarrera, btnTodasReservas };
             foreach (var b in bots)
                 EstiloBotonTab(b, false);
+
+            // Panel de filtro de fecha
+            panelFiltroFecha.BackColor = Color.White;
+            lblFiltroFecha.ForeColor   = TemaManager.TextoSecundario;
+            lblFiltroFechaGuion.ForeColor = TemaManager.TextoSecundario;
+
+            btnAplicarFiltroFecha.BackColor = TemaManager.Acento;
+            btnAplicarFiltroFecha.ForeColor = Color.White;
+            btnAplicarFiltroFecha.FlatStyle = FlatStyle.Flat;
+            btnAplicarFiltroFecha.FlatAppearance.BorderSize = 0;
+            btnAplicarFiltroFecha.Cursor = Cursors.Hand;
+
+            btnQuitarFiltroFecha.BackColor = Color.White;
+            btnQuitarFiltroFecha.ForeColor = TemaManager.TextoSecundario;
+            btnQuitarFiltroFecha.FlatStyle = FlatStyle.Flat;
+            btnQuitarFiltroFecha.FlatAppearance.BorderColor = TemaManager.Borde;
+            btnQuitarFiltroFecha.FlatAppearance.BorderSize = 1;
+            btnQuitarFiltroFecha.Cursor = Cursors.Hand;
         }
 
         private static void AplicarEstiloTabla(DataGridView dgv)
@@ -107,23 +129,29 @@ namespace SistemaAmbientesUAB
             _tipoActual = tipo;
             string query = "", subtitulo = "";
 
+            // El reporte de disponibilidad es una "foto" del momento actual
+            // (ambientes libres AHORA); el filtro de rango de fechas no le aplica.
+            bool aplicaFiltroFecha = tipo != "disponibilidad";
+            bool filtroActivo = aplicaFiltroFecha && _fechaDesde.HasValue && _fechaHasta.HasValue;
+
             switch (tipo)
             {
                 case "ambientes":
                     subtitulo = "Ambientes más utilizados";
-                    query = @"SELECT a.codigo AS Código, b.nombre AS Bloque, a.tipo AS Tipo,
+                    query = $@"SELECT a.codigo AS Código, b.nombre AS Bloque, a.tipo AS Tipo,
                                      a.capacidad AS Capacidad, COUNT(r.id_reserva) AS [Total Reservas]
                               FROM Reserva r
                               INNER JOIN Ambiente a ON r.id_ambiente=a.id_ambiente
                               INNER JOIN Bloque b ON a.id_bloque=b.id_bloque
                               WHERE r.estado<>'cancelada'
+                                {(filtroActivo ? "AND r.fecha_inicio BETWEEN @desde AND @hasta" : "")}
                               GROUP BY a.codigo,b.nombre,a.tipo,a.capacidad
                               ORDER BY [Total Reservas] DESC";
                     break;
 
                 case "cancelaciones":
                     subtitulo = "Historial de cancelaciones";
-                    query = @"SELECT r.id_reserva AS [ID Reserva], u.nombre_completo AS Solicitante,
+                    query = $@"SELECT r.id_reserva AS [ID Reserva], u.nombre_completo AS Solicitante,
                                      a.codigo AS Ambiente, CONVERT(VARCHAR,r.fecha_inicio,103) AS Fecha,
                                      r.motivo AS Motivo, uc.nombre_completo AS [Cancelado por],
                                      CONVERT(VARCHAR,c.fecha_cancelacion,103) AS [Fecha Cancelación],
@@ -133,6 +161,8 @@ namespace SistemaAmbientesUAB
                               INNER JOIN Usuario u  ON r.id_usuario=u.id_usuario
                               INNER JOIN Ambiente a ON r.id_ambiente=a.id_ambiente
                               INNER JOIN Usuario uc ON c.id_usuario_cancela=uc.id_usuario
+                              WHERE 1=1
+                                {(filtroActivo ? "AND CAST(c.fecha_cancelacion AS DATE) BETWEEN @desde AND @hasta" : "")}
                               ORDER BY c.fecha_cancelacion DESC";
                     break;
 
@@ -156,20 +186,21 @@ namespace SistemaAmbientesUAB
 
                 case "carrera":
                     subtitulo = "Uso de ambientes por carrera/área";
-                    query = @"SELECT ISNULL(u.carrera_area,'Sin especificar') AS [Carrera/Área],
+                    query = $@"SELECT ISNULL(u.carrera_area,'Sin especificar') AS [Carrera/Área],
                                      u.tipo_usuario AS [Tipo Usuario],
                                      COUNT(r.id_reserva) AS [Total Reservas],
                                      COUNT(DISTINCT r.id_ambiente) AS [Ambientes distintos]
                               FROM Reserva r
                               INNER JOIN Usuario u ON r.id_usuario=u.id_usuario
                               WHERE r.estado<>'cancelada'
+                                {(filtroActivo ? "AND r.fecha_inicio BETWEEN @desde AND @hasta" : "")}
                               GROUP BY u.carrera_area, u.tipo_usuario
                               ORDER BY [Total Reservas] DESC";
                     break;
 
                 case "todas":
                     subtitulo = "Todas las reservas del sistema";
-                    query = @"SELECT r.id_reserva AS ID, u.nombre_completo AS Solicitante,
+                    query = $@"SELECT r.id_reserva AS ID, u.nombre_completo AS Solicitante,
                                      a.codigo AS Ambiente, b.nombre AS Bloque,
                                      CONVERT(VARCHAR,r.fecha_inicio,103) AS [Fecha Inicio],
                                      CONVERT(VARCHAR(5),r.hora_inicio,108) AS [Hora Ini],
@@ -181,6 +212,8 @@ namespace SistemaAmbientesUAB
                               INNER JOIN Usuario u  ON r.id_usuario=u.id_usuario
                               INNER JOIN Ambiente a ON r.id_ambiente=a.id_ambiente
                               INNER JOIN Bloque b   ON a.id_bloque=b.id_bloque
+                              WHERE 1=1
+                                {(filtroActivo ? "AND r.fecha_inicio BETWEEN @desde AND @hasta" : "")}
                               ORDER BY r.fecha_inicio DESC, r.hora_inicio";
                     break;
             }
@@ -190,17 +223,43 @@ namespace SistemaAmbientesUAB
                 using (SqlConnection con = Conexion.ObtenerConexion())
                 {
                     con.Open();
-                    SqlDataAdapter da = new SqlDataAdapter(query, con);
+                    SqlCommand cmd = new SqlCommand(query, con);
+
+                    if (filtroActivo)
+                    {
+                        cmd.Parameters.AddWithValue("@desde", _fechaDesde.Value.Date);
+                        cmd.Parameters.AddWithValue("@hasta", _fechaHasta.Value.Date);
+                    }
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
                     dgvReporte.DataSource = dt;
                     lblSubtitulo.Text     = subtitulo;
-                    lblTotal.Text         = $"Mostrando {dt.Rows.Count} registro(s)";
+                    lblTotal.Text         = filtroActivo
+                        ? $"Mostrando {dt.Rows.Count} registro(s) — del {_fechaDesde:dd/MM/yyyy} al {_fechaHasta:dd/MM/yyyy}"
+                        : $"Mostrando {dt.Rows.Count} registro(s)";
 
                     ActualizarBotonesTab(tipo);
+                    ActualizarEstadoFiltroFecha(tipo);
                 }
             }
             catch (Exception ex) { MessageBox.Show("Error al cargar reporte: " + ex.Message); }
+        }
+
+        // ── HABILITAR/DESHABILITAR FILTRO SEGÚN EL REPORTE ────
+        private void ActualizarEstadoFiltroFecha(string tipo)
+        {
+            bool aplica = tipo != "disponibilidad";
+
+            dtpDesde.Enabled = aplica;
+            dtpHasta.Enabled = aplica;
+            btnAplicarFiltroFecha.Enabled = aplica;
+            btnQuitarFiltroFecha.Enabled = aplica && (_fechaDesde.HasValue || _fechaHasta.HasValue);
+
+            lblFiltroFecha.Text = aplica
+                ? "Rango de fechas:"
+                : "El filtro de fecha no aplica (este reporte siempre muestra el estado actual)";
         }
 
         private void ActualizarBotonesTab(string tipoActivo)
@@ -286,5 +345,27 @@ namespace SistemaAmbientesUAB
         private void btnDisponibilidad_Click(object sender, EventArgs e)       => CargarReporte("disponibilidad");
         private void btnUsoPorCarrera_Click(object sender, EventArgs e)        => CargarReporte("carrera");
         private void btnTodasReservas_Click(object sender, EventArgs e)        => CargarReporte("todas");
+
+        // ── FILTRO DE RANGO DE FECHAS ──────────────────────────
+        private void btnAplicarFiltroFecha_Click(object sender, EventArgs e)
+        {
+            if (dtpDesde.Value.Date > dtpHasta.Value.Date)
+            {
+                MessageBox.Show("La fecha 'Desde' no puede ser posterior a la fecha 'Hasta'.",
+                    "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            _fechaDesde = dtpDesde.Value.Date;
+            _fechaHasta = dtpHasta.Value.Date;
+            CargarReporte(_tipoActual);
+        }
+
+        private void btnQuitarFiltroFecha_Click(object sender, EventArgs e)
+        {
+            _fechaDesde = null;
+            _fechaHasta = null;
+            CargarReporte(_tipoActual);
+        }
     }
 }
