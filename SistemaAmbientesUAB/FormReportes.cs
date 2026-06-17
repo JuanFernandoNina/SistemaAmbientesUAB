@@ -3,6 +3,10 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Printing;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 namespace SistemaAmbientesUAB
@@ -14,6 +18,12 @@ namespace SistemaAmbientesUAB
         // ── Filtro de rango de fechas (null = sin filtro, se muestra todo) ──
         private DateTime? _fechaDesde = null;
         private DateTime? _fechaHasta = null;
+
+        // ── Datos del reporte actualmente cargado (para exportar) ──────────
+        private DataTable _dtReporteActual;
+
+        // ── Control de paginación al imprimir/exportar a PDF ────────────────
+        private int _printRowIndex = 0;
 
         public FormReportes()
         {
@@ -29,14 +39,14 @@ namespace SistemaAmbientesUAB
         // ── TEMA MINIMALISTA ──────────────────────────────────
         private void AplicarTema()
         {
-            this.BackColor        = Color.White;
+            this.BackColor = Color.White;
             panelBotones.BackColor = Color.FromArgb(247, 249, 252);
 
-            lblTitulo.ForeColor    = TemaManager.TextoPrincipal;
-            lblTitulo.Font         = new Font("Segoe UI", 15F, FontStyle.Bold);
+            lblTitulo.ForeColor = TemaManager.TextoPrincipal;
+            lblTitulo.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
             lblSubtitulo.ForeColor = TemaManager.TextoSecundario;
-            lblSubtitulo.Font      = new Font("Segoe UI", 9.5F);
-            lblTotal.ForeColor     = TemaManager.TextoMuted;
+            lblSubtitulo.Font = new Font("Segoe UI", 9.5F);
+            lblTotal.ForeColor = TemaManager.TextoMuted;
 
             AplicarEstiloTabla(dgvReporte);
 
@@ -48,7 +58,7 @@ namespace SistemaAmbientesUAB
 
             // Panel de filtro de fecha
             panelFiltroFecha.BackColor = Color.White;
-            lblFiltroFecha.ForeColor   = TemaManager.TextoSecundario;
+            lblFiltroFecha.ForeColor = TemaManager.TextoSecundario;
             lblFiltroFechaGuion.ForeColor = TemaManager.TextoSecundario;
 
             btnAplicarFiltroFecha.BackColor = TemaManager.Acento;
@@ -63,41 +73,53 @@ namespace SistemaAmbientesUAB
             btnQuitarFiltroFecha.FlatAppearance.BorderColor = TemaManager.Borde;
             btnQuitarFiltroFecha.FlatAppearance.BorderSize = 1;
             btnQuitarFiltroFecha.Cursor = Cursors.Hand;
+
+            btnExportarExcel.BackColor = Color.FromArgb(33, 128, 83);
+            btnExportarExcel.ForeColor = Color.White;
+            btnExportarExcel.FlatStyle = FlatStyle.Flat;
+            btnExportarExcel.FlatAppearance.BorderSize = 0;
+            btnExportarExcel.Cursor = Cursors.Hand;
+
+            btnExportarPdf.BackColor = Color.FromArgb(178, 34, 34);
+            btnExportarPdf.ForeColor = Color.White;
+            btnExportarPdf.FlatStyle = FlatStyle.Flat;
+            btnExportarPdf.FlatAppearance.BorderSize = 0;
+            btnExportarPdf.Cursor = Cursors.Hand;
         }
 
         private static void AplicarEstiloTabla(DataGridView dgv)
         {
             dgv.EnableHeadersVisualStyles = false;
-            dgv.BackgroundColor           = Color.White;
-            dgv.GridColor                 = Color.FromArgb(230, 235, 243);
-            dgv.BorderStyle               = BorderStyle.None;
-            dgv.RowHeadersVisible         = false;
-            dgv.AllowUserToAddRows        = false;
-            dgv.AllowUserToDeleteRows     = false;
-            dgv.ReadOnly                  = true;
-            dgv.SelectionMode             = DataGridViewSelectionMode.FullRowSelect;
-            dgv.MultiSelect               = false;
-            dgv.AutoSizeColumnsMode       = DataGridViewAutoSizeColumnsMode.Fill;
-            dgv.RowTemplate.Height        = 36;
-            dgv.CellBorderStyle           = DataGridViewCellBorderStyle.SingleHorizontal;
+            dgv.BackgroundColor = Color.White;
+            dgv.GridColor = Color.FromArgb(230, 235, 243);
+            dgv.BorderStyle = BorderStyle.None;
+            dgv.RowHeadersVisible = false;
+            dgv.AllowUserToAddRows = false;
+            dgv.AllowUserToDeleteRows = false;
+            dgv.ReadOnly = true;
+            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgv.MultiSelect = false;
+            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgv.RowTemplate.Height = 36;
+            dgv.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
 
-            dgv.DefaultCellStyle.BackColor           = Color.White;
-            dgv.DefaultCellStyle.ForeColor           = TemaManager.TextoPrincipal;
-            dgv.DefaultCellStyle.SelectionBackColor  = Color.White;
-            dgv.DefaultCellStyle.SelectionForeColor  = TemaManager.TextoPrincipal;
-            dgv.DefaultCellStyle.Font                = new Font("Segoe UI", 9F);
-            dgv.DefaultCellStyle.Padding             = new Padding(9, 0, 9, 0);
+            dgv.DefaultCellStyle.BackColor = Color.White;
+            dgv.DefaultCellStyle.ForeColor = TemaManager.TextoPrincipal;
+            dgv.DefaultCellStyle.SelectionBackColor = Color.White;
+            dgv.DefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal;
+            dgv.DefaultCellStyle.Font = new Font("Segoe UI", 9F);
+            dgv.DefaultCellStyle.Padding = new Padding(9, 0, 9, 0);
 
-            dgv.AlternatingRowsDefaultCellStyle.BackColor          = Color.FromArgb(247, 249, 252);
+            dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(247, 249, 252);
             dgv.AlternatingRowsDefaultCellStyle.SelectionBackColor = Color.FromArgb(247, 249, 252);
             dgv.AlternatingRowsDefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal;
 
-            dgv.ColumnHeadersDefaultCellStyle.BackColor          = Color.FromArgb(239, 243, 248);
-            dgv.ColumnHeadersDefaultCellStyle.ForeColor          = Color.FromArgb(145, 155, 177);
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(239, 243, 248);
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(145, 155, 177);
             dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(239, 243, 248);
             dgv.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.FromArgb(145, 155, 177);
-            dgv.ColumnHeadersDefaultCellStyle.Font               = new Font("Segoe UI Semibold", 8.5F, FontStyle.Bold);
-            dgv.ColumnHeadersDefaultCellStyle.Padding            = new Padding(9, 0, 9, 0);
+            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 8.5F, FontStyle.Bold);
+            dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(9, 0, 9, 0);
             dgv.ColumnHeadersHeight = 36;
             dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
         }
@@ -105,21 +127,21 @@ namespace SistemaAmbientesUAB
         private static void EstiloBotonTab(Button btn, bool activo)
         {
             btn.FlatStyle = FlatStyle.Flat;
-            btn.Cursor    = Cursors.Hand;
-            btn.Font      = new Font("Segoe UI", 9F, activo ? FontStyle.Bold : FontStyle.Regular);
+            btn.Cursor = Cursors.Hand;
+            btn.Font = new Font("Segoe UI", 9F, activo ? FontStyle.Bold : FontStyle.Regular);
 
             if (activo)
             {
                 btn.BackColor = TemaManager.Acento;
                 btn.ForeColor = Color.White;
-                btn.FlatAppearance.BorderSize  = 0;
+                btn.FlatAppearance.BorderSize = 0;
             }
             else
             {
                 btn.BackColor = Color.White;
                 btn.ForeColor = TemaManager.TextoSecundario;
                 btn.FlatAppearance.BorderColor = Color.FromArgb(225, 231, 240);
-                btn.FlatAppearance.BorderSize  = 1;
+                btn.FlatAppearance.BorderSize = 1;
             }
         }
 
@@ -235,8 +257,9 @@ namespace SistemaAmbientesUAB
                     DataTable dt = new DataTable();
                     da.Fill(dt);
                     dgvReporte.DataSource = dt;
-                    lblSubtitulo.Text     = subtitulo;
-                    lblTotal.Text         = filtroActivo
+                    _dtReporteActual = dt;
+                    lblSubtitulo.Text = subtitulo;
+                    lblTotal.Text = filtroActivo
                         ? $"Mostrando {dt.Rows.Count} registro(s) — del {_fechaDesde:dd/MM/yyyy} al {_fechaHasta:dd/MM/yyyy}"
                         : $"Mostrando {dt.Rows.Count} registro(s)";
 
@@ -264,11 +287,11 @@ namespace SistemaAmbientesUAB
 
         private void ActualizarBotonesTab(string tipoActivo)
         {
-            EstiloBotonTab(btnAmbientesMasUsados,  tipoActivo == "ambientes");
-            EstiloBotonTab(btnReservasCanceladas,  tipoActivo == "cancelaciones");
-            EstiloBotonTab(btnDisponibilidad,      tipoActivo == "disponibilidad");
-            EstiloBotonTab(btnUsoPorCarrera,       tipoActivo == "carrera");
-            EstiloBotonTab(btnTodasReservas,       tipoActivo == "todas");
+            EstiloBotonTab(btnAmbientesMasUsados, tipoActivo == "ambientes");
+            EstiloBotonTab(btnReservasCanceladas, tipoActivo == "cancelaciones");
+            EstiloBotonTab(btnDisponibilidad, tipoActivo == "disponibilidad");
+            EstiloBotonTab(btnUsoPorCarrera, tipoActivo == "carrera");
+            EstiloBotonTab(btnTodasReservas, tipoActivo == "todas");
         }
 
         // ── PINTURA DE CELDAS ─────────────────────────────────
@@ -331,20 +354,20 @@ namespace SistemaAmbientesUAB
         {
             int d = radio;
             var gp = new GraphicsPath();
-            gp.AddArc(r.X,         r.Y,          d, d, 180, 90);
-            gp.AddArc(r.Right - d, r.Y,          d, d, 270, 90);
-            gp.AddArc(r.Right - d, r.Bottom - d, d, d, 0,   90);
-            gp.AddArc(r.X,         r.Bottom - d, d, d, 90,  90);
+            gp.AddArc(r.X, r.Y, d, d, 180, 90);
+            gp.AddArc(r.Right - d, r.Y, d, d, 270, 90);
+            gp.AddArc(r.Right - d, r.Bottom - d, d, d, 0, 90);
+            gp.AddArc(r.X, r.Bottom - d, d, d, 90, 90);
             gp.CloseFigure();
             return gp;
         }
 
         // ── EVENTOS BOTONES ───────────────────────────────────
-        private void btnAmbientesMasUsados_Click(object sender, EventArgs e)  => CargarReporte("ambientes");
-        private void btnReservasCanceladas_Click(object sender, EventArgs e)   => CargarReporte("cancelaciones");
-        private void btnDisponibilidad_Click(object sender, EventArgs e)       => CargarReporte("disponibilidad");
-        private void btnUsoPorCarrera_Click(object sender, EventArgs e)        => CargarReporte("carrera");
-        private void btnTodasReservas_Click(object sender, EventArgs e)        => CargarReporte("todas");
+        private void btnAmbientesMasUsados_Click(object sender, EventArgs e) => CargarReporte("ambientes");
+        private void btnReservasCanceladas_Click(object sender, EventArgs e) => CargarReporte("cancelaciones");
+        private void btnDisponibilidad_Click(object sender, EventArgs e) => CargarReporte("disponibilidad");
+        private void btnUsoPorCarrera_Click(object sender, EventArgs e) => CargarReporte("carrera");
+        private void btnTodasReservas_Click(object sender, EventArgs e) => CargarReporte("todas");
 
         // ── FILTRO DE RANGO DE FECHAS ──────────────────────────
         private void btnAplicarFiltroFecha_Click(object sender, EventArgs e)
@@ -366,6 +389,192 @@ namespace SistemaAmbientesUAB
             _fechaDesde = null;
             _fechaHasta = null;
             CargarReporte(_tipoActual);
+        }
+
+        // ══════════════════════════════════════════════════════
+        // EXPORTAR A EXCEL (CSV)
+        // ══════════════════════════════════════════════════════
+        private void btnExportarExcel_Click(object sender, EventArgs e)
+        {
+            if (_dtReporteActual == null || _dtReporteActual.Rows.Count == 0)
+            {
+                MessageBox.Show("No hay datos para exportar.", "Aviso",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                sfd.Filter = "Archivo CSV (*.csv)|*.csv";
+                sfd.FileName = NombreArchivoSugerido() + ".csv";
+
+                if (sfd.ShowDialog() != DialogResult.OK) return;
+
+                try
+                {
+                    ExportarCsv(_dtReporteActual, sfd.FileName);
+                    MessageBox.Show(
+                        "Reporte exportado correctamente.\n\n" +
+                        "Se abre con doble clic (Excel lo reconoce automáticamente), " +
+                        "o desde Excel: Datos > Desde texto/CSV si prefieres elegir la codificación manualmente.",
+                        "Exportación exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al exportar: " + ex.Message);
+                }
+            }
+        }
+
+        private void ExportarCsv(DataTable dt, string ruta)
+        {
+            var sb = new StringBuilder();
+
+            // Encabezados
+            sb.AppendLine(string.Join(";",
+                dt.Columns.Cast<DataColumn>().Select(c => EscaparCsv(c.ColumnName))));
+
+            // Filas
+            foreach (DataRow fila in dt.Rows)
+            {
+                var valores = fila.ItemArray.Select(v => EscaparCsv(Convert.ToString(v)));
+                sb.AppendLine(string.Join(";", valores));
+            }
+
+            // BOM UTF-8 para que Excel muestre tildes/ñ correctamente
+            File.WriteAllText(ruta, sb.ToString(), new UTF8Encoding(true));
+        }
+
+        private string EscaparCsv(string valor)
+        {
+            if (valor == null) return "";
+            bool necesitaComillas = valor.Contains(";") || valor.Contains("\"")
+                                  || valor.Contains("\n") || valor.Contains("\r");
+            if (necesitaComillas)
+                valor = "\"" + valor.Replace("\"", "\"\"") + "\"";
+            return valor;
+        }
+
+        private string NombreArchivoSugerido()
+        {
+            return $"Reporte_{_tipoActual}_{DateTime.Now:yyyyMMdd_HHmm}";
+        }
+
+        // ══════════════════════════════════════════════════════
+        // EXPORTAR A PDF (vía impresión a "Microsoft Print to PDF")
+        // ══════════════════════════════════════════════════════
+        private void btnExportarPdf_Click(object sender, EventArgs e)
+        {
+            if (_dtReporteActual == null || _dtReporteActual.Rows.Count == 0)
+            {
+                MessageBox.Show("No hay datos para exportar.", "Aviso",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            _printRowIndex = 0;
+
+            using (PrintDocument pd = new PrintDocument())
+            {
+                pd.DocumentName = NombreArchivoSugerido();
+                pd.PrintPage += PrintDocument_PrintPage;
+
+                try { pd.DefaultPageSettings.Landscape = true; }
+                catch { /* algunos drivers no soportan el cambio; se ignora */ }
+
+                try { pd.DefaultPageSettings.Margins = new Margins(40, 40, 50, 40); }
+                catch { /* idem */ }
+
+                // Preseleccionar "Microsoft Print to PDF" si está instalada
+                foreach (string impresora in PrinterSettings.InstalledPrinters)
+                {
+                    if (impresora.IndexOf("PDF", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        pd.PrinterSettings.PrinterName = impresora;
+                        break;
+                    }
+                }
+
+                using (PrintDialog dlg = new PrintDialog())
+                {
+                    dlg.Document = pd;
+                    dlg.AllowSelection = false;
+                    dlg.AllowSomePages = false;
+                    dlg.UseEXDialog = true;
+
+                    if (dlg.ShowDialog() != DialogResult.OK) return;
+
+                    try
+                    {
+                        _printRowIndex = 0;
+                        pd.Print();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error al generar el PDF: " + ex.Message);
+                    }
+                }
+            }
+        }
+
+        private void PrintDocument_PrintPage(object sender, PrintPageEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            Rectangle area = e.MarginBounds;
+            float y = area.Top;
+
+            Font fuenteTitulo = new Font("Segoe UI", 13F, FontStyle.Bold);
+            Font fuenteSubtitulo = new Font("Segoe UI", 9F, FontStyle.Italic);
+            Font fuenteEncabezado = new Font("Segoe UI", 9F, FontStyle.Bold);
+            Font fuenteCelda = new Font("Segoe UI", 8.5F);
+
+            // Título y resumen solo en la primera página
+            if (_printRowIndex == 0)
+            {
+                g.DrawString("Reportes y Estadísticas — " + lblSubtitulo.Text, fuenteTitulo, Brushes.Black, area.Left, y);
+                y += 26;
+                g.DrawString(lblTotal.Text, fuenteSubtitulo, Brushes.DimGray, area.Left, y);
+                y += 22;
+            }
+
+            int colCount = _dtReporteActual.Columns.Count;
+            float anchoCol = area.Width / (float)colCount;
+
+            // Encabezados de columna
+            float x = area.Left;
+            for (int c = 0; c < colCount; c++)
+            {
+                g.DrawString(_dtReporteActual.Columns[c].ColumnName, fuenteEncabezado, Brushes.Black,
+                    new RectangleF(x, y, anchoCol - 2, 20));
+                x += anchoCol;
+            }
+            y += 20;
+            g.DrawLine(Pens.Black, area.Left, y, area.Right, y);
+            y += 4;
+
+            // Filas de datos (con paginación)
+            while (_printRowIndex < _dtReporteActual.Rows.Count)
+            {
+                if (y + 18 > area.Bottom)
+                {
+                    e.HasMorePages = true;
+                    return;
+                }
+
+                x = area.Left;
+                DataRow fila = _dtReporteActual.Rows[_printRowIndex];
+                for (int c = 0; c < colCount; c++)
+                {
+                    string valor = Convert.ToString(fila[c]);
+                    g.DrawString(valor, fuenteCelda, Brushes.Black,
+                        new RectangleF(x, y, anchoCol - 2, 32));
+                    x += anchoCol;
+                }
+                y += 18;
+                _printRowIndex++;
+            }
+
+            e.HasMorePages = false;
         }
     }
 }

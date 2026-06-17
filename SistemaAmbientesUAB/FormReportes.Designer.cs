@@ -28,6 +28,8 @@
             this.dtpHasta = new System.Windows.Forms.DateTimePicker();
             this.btnAplicarFiltroFecha = new System.Windows.Forms.Button();
             this.btnQuitarFiltroFecha = new System.Windows.Forms.Button();
+            this.btnExportarExcel = new System.Windows.Forms.Button();
+            this.btnExportarPdf = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReporte)).BeginInit();
             this.SuspendLayout();
 
@@ -109,12 +111,26 @@
             this.btnQuitarFiltroFecha.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.btnQuitarFiltroFecha.Click += new System.EventHandler(this.btnQuitarFiltroFecha_Click);
 
+            this.btnExportarExcel.Text = "📊 Excel (CSV)";
+            this.btnExportarExcel.Location = new System.Drawing.Point(640, 3);
+            this.btnExportarExcel.Size = new System.Drawing.Size(115, 30);
+            this.btnExportarExcel.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnExportarExcel.Click += new System.EventHandler(this.btnExportarExcel_Click);
+
+            this.btnExportarPdf.Text = "🖨️ PDF";
+            this.btnExportarPdf.Location = new System.Drawing.Point(765, 3);
+            this.btnExportarPdf.Size = new System.Drawing.Size(95, 30);
+            this.btnExportarPdf.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnExportarPdf.Click += new System.EventHandler(this.btnExportarPdf_Click);
+
             this.panelFiltroFecha.Controls.Add(this.lblFiltroFecha);
             this.panelFiltroFecha.Controls.Add(this.dtpDesde);
             this.panelFiltroFecha.Controls.Add(this.lblFiltroFechaGuion);
             this.panelFiltroFecha.Controls.Add(this.dtpHasta);
             this.panelFiltroFecha.Controls.Add(this.btnAplicarFiltroFecha);
             this.panelFiltroFecha.Controls.Add(this.btnQuitarFiltroFecha);
+            this.panelFiltroFecha.Controls.Add(this.btnExportarExcel);
+            this.panelFiltroFecha.Controls.Add(this.btnExportarPdf);
 
             // ── SUBTÍTULO reporte activo ──────────────────────
             this.lblSubtitulo.Text = "Selecciona un reporte arriba";
@@ -193,5 +209,7 @@
         private System.Windows.Forms.DateTimePicker dtpHasta;
         private System.Windows.Forms.Button btnAplicarFiltroFecha;
         private System.Windows.Forms.Button btnQuitarFiltroFecha;
+        private System.Windows.Forms.Button btnExportarExcel;
+        private System.Windows.Forms.Button btnExportarPdf;
     }
 }
