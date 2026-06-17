@@ -9,58 +9,108 @@ namespace SistemaAmbientesUAB
 {
     public partial class FormNuevaReserva : Form
     {
-        private int _idUsuario;
+        private int _idUsuario;      // usuario logueado (admin o no)
+        private bool _esAdmin;
 
+        // ── Constructor sin cambios para usuarios normales ────
         public FormNuevaReserva(int idUsuario)
+            : this(idUsuario, false) { }
+
+        // ── Constructor extendido para admin ──────────────────
+        public FormNuevaReserva(int idUsuario, bool esAdmin)
         {
             InitializeComponent();
             _idUsuario = idUsuario;
+            _esAdmin = esAdmin;
         }
 
         private void FormNuevaReserva_Load(object sender, EventArgs e)
         {
             AplicarEstiloTabla(dgvAmbientes);
             CargarHorarios();
-            dtpFecha.MinDate    = DateTime.Today;
+            dtpFecha.MinDate = DateTime.Today;
             dtpFechaFin.MinDate = DateTime.Today;
+
+            // Panel "reservar en nombre de" — solo visible para admin
+            pnlEnNombreDe.Visible = _esAdmin;
+            if (_esAdmin)
+                CargarUsuarios();
+        }
+
+        // ── Carga el combo de usuarios (solo admin) ───────────
+        private void CargarUsuarios()
+        {
+            try
+            {
+                using (SqlConnection con = Conexion.ObtenerConexion())
+                {
+                    con.Open();
+                    string sql = @"
+                        SELECT id_usuario,
+                               nombre_completo + ' (' + tipo_usuario + ' — ' + codigo + ')' AS etiqueta
+                        FROM   Usuario
+                        WHERE  estado = 'activo'
+                        ORDER  BY nombre_completo";
+
+                    SqlDataAdapter da = new SqlDataAdapter(sql, con);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    cmbUsuarioBeneficiario.DisplayMember = "etiqueta";
+                    cmbUsuarioBeneficiario.ValueMember = "id_usuario";
+                    cmbUsuarioBeneficiario.DataSource = dt;
+
+                    // Preseleccionar al propio admin
+                    foreach (DataRowView row in cmbUsuarioBeneficiario.Items)
+                    {
+                        if (Convert.ToInt32(row["id_usuario"]) == _idUsuario)
+                        {
+                            cmbUsuarioBeneficiario.SelectedItem = row;
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar usuarios: " + ex.Message);
+            }
         }
 
         // ── ESTILO TABLA MINIMALISTA ──────────────────────────
         private static void AplicarEstiloTabla(DataGridView dgv)
         {
             dgv.EnableHeadersVisualStyles = false;
-            dgv.BackgroundColor           = Color.White;
-            dgv.GridColor                 = Color.FromArgb(230, 235, 243);
-            dgv.BorderStyle               = BorderStyle.None;
-            dgv.RowHeadersVisible         = false;
-            dgv.AllowUserToAddRows        = false;
-            dgv.AllowUserToDeleteRows     = false;
-            dgv.ReadOnly                  = true;
-            dgv.SelectionMode             = DataGridViewSelectionMode.FullRowSelect;
-            dgv.MultiSelect               = false;
-            dgv.AutoSizeColumnsMode       = DataGridViewAutoSizeColumnsMode.Fill;
-            dgv.RowTemplate.Height        = 36;
-            dgv.CellBorderStyle           = DataGridViewCellBorderStyle.SingleHorizontal;
+            dgv.BackgroundColor = Color.White;
+            dgv.GridColor = Color.FromArgb(230, 235, 243);
+            dgv.BorderStyle = BorderStyle.None;
+            dgv.RowHeadersVisible = false;
+            dgv.AllowUserToAddRows = false;
+            dgv.AllowUserToDeleteRows = false;
+            dgv.ReadOnly = true;
+            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgv.MultiSelect = false;
+            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgv.RowTemplate.Height = 36;
+            dgv.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
 
-            // Filas
-            dgv.DefaultCellStyle.BackColor           = Color.White;
-            dgv.DefaultCellStyle.ForeColor           = TemaManager.TextoPrincipal;
-            dgv.DefaultCellStyle.SelectionBackColor  = Color.FromArgb(219, 234, 254);
-            dgv.DefaultCellStyle.SelectionForeColor  = TemaManager.TextoPrincipal;
-            dgv.DefaultCellStyle.Font                = new Font("Segoe UI", 9F);
-            dgv.DefaultCellStyle.Padding             = new Padding(9, 0, 9, 0);
+            dgv.DefaultCellStyle.BackColor = Color.White;
+            dgv.DefaultCellStyle.ForeColor = TemaManager.TextoPrincipal;
+            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(219, 234, 254);
+            dgv.DefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal;
+            dgv.DefaultCellStyle.Font = new Font("Segoe UI", 9F);
+            dgv.DefaultCellStyle.Padding = new Padding(9, 0, 9, 0);
 
-            dgv.AlternatingRowsDefaultCellStyle.BackColor          = Color.FromArgb(247, 249, 252);
+            dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(247, 249, 252);
             dgv.AlternatingRowsDefaultCellStyle.SelectionBackColor = Color.FromArgb(219, 234, 254);
             dgv.AlternatingRowsDefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal;
 
-            // Cabecera
-            dgv.ColumnHeadersDefaultCellStyle.BackColor          = Color.FromArgb(239, 243, 248);
-            dgv.ColumnHeadersDefaultCellStyle.ForeColor          = Color.FromArgb(145, 155, 177);
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(239, 243, 248);
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(145, 155, 177);
             dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(239, 243, 248);
             dgv.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.FromArgb(145, 155, 177);
-            dgv.ColumnHeadersDefaultCellStyle.Font               = new Font("Segoe UI Semibold", 8.5F, FontStyle.Bold);
-            dgv.ColumnHeadersDefaultCellStyle.Padding            = new Padding(9, 0, 9, 0);
+            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 8.5F, FontStyle.Bold);
+            dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(9, 0, 9, 0);
             dgv.ColumnHeadersHeight = 36;
             dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
         }
@@ -74,7 +124,6 @@ namespace SistemaAmbientesUAB
 
             e.Handled = true;
 
-            // Fondo de fila
             Color fondo = e.RowIndex % 2 == 0 ? Color.White : Color.FromArgb(247, 249, 252);
             bool seleccionada = dgvAmbientes.Rows[e.RowIndex].Selected;
             if (seleccionada) fondo = Color.FromArgb(219, 234, 254);
@@ -110,15 +159,15 @@ namespace SistemaAmbientesUAB
         {
             int d = radio;
             var gp = new GraphicsPath();
-            gp.AddArc(r.X,         r.Y,          d, d, 180, 90);
-            gp.AddArc(r.Right - d, r.Y,          d, d, 270, 90);
-            gp.AddArc(r.Right - d, r.Bottom - d, d, d, 0,   90);
-            gp.AddArc(r.X,         r.Bottom - d, d, d, 90,  90);
+            gp.AddArc(r.X, r.Y, d, d, 180, 90);
+            gp.AddArc(r.Right - d, r.Y, d, d, 270, 90);
+            gp.AddArc(r.Right - d, r.Bottom - d, d, d, 0, 90);
+            gp.AddArc(r.X, r.Bottom - d, d, d, 90, 90);
             gp.CloseFigure();
             return gp;
         }
 
-        // ── LÓGICA ORIGINAL (sin cambios) ─────────────────────
+        // ── HORARIOS ──────────────────────────────────────────
         private void CargarHorarios()
         {
             string[] horarios = {
@@ -131,7 +180,7 @@ namespace SistemaAmbientesUAB
             cmbHoraInicio.Items.AddRange(horarios);
             cmbHoraFin.Items.AddRange(horarios);
             cmbHoraInicio.SelectedIndex = 0;
-            cmbHoraFin.SelectedIndex    = 1;
+            cmbHoraFin.SelectedIndex = 1;
         }
 
         private void dtpFecha_ValueChanged(object sender, EventArgs e)
@@ -140,14 +189,14 @@ namespace SistemaAmbientesUAB
             bool esFinDeSemana = dia == DayOfWeek.Saturday || dia == DayOfWeek.Sunday;
 
             cmbHoraInicio.Enabled = !esFinDeSemana;
-            cmbHoraFin.Enabled    = !esFinDeSemana;
+            cmbHoraFin.Enabled = !esFinDeSemana;
 
             if (esFinDeSemana)
             {
-                lblMensaje.Text      = "⚠️ Fin de semana: ingresa el horario manualmente.";
+                lblMensaje.Text = "⚠️ Fin de semana: ingresa el horario manualmente.";
                 lblMensaje.ForeColor = Color.DarkOrange;
                 cmbHoraInicio.Enabled = true;
-                cmbHoraFin.Enabled    = true;
+                cmbHoraFin.Enabled = true;
             }
             else
             {
@@ -161,6 +210,7 @@ namespace SistemaAmbientesUAB
             cmbFrecuencia.Visible = chkRecurrente.Checked;
         }
 
+        // ── BUSCAR AMBIENTES ──────────────────────────────────
         private void btnBuscar_Click(object sender, EventArgs e)
         {
             if (cmbHoraInicio.SelectedItem == null || cmbHoraFin.SelectedItem == null)
@@ -177,32 +227,30 @@ namespace SistemaAmbientesUAB
                     con.Open();
                     SqlCommand cmd = new SqlCommand("sp_SugerirAmbientes", con);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@fecha_inicio",         dtpFecha.Value.Date);
-                    cmd.Parameters.AddWithValue("@fecha_fin",            dtpFechaFin.Value.Date);
-                    cmd.Parameters.AddWithValue("@hora_inicio",          cmbHoraInicio.SelectedItem.ToString());
-                    cmd.Parameters.AddWithValue("@hora_fin",             cmbHoraFin.SelectedItem.ToString());
-                    cmd.Parameters.AddWithValue("@capacidad_requerida",  (int)nudAsistentes.Value);
-                    cmd.Parameters.AddWithValue("@necesita_proyector",   chkProyector.Checked    ? 1 : 0);
-                    cmd.Parameters.AddWithValue("@necesita_computadoras",chkComputadoras.Checked ? 1 : 0);
-                    cmd.Parameters.AddWithValue("@necesita_enchufes",    chkEnchufes.Checked     ? 1 : 0);
+                    cmd.Parameters.AddWithValue("@fecha_inicio", dtpFecha.Value.Date);
+                    cmd.Parameters.AddWithValue("@fecha_fin", dtpFechaFin.Value.Date);
+                    cmd.Parameters.AddWithValue("@hora_inicio", cmbHoraInicio.SelectedItem.ToString());
+                    cmd.Parameters.AddWithValue("@hora_fin", cmbHoraFin.SelectedItem.ToString());
+                    cmd.Parameters.AddWithValue("@capacidad_requerida", (int)nudAsistentes.Value);
+                    cmd.Parameters.AddWithValue("@necesita_proyector", chkProyector.Checked ? 1 : 0);
+                    cmd.Parameters.AddWithValue("@necesita_computadoras", chkComputadoras.Checked ? 1 : 0);
+                    cmd.Parameters.AddWithValue("@necesita_enchufes", chkEnchufes.Checked ? 1 : 0);
 
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
 
                     dgvAmbientes.DataSource = dt;
-
-                    // Re-aplicar estilos tras cargar datos nuevos
                     AplicarEstiloTabla(dgvAmbientes);
 
                     if (dt.Rows.Count == 0)
                     {
-                        lblMensaje.Text      = "⚠️ No hay ambientes disponibles para ese horario.";
+                        lblMensaje.Text = "⚠️ No hay ambientes disponibles para ese horario.";
                         lblMensaje.ForeColor = Color.DarkOrange;
                     }
                     else
                     {
-                        lblMensaje.Text      = $"✅ {dt.Rows.Count} ambiente(s) disponible(s). Selecciona uno y confirma.";
+                        lblMensaje.Text = $"✅ {dt.Rows.Count} ambiente(s) disponible(s). Selecciona uno y confirma.";
                         lblMensaje.ForeColor = Color.FromArgb(16, 185, 129);
                     }
                 }
@@ -213,6 +261,7 @@ namespace SistemaAmbientesUAB
             }
         }
 
+        // ── CONFIRMAR RESERVA ─────────────────────────────────
         private void btnReservar_Click(object sender, EventArgs e)
         {
             if (dgvAmbientes.SelectedRows.Count == 0)
@@ -229,11 +278,31 @@ namespace SistemaAmbientesUAB
                 return;
             }
 
-            int    idAmbiente = Convert.ToInt32(dgvAmbientes.SelectedRows[0].Cells["id_ambiente"].Value);
-            string ambiente   = dgvAmbientes.SelectedRows[0].Cells["codigo"].Value.ToString();
+            // Determinar el usuario beneficiario
+            int idBeneficiario;
+            bool creadoPorAdmin;
+
+            if (_esAdmin && cmbUsuarioBeneficiario.SelectedValue != null)
+            {
+                idBeneficiario = Convert.ToInt32(cmbUsuarioBeneficiario.SelectedValue);
+                creadoPorAdmin = (idBeneficiario != _idUsuario);   // true solo si reserva para OTRO
+            }
+            else
+            {
+                idBeneficiario = _idUsuario;
+                creadoPorAdmin = false;
+            }
+
+            int idAmbiente = Convert.ToInt32(dgvAmbientes.SelectedRows[0].Cells["id_ambiente"].Value);
+            string ambiente = dgvAmbientes.SelectedRows[0].Cells["codigo"].Value.ToString();
+
+            // Texto de confirmación diferenciado
+            string lineaBeneficiario = creadoPorAdmin
+                ? $"\nReservando para: {cmbUsuarioBeneficiario.Text}"
+                : "";
 
             var confirm = MessageBox.Show(
-                $"¿Confirmar reserva del ambiente {ambiente}?\n\n" +
+                $"¿Confirmar reserva del ambiente {ambiente}?{lineaBeneficiario}\n\n" +
                 $"Fecha: {dtpFecha.Value:dd/MM/yyyy} al {dtpFechaFin.Value:dd/MM/yyyy}\n" +
                 $"Horario: {cmbHoraInicio.SelectedItem} - {cmbHoraFin.SelectedItem}\n" +
                 $"Motivo: {txtMotivo.Text}",
@@ -256,25 +325,30 @@ namespace SistemaAmbientesUAB
                         VALUES
                             (@idUsuario, @idAmbiente, @fechaInicio, @fechaFin,
                              @horaInicio, @horaFin, @motivo, @asistentes,
-                             @esRecurrente, @frecuencia, 'activa', 0)";
+                             @esRecurrente, @frecuencia, 'activa', @creadoPorAdmin)";
 
                     SqlCommand cmd = new SqlCommand(query, con);
-                    cmd.Parameters.AddWithValue("@idUsuario",   _idUsuario);
-                    cmd.Parameters.AddWithValue("@idAmbiente",  idAmbiente);
+                    cmd.Parameters.AddWithValue("@idUsuario", idBeneficiario);
+                    cmd.Parameters.AddWithValue("@idAmbiente", idAmbiente);
                     cmd.Parameters.AddWithValue("@fechaInicio", dtpFecha.Value.Date);
-                    cmd.Parameters.AddWithValue("@fechaFin",    dtpFechaFin.Value.Date);
-                    cmd.Parameters.AddWithValue("@horaInicio",  cmbHoraInicio.SelectedItem.ToString());
-                    cmd.Parameters.AddWithValue("@horaFin",     cmbHoraFin.SelectedItem.ToString());
-                    cmd.Parameters.AddWithValue("@motivo",      txtMotivo.Text.Trim());
-                    cmd.Parameters.AddWithValue("@asistentes",  (int)nudAsistentes.Value);
+                    cmd.Parameters.AddWithValue("@fechaFin", dtpFechaFin.Value.Date);
+                    cmd.Parameters.AddWithValue("@horaInicio", cmbHoraInicio.SelectedItem.ToString());
+                    cmd.Parameters.AddWithValue("@horaFin", cmbHoraFin.SelectedItem.ToString());
+                    cmd.Parameters.AddWithValue("@motivo", txtMotivo.Text.Trim());
+                    cmd.Parameters.AddWithValue("@asistentes", (int)nudAsistentes.Value);
                     cmd.Parameters.AddWithValue("@esRecurrente", chkRecurrente.Checked ? 1 : 0);
-                    cmd.Parameters.AddWithValue("@frecuencia",  chkRecurrente.Checked
+                    cmd.Parameters.AddWithValue("@frecuencia", chkRecurrente.Checked
                         ? (object)cmbFrecuencia.SelectedItem.ToString()
                         : DBNull.Value);
+                    cmd.Parameters.AddWithValue("@creadoPorAdmin", creadoPorAdmin ? 1 : 0);
                     cmd.ExecuteNonQuery();
                 }
 
-                MessageBox.Show("✅ Reserva registrada correctamente.", "Éxito",
+                string msgExito = creadoPorAdmin
+                    ? $"✅ Reserva registrada correctamente para {cmbUsuarioBeneficiario.Text}."
+                    : "✅ Reserva registrada correctamente.";
+
+                MessageBox.Show(msgExito, "Éxito",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.Close();
             }

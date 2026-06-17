@@ -51,12 +51,11 @@ namespace SistemaAmbientesUAB
                     {
                         int idUsuario = Convert.ToInt32(dr["id_usuario"]);
                         string nombre = dr["nombre_completo"].ToString();
-                        string tipoUsuario = dr["tipo_usuario"].ToString();   // estudiante | docente | iglesia | administrativo
+                        string tipoUsuario = dr["tipo_usuario"].ToString();
                         bool esAdmin = Convert.ToBoolean(dr["es_admin"]);
 
                         dr.Close();
 
-                        // Construir los permisos según tipo_usuario
                         var permisos = ResolverPermisos(tipoUsuario, esAdmin);
 
                         FormMenu menu = new FormMenu(idUsuario, nombre, tipoUsuario, permisos);
@@ -75,7 +74,6 @@ namespace SistemaAmbientesUAB
             }
         }
 
-        // Devuelve los permisos que tiene el rol
         private PermisosUsuario ResolverPermisos(string tipoUsuario, bool esAdmin)
         {
             return new PermisosUsuario
@@ -86,7 +84,8 @@ namespace SistemaAmbientesUAB
                 VerAmbientes = esAdmin || tipoUsuario == "administrativo",
                 VerUsuarios = esAdmin || tipoUsuario == "administrativo",
                 VerReportes = esAdmin || tipoUsuario == "administrativo" || tipoUsuario == "docente",
-                TipoUsuario = tipoUsuario
+                TipoUsuario = tipoUsuario,
+                EsAdmin = esAdmin        // ← NUEVO
             };
         }
 
@@ -96,7 +95,6 @@ namespace SistemaAmbientesUAB
             lblError.Visible = true;
         }
 
-        // Permitir Enter en los campos
         private void txtUsuario_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             if (e.KeyCode == System.Windows.Forms.Keys.Enter) txtPassword.Focus();
@@ -117,6 +115,7 @@ namespace SistemaAmbientesUAB
         public bool VerAmbientes;
         public bool VerUsuarios;
         public bool VerReportes;
-        public string TipoUsuario;  // estudiante | docente | iglesia | administrativo
+        public bool EsAdmin;        // ← NUEVO
+        public string TipoUsuario;
     }
 }

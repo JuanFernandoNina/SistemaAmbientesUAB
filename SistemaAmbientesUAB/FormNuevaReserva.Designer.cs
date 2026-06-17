@@ -14,6 +14,12 @@
         private void InitializeComponent()
         {
             this.lblTitulo = new System.Windows.Forms.Label();
+            // ── Panel "En nombre de" (solo admin) ─────────────
+            this.pnlEnNombreDe = new System.Windows.Forms.Panel();
+            this.lblEnNombreDeIcon = new System.Windows.Forms.Label();
+            this.lblEnNombreDe = new System.Windows.Forms.Label();
+            this.cmbUsuarioBeneficiario = new System.Windows.Forms.ComboBox();
+            // ── Panel filtros ──────────────────────────────────
             this.pnlFiltros = new System.Windows.Forms.Panel();
             this.lblSecFiltros = new System.Windows.Forms.Label();
             this.lblFecha = new System.Windows.Forms.Label();
@@ -37,16 +43,19 @@
             this.lblFrecuencia = new System.Windows.Forms.Label();
             this.cmbFrecuencia = new System.Windows.Forms.ComboBox();
             this.btnBuscar = new System.Windows.Forms.Button();
+            // ── Panel grid ────────────────────────────────────
             this.pnlGrid = new System.Windows.Forms.Panel();
             this.lblSecGrid = new System.Windows.Forms.Label();
             this.lblMensaje = new System.Windows.Forms.Label();
             this.dgvAmbientes = new System.Windows.Forms.DataGridView();
+            // ── Panel acciones ────────────────────────────────
             this.pnlAcciones = new System.Windows.Forms.Panel();
             this.btnReservar = new System.Windows.Forms.Button();
             this.btnCancelar = new System.Windows.Forms.Button();
 
             ((System.ComponentModel.ISupportInitialize)(this.dgvAmbientes)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAsistentes)).BeginInit();
+            this.pnlEnNombreDe.SuspendLayout();
             this.pnlFiltros.SuspendLayout();
             this.pnlGrid.SuspendLayout();
             this.pnlAcciones.SuspendLayout();
@@ -56,8 +65,8 @@
             //  FORM
             // ═══════════════════════════════════════════════════
             this.Text = "Nueva Reserva";
-            this.Size = new System.Drawing.Size(960, 700);
-            this.MinimumSize = new System.Drawing.Size(900, 640);
+            this.Size = new System.Drawing.Size(960, 760);
+            this.MinimumSize = new System.Drawing.Size(900, 700);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.BackColor = TemaManager.FondoPrincipal;
             this.Font = new System.Drawing.Font("Segoe UI", 9.5F);
@@ -74,25 +83,66 @@
             this.lblTitulo.ForeColor = TemaManager.TextoPrincipal;
 
             // ═══════════════════════════════════════════════════
-            //  PANEL FILTROS (card blanca)
+            //  PANEL "EN NOMBRE DE" — solo visible para admin
+            //  Se posiciona entre el título y los filtros.
+            //  Cuando Visible=false el espacio sigue reservado,
+            //  por eso pnlFiltros se mueve dinámicamente en Load.
             // ═══════════════════════════════════════════════════
-            this.pnlFiltros.Location = new System.Drawing.Point(20, 62);
+            int yPanel = 62;
+
+            this.pnlEnNombreDe.Location = new System.Drawing.Point(20, yPanel);
+            this.pnlEnNombreDe.Size = new System.Drawing.Size(908, 54);
+            this.pnlEnNombreDe.BackColor = System.Drawing.Color.FromArgb(254, 243, 199);  // amarillo suave
+            this.pnlEnNombreDe.Padding = new System.Windows.Forms.Padding(12, 0, 12, 0);
+            this.pnlEnNombreDe.Visible = false;   // .cs lo activa si es admin
+
+            // Ícono
+            this.lblEnNombreDeIcon.Text = "👤";
+            this.lblEnNombreDeIcon.Location = new System.Drawing.Point(12, 16);
+            this.lblEnNombreDeIcon.Size = new System.Drawing.Size(24, 22);
+            this.lblEnNombreDeIcon.Font = new System.Drawing.Font("Segoe UI", 12F);
+
+            // Etiqueta
+            this.lblEnNombreDe.Text = "Reservar en nombre de:";
+            this.lblEnNombreDe.Location = new System.Drawing.Point(42, 18);
+            this.lblEnNombreDe.Size = new System.Drawing.Size(190, 20);
+            this.lblEnNombreDe.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblEnNombreDe.ForeColor = System.Drawing.Color.FromArgb(120, 80, 0);
+
+            // ComboBox de usuarios
+            this.cmbUsuarioBeneficiario.Location = new System.Drawing.Point(240, 14);
+            this.cmbUsuarioBeneficiario.Size = new System.Drawing.Size(640, 26);
+            this.cmbUsuarioBeneficiario.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.cmbUsuarioBeneficiario.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbUsuarioBeneficiario.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbUsuarioBeneficiario.BackColor = System.Drawing.Color.White;
+
+            this.pnlEnNombreDe.Controls.Add(this.lblEnNombreDeIcon);
+            this.pnlEnNombreDe.Controls.Add(this.lblEnNombreDe);
+            this.pnlEnNombreDe.Controls.Add(this.cmbUsuarioBeneficiario);
+
+            // ═══════════════════════════════════════════════════
+            //  PANEL FILTROS
+            //  Se desplaza 62 px hacia abajo cuando hay panel admin
+            //  El ajuste ocurre en FormNuevaReserva_Load (Visible=true => shift).
+            // ═══════════════════════════════════════════════════
+            int yFiltros = yPanel + 62;   // debajo del panel admin (aunque esté oculto)
+
+            this.pnlFiltros.Location = new System.Drawing.Point(20, yFiltros);
             this.pnlFiltros.Size = new System.Drawing.Size(908, 240);
             this.pnlFiltros.BackColor = TemaManager.FondoTarjeta;
             this.pnlFiltros.Padding = new System.Windows.Forms.Padding(16);
 
-            // Encabezado de sección
             this.lblSecFiltros.Text = "Parámetros de búsqueda";
             this.lblSecFiltros.Location = new System.Drawing.Point(16, 12);
             this.lblSecFiltros.Size = new System.Drawing.Size(350, 22);
             this.lblSecFiltros.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.lblSecFiltros.ForeColor = TemaManager.TextoPrincipal;
 
-            // ── Fila 1: Fecha inicio / Fecha fin / Hora inicio / Hora fin ──
+            // ── Fila 1 ──
             int yR1 = 44; int col1 = 16; int col2 = 240; int col3 = 464; int col4 = 688;
             int lblH = 20; int ctrlH = 30; int lblW = 110; int ctrlW = 200;
 
-            // Fecha inicio
             this.lblFecha.Text = "Fecha inicio";
             this.lblFecha.Location = new System.Drawing.Point(col1, yR1);
             this.lblFecha.Size = new System.Drawing.Size(lblW, lblH);
@@ -105,7 +155,6 @@
             this.dtpFecha.Format = System.Windows.Forms.DateTimePickerFormat.Short;
             this.dtpFecha.ValueChanged += new System.EventHandler(this.dtpFecha_ValueChanged);
 
-            // Fecha fin
             this.lblFechaFin.Text = "Fecha fin";
             this.lblFechaFin.Location = new System.Drawing.Point(col2, yR1);
             this.lblFechaFin.Size = new System.Drawing.Size(lblW, lblH);
@@ -117,7 +166,6 @@
             this.dtpFechaFin.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.dtpFechaFin.Format = System.Windows.Forms.DateTimePickerFormat.Short;
 
-            // Hora inicio
             this.lblHoraInicio.Text = "Hora inicio";
             this.lblHoraInicio.Location = new System.Drawing.Point(col3, yR1);
             this.lblHoraInicio.Size = new System.Drawing.Size(lblW, lblH);
@@ -130,7 +178,6 @@
             this.cmbHoraInicio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbHoraInicio.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 
-            // Hora fin
             this.lblHoraFin.Text = "Hora fin";
             this.lblHoraFin.Location = new System.Drawing.Point(col4, yR1);
             this.lblHoraFin.Size = new System.Drawing.Size(lblW, lblH);
@@ -143,7 +190,7 @@
             this.cmbHoraFin.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbHoraFin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 
-            // ── Fila 2: Asistentes / Motivo / Recurrente ──
+            // ── Fila 2 ──
             int yR2 = yR1 + lblH + ctrlH + 18;
 
             this.lblAsistentes.Text = "N.º asistentes";
@@ -166,11 +213,10 @@
             this.lblMotivo.Font = new System.Drawing.Font("Segoe UI", 8.5F);
 
             this.txtMotivo.Location = new System.Drawing.Point(col2, yR2 + lblH + 2);
-            this.txtMotivo.Size = new System.Drawing.Size(464, ctrlH);   // abarca col2..col3
+            this.txtMotivo.Size = new System.Drawing.Size(464, ctrlH);
             this.txtMotivo.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.txtMotivo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 
-            // Recurrente
             this.lblRecurrente.Text = "¿Recurrente?";
             this.lblRecurrente.Location = new System.Drawing.Point(col4, yR2);
             this.lblRecurrente.Size = new System.Drawing.Size(110, lblH);
@@ -196,7 +242,7 @@
             this.cmbFrecuencia.SelectedIndex = 1;
             this.cmbFrecuencia.Visible = false;
 
-            // ── Fila 3: Requerimientos + botón buscar ──
+            // ── Fila 3: Requerimientos ──
             int yR3 = yR2 + lblH + ctrlH + 18;
 
             this.lblReqTitle.Text = "Requerimientos:";
@@ -234,7 +280,7 @@
             this.btnBuscar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnBuscar.Click += new System.EventHandler(this.btnBuscar_Click);
 
-            // Agregar controles al panel filtros
+            // Agregar al panel filtros
             this.pnlFiltros.Controls.Add(this.lblSecFiltros);
             this.pnlFiltros.Controls.Add(this.lblFecha);
             this.pnlFiltros.Controls.Add(this.dtpFecha);
@@ -259,9 +305,11 @@
             this.pnlFiltros.Controls.Add(this.btnBuscar);
 
             // ═══════════════════════════════════════════════════
-            //  PANEL GRID (card blanca)
+            //  PANEL GRID
             // ═══════════════════════════════════════════════════
-            this.pnlGrid.Location = new System.Drawing.Point(20, 316);
+            int yGrid = yFiltros + 248;   // filtros (240) + 8 de margen
+
+            this.pnlGrid.Location = new System.Drawing.Point(20, yGrid);
             this.pnlGrid.Size = new System.Drawing.Size(908, 290);
             this.pnlGrid.BackColor = TemaManager.FondoTarjeta;
             this.pnlGrid.Padding = new System.Windows.Forms.Padding(16, 12, 16, 12);
@@ -278,7 +326,6 @@
             this.lblMensaje.Font = new System.Drawing.Font("Segoe UI", 8.5F);
             this.lblMensaje.ForeColor = TemaManager.TextoSecundario;
 
-            // DataGridView estilizado
             this.dgvAmbientes.Location = new System.Drawing.Point(16, 62);
             this.dgvAmbientes.Size = new System.Drawing.Size(874, 210);
             this.dgvAmbientes.BackgroundColor = TemaManager.FondoGrid;
@@ -294,8 +341,6 @@
             this.dgvAmbientes.RowTemplate.Height = 34;
             this.dgvAmbientes.GridColor = TemaManager.FondoTarjeta2;
             this.dgvAmbientes.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
-
-            // Cabecera
             this.dgvAmbientes.ColumnHeadersDefaultCellStyle.BackColor = TemaManager.FondoMenu;
             this.dgvAmbientes.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(178, 200, 230);
             this.dgvAmbientes.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
@@ -303,8 +348,6 @@
             this.dgvAmbientes.ColumnHeadersHeight = 32;
             this.dgvAmbientes.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgvAmbientes.EnableHeadersVisualStyles = false;
-
-            // Filas
             this.dgvAmbientes.DefaultCellStyle.BackColor = TemaManager.FondoGrid;
             this.dgvAmbientes.DefaultCellStyle.ForeColor = TemaManager.TextoPrincipal;
             this.dgvAmbientes.DefaultCellStyle.SelectionBackColor = TemaManager.Acento;
@@ -318,9 +361,11 @@
             this.pnlGrid.Controls.Add(this.dgvAmbientes);
 
             // ═══════════════════════════════════════════════════
-            //  PANEL ACCIONES (barra inferior)
+            //  PANEL ACCIONES
             // ═══════════════════════════════════════════════════
-            this.pnlAcciones.Location = new System.Drawing.Point(20, 616);
+            int yAcciones = yGrid + 298;
+
+            this.pnlAcciones.Location = new System.Drawing.Point(20, yAcciones);
             this.pnlAcciones.Size = new System.Drawing.Size(908, 48);
             this.pnlAcciones.BackColor = System.Drawing.Color.Transparent;
 
@@ -353,12 +398,14 @@
             //  CONTROLES AL FORM
             // ═══════════════════════════════════════════════════
             this.Controls.Add(this.lblTitulo);
+            this.Controls.Add(this.pnlEnNombreDe);
             this.Controls.Add(this.pnlFiltros);
             this.Controls.Add(this.pnlGrid);
             this.Controls.Add(this.pnlAcciones);
 
             ((System.ComponentModel.ISupportInitialize)(this.dgvAmbientes)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudAsistentes)).EndInit();
+            this.pnlEnNombreDe.ResumeLayout(false);
             this.pnlFiltros.ResumeLayout(false);
             this.pnlGrid.ResumeLayout(false);
             this.pnlAcciones.ResumeLayout(false);
@@ -367,6 +414,12 @@
 
         // ── Declaraciones ─────────────────────────────────────
         private System.Windows.Forms.Label lblTitulo;
+        // Panel en nombre de
+        private System.Windows.Forms.Panel pnlEnNombreDe;
+        private System.Windows.Forms.Label lblEnNombreDeIcon;
+        private System.Windows.Forms.Label lblEnNombreDe;
+        private System.Windows.Forms.ComboBox cmbUsuarioBeneficiario;
+        // Filtros
         private System.Windows.Forms.Panel pnlFiltros;
         private System.Windows.Forms.Label lblSecFiltros;
         private System.Windows.Forms.Label lblFecha;
@@ -390,10 +443,12 @@
         private System.Windows.Forms.Label lblFrecuencia;
         private System.Windows.Forms.ComboBox cmbFrecuencia;
         private System.Windows.Forms.Button btnBuscar;
+        // Grid
         private System.Windows.Forms.Panel pnlGrid;
         private System.Windows.Forms.Label lblSecGrid;
         private System.Windows.Forms.Label lblMensaje;
         private System.Windows.Forms.DataGridView dgvAmbientes;
+        // Acciones
         private System.Windows.Forms.Panel pnlAcciones;
         private System.Windows.Forms.Button btnReservar;
         private System.Windows.Forms.Button btnCancelar;

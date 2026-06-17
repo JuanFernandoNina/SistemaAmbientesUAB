@@ -23,23 +23,17 @@ namespace SistemaAmbientesUAB
 
         private void FormMenu_Load(object sender, EventArgs e)
         {
-            // Avatar inicial
             string inicial = _nombre.Length > 0 ? _nombre[0].ToString().ToUpper() : "U";
             lblAvatar.Text = inicial;
             lblNombreUsuario.Text = _nombre.Length > 20 ? _nombre.Substring(0, 20) + "…" : _nombre;
 
-            // Badge de rol bajo el nombre
             ConfigurarBadgeRol();
-
-            // Visibilidad de botones según permisos
             AplicarPermisos();
-
             AplicarTema();
             SetBtnActivo(btnHome);
             CargarFormulario(new FormHome(_idUsuario, _nombre));
         }
 
-        // ── Muestra el badge de rol con su color ──────────────
         private void ConfigurarBadgeRol()
         {
             switch (_tipoUsuario)
@@ -59,7 +53,7 @@ namespace SistemaAmbientesUAB
                     lblRolBadge.ForeColor = Color.FromArgb(92, 45, 145);
                     lblRolBadge.BackColor = Color.FromArgb(237, 233, 254);
                     break;
-                default: // administrativo
+                default:
                     lblRolBadge.Text = "Admin";
                     lblRolBadge.ForeColor = Color.FromArgb(146, 64, 14);
                     lblRolBadge.BackColor = Color.FromArgb(254, 243, 199);
@@ -68,7 +62,6 @@ namespace SistemaAmbientesUAB
             lblRolBadge.Visible = true;
         }
 
-        // ── Oculta/muestra botones según permisos ─────────────
         private void AplicarPermisos()
         {
             btnNuevaReserva.Visible = _permisos.VerNuevaReserva;
@@ -78,7 +71,6 @@ namespace SistemaAmbientesUAB
             btnReportes.Visible = _permisos.VerReportes;
         }
 
-        // ── TEMA ──────────────────────────────────────────────
         public void AplicarTema()
         {
             this.BackColor = TemaManager.FondoPrincipal;
@@ -107,13 +99,11 @@ namespace SistemaAmbientesUAB
             if (_btnActivo != null) AplicarActivo(_btnActivo);
 
             btnCerrarSesion.BackColor = TemaManager.TemaActual == TipoTema.Claro
-                ? Color.FromArgb(185, 28, 28)
-                : Color.FromArgb(127, 29, 29);
+                ? Color.FromArgb(185, 28, 28) : Color.FromArgb(127, 29, 29);
             btnCerrarSesion.ForeColor = Color.White;
 
             btnTema.BackColor = TemaManager.TemaActual == TipoTema.Claro
-                ? Color.FromArgb(20, 48, 90)
-                : Color.FromArgb(28, 36, 54);
+                ? Color.FromArgb(20, 48, 90) : Color.FromArgb(28, 36, 54);
             btnTema.ForeColor = Color.White;
             btnTema.Text = TemaManager.TemaActual == TipoTema.Claro
                 ? "   \u25D1   Modo Oscuro"
@@ -175,7 +165,6 @@ namespace SistemaAmbientesUAB
             btn.ForeColor = TemaManager.NavIcono;
         }
 
-        // ── NAVEGACIÓN ────────────────────────────────────────
         private void CargarFormulario(Form frm)
         {
             panelContenido.Controls.Clear();
@@ -193,7 +182,7 @@ namespace SistemaAmbientesUAB
         { SetBtnActivo(btnReservas); CargarFormulario(new FormMisReservas(_idUsuario)); }
 
         private void btnNuevaReserva_Click(object sender, EventArgs e)
-        { SetBtnActivo(btnNuevaReserva); CargarFormulario(new FormNuevaReserva(_idUsuario)); }
+        { SetBtnActivo(btnNuevaReserva); CargarFormulario(new FormNuevaReserva(_idUsuario, _permisos.EsAdmin)); }   // ← CAMBIADO
 
         private void btnAmbientes_Click(object sender, EventArgs e)
         { SetBtnActivo(btnAmbientes); CargarFormulario(new FormAmbientes()); }
