@@ -86,6 +86,8 @@
             this.dgvReporte.EnableHeadersVisualStyles = false;
             this.dgvReporte.RowTemplate.Height = 35;
             this.dgvReporte.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(235, 240, 255);
+            this.dgvReporte.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
+            this.dgvReporte.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvReporte_CellPainting);
 
             // ── LABEL TOTAL ───────────────────────────────────
             this.lblTotal.Text = "";

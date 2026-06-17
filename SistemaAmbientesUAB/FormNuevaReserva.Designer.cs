@@ -311,6 +311,7 @@
             this.dgvAmbientes.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
             this.dgvAmbientes.DefaultCellStyle.Padding = new System.Windows.Forms.Padding(8, 0, 0, 0);
             this.dgvAmbientes.AlternatingRowsDefaultCellStyle.BackColor = TemaManager.FondoTarjeta2;
+            this.dgvAmbientes.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvAmbientes_CellPainting);
 
             this.pnlGrid.Controls.Add(this.lblSecGrid);
             this.pnlGrid.Controls.Add(this.lblMensaje);

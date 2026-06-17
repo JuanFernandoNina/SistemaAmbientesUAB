@@ -1,13 +1,16 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace SistemaAmbientesUAB
 {
     public partial class FormReportes : Form
     {
+        private string _tipoActual = "ambientes";
+
         public FormReportes()
         {
             InitializeComponent();
@@ -19,35 +22,95 @@ namespace SistemaAmbientesUAB
             CargarReporte("ambientes");
         }
 
+        // ── TEMA MINIMALISTA ──────────────────────────────────
         private void AplicarTema()
         {
-            this.BackColor = TemaManager.FondoPrincipal;
-            panelBotones.BackColor = TemaManager.FondoPrincipal;
-            TemaManager.AplicarLabel(lblTitulo);
-            TemaManager.AplicarLabel(lblSubtitulo);
-            TemaManager.AplicarLabel(lblTotal, true);
-            TemaManager.AplicarGrid(dgvReporte);
+            this.BackColor        = Color.White;
+            panelBotones.BackColor = Color.FromArgb(247, 249, 252);
 
-            // Estilo base de los botones de reporte
+            lblTitulo.ForeColor    = TemaManager.TextoPrincipal;
+            lblTitulo.Font         = new Font("Segoe UI", 15F, FontStyle.Bold);
+            lblSubtitulo.ForeColor = TemaManager.TextoSecundario;
+            lblSubtitulo.Font      = new Font("Segoe UI", 9.5F);
+            lblTotal.ForeColor     = TemaManager.TextoMuted;
+
+            AplicarEstiloTabla(dgvReporte);
+
+            // Botones de reporte como tabs/pills
             Button[] bots = { btnAmbientesMasUsados, btnReservasCanceladas,
                                btnDisponibilidad, btnUsoPorCarrera, btnTodasReservas };
             foreach (var b in bots)
+                EstiloBotonTab(b, false);
+        }
+
+        private static void AplicarEstiloTabla(DataGridView dgv)
+        {
+            dgv.EnableHeadersVisualStyles = false;
+            dgv.BackgroundColor           = Color.White;
+            dgv.GridColor                 = Color.FromArgb(230, 235, 243);
+            dgv.BorderStyle               = BorderStyle.None;
+            dgv.RowHeadersVisible         = false;
+            dgv.AllowUserToAddRows        = false;
+            dgv.AllowUserToDeleteRows     = false;
+            dgv.ReadOnly                  = true;
+            dgv.SelectionMode             = DataGridViewSelectionMode.FullRowSelect;
+            dgv.MultiSelect               = false;
+            dgv.AutoSizeColumnsMode       = DataGridViewAutoSizeColumnsMode.Fill;
+            dgv.RowTemplate.Height        = 36;
+            dgv.CellBorderStyle           = DataGridViewCellBorderStyle.SingleHorizontal;
+
+            dgv.DefaultCellStyle.BackColor           = Color.White;
+            dgv.DefaultCellStyle.ForeColor           = TemaManager.TextoPrincipal;
+            dgv.DefaultCellStyle.SelectionBackColor  = Color.White;
+            dgv.DefaultCellStyle.SelectionForeColor  = TemaManager.TextoPrincipal;
+            dgv.DefaultCellStyle.Font                = new Font("Segoe UI", 9F);
+            dgv.DefaultCellStyle.Padding             = new Padding(9, 0, 9, 0);
+
+            dgv.AlternatingRowsDefaultCellStyle.BackColor          = Color.FromArgb(247, 249, 252);
+            dgv.AlternatingRowsDefaultCellStyle.SelectionBackColor = Color.FromArgb(247, 249, 252);
+            dgv.AlternatingRowsDefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal;
+
+            dgv.ColumnHeadersDefaultCellStyle.BackColor          = Color.FromArgb(239, 243, 248);
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor          = Color.FromArgb(145, 155, 177);
+            dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(239, 243, 248);
+            dgv.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.FromArgb(145, 155, 177);
+            dgv.ColumnHeadersDefaultCellStyle.Font               = new Font("Segoe UI Semibold", 8.5F, FontStyle.Bold);
+            dgv.ColumnHeadersDefaultCellStyle.Padding            = new Padding(9, 0, 9, 0);
+            dgv.ColumnHeadersHeight = 36;
+            dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+        }
+
+        private static void EstiloBotonTab(Button btn, bool activo)
+        {
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.Cursor    = Cursors.Hand;
+            btn.Font      = new Font("Segoe UI", 9F, activo ? FontStyle.Bold : FontStyle.Regular);
+
+            if (activo)
             {
-                b.BackColor = TemaManager.AcentoOscuro;
-                b.ForeColor = Color.White;
-                b.FlatStyle = FlatStyle.Flat;
-                b.FlatAppearance.BorderSize = 0;
+                btn.BackColor = TemaManager.Acento;
+                btn.ForeColor = Color.White;
+                btn.FlatAppearance.BorderSize  = 0;
+            }
+            else
+            {
+                btn.BackColor = Color.White;
+                btn.ForeColor = TemaManager.TextoSecundario;
+                btn.FlatAppearance.BorderColor = Color.FromArgb(225, 231, 240);
+                btn.FlatAppearance.BorderSize  = 1;
             }
         }
 
+        // ── CARGA DE REPORTES ─────────────────────────────────
         private void CargarReporte(string tipo)
         {
+            _tipoActual = tipo;
             string query = "", subtitulo = "";
 
             switch (tipo)
             {
                 case "ambientes":
-                    subtitulo = "🏆 Ambientes más utilizados";
+                    subtitulo = "Ambientes más utilizados";
                     query = @"SELECT a.codigo AS Código, b.nombre AS Bloque, a.tipo AS Tipo,
                                      a.capacidad AS Capacidad, COUNT(r.id_reserva) AS [Total Reservas]
                               FROM Reserva r
@@ -59,7 +122,7 @@ namespace SistemaAmbientesUAB
                     break;
 
                 case "cancelaciones":
-                    subtitulo = "❌ Historial de cancelaciones";
+                    subtitulo = "Historial de cancelaciones";
                     query = @"SELECT r.id_reserva AS [ID Reserva], u.nombre_completo AS Solicitante,
                                      a.codigo AS Ambiente, CONVERT(VARCHAR,r.fecha_inicio,103) AS Fecha,
                                      r.motivo AS Motivo, uc.nombre_completo AS [Cancelado por],
@@ -74,7 +137,7 @@ namespace SistemaAmbientesUAB
                     break;
 
                 case "disponibilidad":
-                    subtitulo = "📅 Ambientes disponibles hoy";
+                    subtitulo = "Ambientes disponibles hoy";
                     query = @"SELECT a.codigo AS Código, b.nombre AS Bloque, a.tipo AS Tipo,
                                      a.capacidad AS Capacidad,
                                      CASE WHEN a.tiene_proyector=1 THEN '✅' ELSE '❌' END AS Proyector,
@@ -92,7 +155,7 @@ namespace SistemaAmbientesUAB
                     break;
 
                 case "carrera":
-                    subtitulo = "🎓 Uso de ambientes por carrera/área";
+                    subtitulo = "Uso de ambientes por carrera/área";
                     query = @"SELECT ISNULL(u.carrera_area,'Sin especificar') AS [Carrera/Área],
                                      u.tipo_usuario AS [Tipo Usuario],
                                      COUNT(r.id_reserva) AS [Total Reservas],
@@ -105,7 +168,7 @@ namespace SistemaAmbientesUAB
                     break;
 
                 case "todas":
-                    subtitulo = "📋 Todas las reservas del sistema";
+                    subtitulo = "Todas las reservas del sistema";
                     query = @"SELECT r.id_reserva AS ID, u.nombre_completo AS Solicitante,
                                      a.codigo AS Ambiente, b.nombre AS Bloque,
                                      CONVERT(VARCHAR,r.fecha_inicio,103) AS [Fecha Inicio],
@@ -131,50 +194,97 @@ namespace SistemaAmbientesUAB
                     DataTable dt = new DataTable();
                     da.Fill(dt);
                     dgvReporte.DataSource = dt;
-                    lblSubtitulo.Text = subtitulo;
-                    lblTotal.Text = $"Total: {dt.Rows.Count} registro(s)";
+                    lblSubtitulo.Text     = subtitulo;
+                    lblTotal.Text         = $"Mostrando {dt.Rows.Count} registro(s)";
 
-                    if (dt.Columns.Contains("Estado"))
-                    {
-                        foreach (DataGridViewRow row in dgvReporte.Rows)
-                        {
-                            string estado = row.Cells["Estado"].Value?.ToString();
-                            if (estado == "cancelada")
-                                row.DefaultCellStyle.ForeColor = Color.FromArgb(255, 80, 80);
-                            else if (estado == "finalizada")
-                                row.DefaultCellStyle.ForeColor = TemaManager.TextoSecundario;
-                            else if (estado == "activa")
-                                row.DefaultCellStyle.ForeColor = TemaManager.Acento;
-                        }
-                    }
-
-                    ResetearBotones();
-                    Color activo = Color.FromArgb(40, 80, 200);
-                    switch (tipo)
-                    {
-                        case "ambientes": btnAmbientesMasUsados.BackColor = activo; break;
-                        case "cancelaciones": btnReservasCanceladas.BackColor = activo; break;
-                        case "disponibilidad": btnDisponibilidad.BackColor = activo; break;
-                        case "carrera": btnUsoPorCarrera.BackColor = activo; break;
-                        case "todas": btnTodasReservas.BackColor = activo; break;
-                    }
+                    ActualizarBotonesTab(tipo);
                 }
             }
             catch (Exception ex) { MessageBox.Show("Error al cargar reporte: " + ex.Message); }
         }
 
-        private void ResetearBotones()
+        private void ActualizarBotonesTab(string tipoActivo)
         {
-            Button[] bots = { btnAmbientesMasUsados, btnReservasCanceladas,
-                               btnDisponibilidad, btnUsoPorCarrera, btnTodasReservas };
-            foreach (var b in bots)
-                b.BackColor = TemaManager.AcentoOscuro;
+            EstiloBotonTab(btnAmbientesMasUsados,  tipoActivo == "ambientes");
+            EstiloBotonTab(btnReservasCanceladas,  tipoActivo == "cancelaciones");
+            EstiloBotonTab(btnDisponibilidad,      tipoActivo == "disponibilidad");
+            EstiloBotonTab(btnUsoPorCarrera,       tipoActivo == "carrera");
+            EstiloBotonTab(btnTodasReservas,       tipoActivo == "todas");
         }
 
-        private void btnAmbientesMasUsados_Click(object sender, EventArgs e) => CargarReporte("ambientes");
-        private void btnReservasCanceladas_Click(object sender, EventArgs e) => CargarReporte("cancelaciones");
-        private void btnDisponibilidad_Click(object sender, EventArgs e) => CargarReporte("disponibilidad");
-        private void btnUsoPorCarrera_Click(object sender, EventArgs e) => CargarReporte("carrera");
-        private void btnTodasReservas_Click(object sender, EventArgs e) => CargarReporte("todas");
+        // ── PINTURA DE CELDAS ─────────────────────────────────
+        private void dgvReporte_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+            string col = dgvReporte.Columns[e.ColumnIndex].Name;
+            if (col == "Estado") PintarBadgeEstado(e);
+        }
+
+        private void PintarBadgeEstado(DataGridViewCellPaintingEventArgs e)
+        {
+            e.Handled = true;
+            PintarFondoCelda(e);
+
+            string estado = Convert.ToString(e.Value);
+            Color fondo, texto;
+
+            if (estado == "activa" || estado == "disponible")
+            {
+                fondo = Color.FromArgb(220, 252, 231); texto = Color.FromArgb(16, 185, 129);
+            }
+            else if (estado == "cancelada" || estado == "inhabilitado")
+            {
+                fondo = Color.FromArgb(254, 226, 226); texto = Color.FromArgb(239, 68, 68);
+            }
+            else
+            {
+                fondo = Color.FromArgb(254, 243, 199); texto = Color.FromArgb(245, 158, 11);
+            }
+
+            Size ts = TextRenderer.MeasureText(estado, new Font("Segoe UI Semibold", 8F, FontStyle.Bold));
+            Rectangle badge = new Rectangle(
+                e.CellBounds.Left + 9,
+                e.CellBounds.Top + (e.CellBounds.Height - 22) / 2,
+                ts.Width + 18, 22);
+
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            using (var gp = RoundedPath(badge, badge.Height))
+            using (var br = new SolidBrush(fondo))
+                e.Graphics.FillPath(br, gp);
+
+            TextRenderer.DrawText(e.Graphics, estado,
+                new Font("Segoe UI Semibold", 8F, FontStyle.Bold),
+                badge, texto,
+                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+        }
+
+        private void PintarFondoCelda(DataGridViewCellPaintingEventArgs e)
+        {
+            Color fondo = e.RowIndex % 2 == 0 ? Color.White : Color.FromArgb(247, 249, 252);
+            using (var br = new SolidBrush(fondo))
+                e.Graphics.FillRectangle(br, e.CellBounds);
+            using (var pen = new Pen(Color.FromArgb(230, 235, 243)))
+                e.Graphics.DrawLine(pen, e.CellBounds.Left, e.CellBounds.Bottom - 1,
+                                         e.CellBounds.Right, e.CellBounds.Bottom - 1);
+        }
+
+        private GraphicsPath RoundedPath(Rectangle r, int radio)
+        {
+            int d = radio;
+            var gp = new GraphicsPath();
+            gp.AddArc(r.X,         r.Y,          d, d, 180, 90);
+            gp.AddArc(r.Right - d, r.Y,          d, d, 270, 90);
+            gp.AddArc(r.Right - d, r.Bottom - d, d, d, 0,   90);
+            gp.AddArc(r.X,         r.Bottom - d, d, d, 90,  90);
+            gp.CloseFigure();
+            return gp;
+        }
+
+        // ── EVENTOS BOTONES ───────────────────────────────────
+        private void btnAmbientesMasUsados_Click(object sender, EventArgs e)  => CargarReporte("ambientes");
+        private void btnReservasCanceladas_Click(object sender, EventArgs e)   => CargarReporte("cancelaciones");
+        private void btnDisponibilidad_Click(object sender, EventArgs e)       => CargarReporte("disponibilidad");
+        private void btnUsoPorCarrera_Click(object sender, EventArgs e)        => CargarReporte("carrera");
+        private void btnTodasReservas_Click(object sender, EventArgs e)        => CargarReporte("todas");
     }
 }
