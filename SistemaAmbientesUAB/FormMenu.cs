@@ -179,7 +179,7 @@ namespace SistemaAmbientesUAB
         { SetBtnActivo(btnHome); CargarFormulario(new FormHome(_idUsuario, _nombre)); }
 
         private void btnReservas_Click(object sender, EventArgs e)
-        { SetBtnActivo(btnReservas); CargarFormulario(new FormMisReservas(_idUsuario)); }
+        { SetBtnActivo(btnReservas); CargarFormulario(new FormMisReservas(_idUsuario, _permisos.EsAdmin)); }   // ← CAMBIADO
 
         private void btnNuevaReserva_Click(object sender, EventArgs e)
         { SetBtnActivo(btnNuevaReserva); CargarFormulario(new FormNuevaReserva(_idUsuario, _permisos.EsAdmin)); }   // ← CAMBIADO
