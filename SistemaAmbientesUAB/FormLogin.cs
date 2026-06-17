@@ -84,8 +84,9 @@ namespace SistemaAmbientesUAB
                 VerAmbientes = esAdmin || tipoUsuario == "administrativo",
                 VerUsuarios = esAdmin || tipoUsuario == "administrativo",
                 VerReportes = esAdmin || tipoUsuario == "administrativo" || tipoUsuario == "docente",
+                VerEventos = esAdmin,
                 TipoUsuario = tipoUsuario,
-                EsAdmin = esAdmin        // ← NUEVO
+                EsAdmin = esAdmin
             };
         }
 
@@ -115,7 +116,8 @@ namespace SistemaAmbientesUAB
         public bool VerAmbientes;
         public bool VerUsuarios;
         public bool VerReportes;
-        public bool EsAdmin;        // ← NUEVO
+        public bool VerEventos;
+        public bool EsAdmin;
         public string TipoUsuario;
     }
 }

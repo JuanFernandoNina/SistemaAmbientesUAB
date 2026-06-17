@@ -19,6 +19,7 @@
             this.btnAmbientes = new System.Windows.Forms.Button();
             this.btnUsuarios = new System.Windows.Forms.Button();
             this.btnReportes = new System.Windows.Forms.Button();
+            this.btnEventos = new System.Windows.Forms.Button();
             this.btnTema = new System.Windows.Forms.Button();
             this.btnCerrarSesion = new System.Windows.Forms.Button();
             this.panelMenu = new System.Windows.Forms.Panel();
@@ -26,7 +27,7 @@
             this.lblNombreUsuario = new System.Windows.Forms.Label();
             this.lblAppName = new System.Windows.Forms.Label();
             this.lblAvatar = new System.Windows.Forms.Label();
-            this.lblRolBadge = new System.Windows.Forms.Label();   // ← NUEVO
+            this.lblRolBadge = new System.Windows.Forms.Label();
             this.panelSep = new System.Windows.Forms.Panel();
 
             // ── FORM ──────────────────────────────────────────
@@ -43,8 +44,8 @@
             this.panelMenu.Size = new System.Drawing.Size(220, 720);
             this.panelMenu.BackColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.panelMenu.Anchor = System.Windows.Forms.AnchorStyles.Top |
-                                       System.Windows.Forms.AnchorStyles.Left |
-                                       System.Windows.Forms.AnchorStyles.Bottom;
+                                   System.Windows.Forms.AnchorStyles.Left |
+                                   System.Windows.Forms.AnchorStyles.Bottom;
 
             // ── APP NAME ──────────────────────────────────────
             this.lblAppName.Text = "AmbientesUAB";
@@ -86,17 +87,18 @@
             this.lblRolBadge.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblRolBadge.Visible = false;
 
-            // ── BOTONES MENÚ  (primer botón desde y=178, bajo el badge) ──
+            // ── BOTONES MENÚ  (Primer botón desde y=178, incrementos de 46px) ──
             SetupBtn(this.btnHome, "   \u2302   Inicio", 178);
             SetupBtn(this.btnNuevaReserva, "   +   Nueva Reserva", 224);
             SetupBtn(this.btnReservas, "   \u25A6   Mis Reservas", 270);
             SetupBtn(this.btnAmbientes, "   \u25A3   Ambientes", 316);
             SetupBtn(this.btnUsuarios, "   \u25C9   Usuarios", 362);
             SetupBtn(this.btnReportes, "   \u25AA   Reportes", 408);
+            SetupBtn(this.btnEventos, "   📅   Eventos", 454);
 
-            // posición inferior
+            // Posición inferior fija
             SetupBtn(this.btnTema, "   \u25D1   Modo Oscuro", 558);
-            SetupBtn(this.btnCerrarSesion, "   \u2715   Cerrar Sesi\u00F3n", 618);
+            SetupBtn(this.btnCerrarSesion, "   \u2715   Cerrar Sesión", 618);
 
             this.btnCerrarSesion.BackColor = System.Drawing.Color.FromArgb(185, 28, 28);
             this.btnCerrarSesion.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold);
@@ -109,6 +111,7 @@
             this.btnAmbientes.Click += new System.EventHandler(this.btnAmbientes_Click);
             this.btnUsuarios.Click += new System.EventHandler(this.btnUsuarios_Click);
             this.btnReportes.Click += new System.EventHandler(this.btnReportes_Click);
+            this.btnEventos.Click += new System.EventHandler(this.btnEventos_Click);
             this.btnTema.Click += new System.EventHandler(this.btnTema_Click);
             this.btnCerrarSesion.Click += new System.EventHandler(this.btnCerrarSesion_Click);
 
@@ -124,6 +127,7 @@
             this.panelMenu.Controls.Add(this.btnAmbientes);
             this.panelMenu.Controls.Add(this.btnUsuarios);
             this.panelMenu.Controls.Add(this.btnReportes);
+            this.panelMenu.Controls.Add(this.btnEventos);
             this.panelMenu.Controls.Add(this.btnTema);
             this.panelMenu.Controls.Add(this.btnCerrarSesion);
 
@@ -132,9 +136,9 @@
             this.panelContenido.Size = new System.Drawing.Size(924, 720);
             this.panelContenido.BackColor = System.Drawing.Color.FromArgb(241, 245, 249);
             this.panelContenido.Anchor = System.Windows.Forms.AnchorStyles.Top |
-                                            System.Windows.Forms.AnchorStyles.Left |
-                                            System.Windows.Forms.AnchorStyles.Right |
-                                            System.Windows.Forms.AnchorStyles.Bottom;
+                                         System.Windows.Forms.AnchorStyles.Left |
+                                         System.Windows.Forms.AnchorStyles.Right |
+                                         System.Windows.Forms.AnchorStyles.Bottom;
 
             // ── AGREGAR AL FORM ───────────────────────────────
             this.Controls.Add(this.panelMenu);
@@ -162,13 +166,14 @@
         private System.Windows.Forms.Label lblAppName;
         private System.Windows.Forms.Label lblNombreUsuario;
         private System.Windows.Forms.Label lblAvatar;
-        private System.Windows.Forms.Label lblRolBadge;        // ← NUEVO
+        private System.Windows.Forms.Label lblRolBadge;
         private System.Windows.Forms.Button btnHome;
         private System.Windows.Forms.Button btnReservas;
         private System.Windows.Forms.Button btnNuevaReserva;
         private System.Windows.Forms.Button btnAmbientes;
         private System.Windows.Forms.Button btnUsuarios;
         private System.Windows.Forms.Button btnReportes;
+        private System.Windows.Forms.Button btnEventos;
         private System.Windows.Forms.Button btnTema;
         private System.Windows.Forms.Button btnCerrarSesion;
     }

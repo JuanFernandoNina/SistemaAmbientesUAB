@@ -69,6 +69,7 @@ namespace SistemaAmbientesUAB
             btnAmbientes.Visible = _permisos.VerAmbientes;
             btnUsuarios.Visible = _permisos.VerUsuarios;
             btnReportes.Visible = _permisos.VerReportes;
+            btnEventos.Visible = _permisos.VerEventos;
         }
 
         public void AplicarTema()
@@ -86,6 +87,7 @@ namespace SistemaAmbientesUAB
 
             Button[] botones = { btnHome, btnReservas, btnNuevaReserva,
                                   btnAmbientes, btnUsuarios, btnReportes,
+                                  btnEventos,
                                   btnTema, btnCerrarSesion };
 
             foreach (var btn in botones)
@@ -179,10 +181,10 @@ namespace SistemaAmbientesUAB
         { SetBtnActivo(btnHome); CargarFormulario(new FormHome(_idUsuario, _nombre)); }
 
         private void btnReservas_Click(object sender, EventArgs e)
-        { SetBtnActivo(btnReservas); CargarFormulario(new FormMisReservas(_idUsuario, _permisos.EsAdmin)); }   // ← CAMBIADO
+        { SetBtnActivo(btnReservas); CargarFormulario(new FormMisReservas(_idUsuario, _permisos.EsAdmin)); }
 
         private void btnNuevaReserva_Click(object sender, EventArgs e)
-        { SetBtnActivo(btnNuevaReserva); CargarFormulario(new FormNuevaReserva(_idUsuario, _permisos.EsAdmin)); }   // ← CAMBIADO
+        { SetBtnActivo(btnNuevaReserva); CargarFormulario(new FormNuevaReserva(_idUsuario, _permisos.EsAdmin)); }
 
         private void btnAmbientes_Click(object sender, EventArgs e)
         { SetBtnActivo(btnAmbientes); CargarFormulario(new FormAmbientes()); }
@@ -192,6 +194,9 @@ namespace SistemaAmbientesUAB
 
         private void btnReportes_Click(object sender, EventArgs e)
         { SetBtnActivo(btnReportes); CargarFormulario(new FormReportes()); }
+
+        private void btnEventos_Click(object sender, EventArgs e)
+        { SetBtnActivo(btnEventos); CargarFormulario(new FormEventos()); }
 
         private void btnTema_Click(object sender, EventArgs e)
         {
