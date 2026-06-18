@@ -20,12 +20,6 @@ namespace SistemaAmbientesUAB
         {
             AplicarTema();
             CargarUsuarios();
-
-            // Aplicar bordes redondeados modernos a los botones inferiores
-            RedondearBoton(btnNuevo, 6);
-            RedondearBoton(btnEditar, 6);
-            RedondearBoton(btnToggleEstado, 6);
-            RedondearBoton(btnEliminar, 6);
         }
 
         // ── TEMA MINIMALISTA ──────────────────────────────────
@@ -112,18 +106,7 @@ namespace SistemaAmbientesUAB
             btn.Cursor = Cursors.Hand;
         }
 
-        private static void RedondearBoton(Button btn, int radio)
-        {
-            var gp = new GraphicsPath();
-            gp.AddArc(0, 0, radio * 2, radio * 2, 180, 90);
-            gp.AddArc(btn.Width - (radio * 2), 0, radio * 2, radio * 2, 270, 90);
-            gp.AddArc(btn.Width - (radio * 2), btn.Height - (radio * 2), radio * 2, radio * 2, 0, 90);
-            gp.AddArc(0, btn.Height - (radio * 2), radio * 2, radio * 2, 90, 90);
-            gp.CloseFigure();
-            btn.Region = new Region(gp);
-        }
-
-        // ── DATOS (Query Corregida con texto plano 'Si' evitamos el '?') ───────────────────────
+        // ── DATOS ─────────────────────────────────────────────
         private void CargarUsuarios(string buscar = "", string tipo = "Todos")
         {
             try
@@ -169,7 +152,7 @@ namespace SistemaAmbientesUAB
             catch (Exception ex) { MessageBox.Show("Error al cargar usuarios: " + ex.Message); }
         }
 
-        // ── PINTURA DE CELDAS (Badges y renderizado limpio de la columna Admin) ─────────────────
+        // ── PINTURA DE CELDAS (Badges estilizados) ────────────
         private void dgvUsuarios_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0) return;
@@ -188,7 +171,7 @@ namespace SistemaAmbientesUAB
                 return;
             }
 
-            // Renderizar Columna Admin Centrada, con texto 'Si' en Verde Esmeralda
+            // Renderizar Columna Admin Centrada
             if (colName == "Admin")
             {
                 e.Handled = true;
@@ -295,7 +278,7 @@ namespace SistemaAmbientesUAB
             if (e.RowIndex >= 0) dgvUsuarios.Rows[e.RowIndex].Selected = true;
         }
 
-        // ── PLACEHOLDER BUSCADOR REACTIVO ──────────────────────────────
+        // ── PLACEHOLDER BUSCADOR REACTIVO ──────────────────────
         private string ObtenerTextoBusqueda()
         {
             string t = txtBuscar.Text.Trim();
@@ -322,7 +305,7 @@ namespace SistemaAmbientesUAB
             CargarUsuarios(ObtenerTextoBusqueda(), cmbTipoFiltro.SelectedItem?.ToString() ?? "Todos");
         }
 
-        // ── EVENTOS DE ACCIÓN ───────────────────────────────────────────
+        // ── EVENTOS DE ACCIÓN ─────────────────────────────────
         private void btnFiltrar_Click(object sender, EventArgs e) =>
             CargarUsuarios(ObtenerTextoBusqueda(), cmbTipoFiltro.SelectedItem?.ToString() ?? "Todos");
 
@@ -369,7 +352,7 @@ namespace SistemaAmbientesUAB
                     cmd.Parameters.AddWithValue("@id", id);
                     cmd.ExecuteNonQuery();
                 }
-                lblMensaje.Text = $"✅ '{nombre}' ahora está {nuevoEstado}.";
+                lblMensaje.Text = $"'{nombre}' ahora está {nuevoEstado}.";
                 lblMensaje.ForeColor = TemaManager.Exito;
                 CargarUsuarios();
             }
@@ -399,7 +382,7 @@ namespace SistemaAmbientesUAB
                     cmd.ExecuteNonQuery();
                 }
 
-                lblMensaje.Text = $"❌ '{nombre}' fue eliminado completamente.";
+                lblMensaje.Text = $"'{nombre}' fue eliminado completamente.";
                 lblMensaje.ForeColor = Color.FromArgb(220, 40, 40);
                 CargarUsuarios();
             }
