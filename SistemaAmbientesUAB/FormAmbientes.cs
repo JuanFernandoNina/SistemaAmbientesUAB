@@ -21,9 +21,15 @@ namespace SistemaAmbientesUAB
             AplicarTema();
             CargarBloques();
             CargarAmbientes();
+
+            // Aplicar bordes redondeados modernos a los botones inferiores
+            RedondearBoton(btnNuevo, 6);
+            RedondearBoton(btnEditar, 6);
+            RedondearBoton(btnCambiarEstado, 6);
+            RedondearBoton(btnEliminar, 6);
         }
 
-        // ── TEMA MINIMALISTA (mismo estilo que MisReservas) ───
+        // ── TEMA MINIMALISTA ───
         private void AplicarTema()
         {
             this.BackColor = Color.White;
@@ -48,7 +54,7 @@ namespace SistemaAmbientesUAB
             // Botón filtrar — estilo outline azul
             EstiloBotonOutline(btnFiltrar, TemaManager.Acento);
 
-            // Botones de acción
+            // Botones de acción sólidos
             EstiloBotonSolido(btnNuevo, Color.FromArgb(40, 120, 40));
             EstiloBotonSolido(btnEditar, Color.FromArgb(40, 80, 160));
             EstiloBotonSolido(btnCambiarEstado, Color.FromArgb(160, 100, 0));
@@ -71,23 +77,23 @@ namespace SistemaAmbientesUAB
             dgv.RowTemplate.Height = 36;
             dgv.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
 
-            // Color para fila seleccionada (Azul pastel suave)
-            Color colorSeleccion = Color.FromArgb(226, 238, 253);
+            // Color celeste suave para la fila seleccionada
+            Color colorSeleccion = Color.FromArgb(224, 236, 252);
 
             // Filas Normales
             dgv.DefaultCellStyle.BackColor = Color.White;
             dgv.DefaultCellStyle.ForeColor = TemaManager.TextoPrincipal;
-            dgv.DefaultCellStyle.SelectionBackColor = colorSeleccion; // ◄── CORREGIDO
-            dgv.DefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal; // ◄── CORREGIDO
+            dgv.DefaultCellStyle.SelectionBackColor = colorSeleccion;
+            dgv.DefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal;
             dgv.DefaultCellStyle.Font = new Font("Segoe UI", 9F);
             dgv.DefaultCellStyle.Padding = new Padding(9, 0, 9, 0);
 
             // Filas Alternas
             dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(247, 249, 252);
-            dgv.AlternatingRowsDefaultCellStyle.SelectionBackColor = colorSeleccion; // ◄── CORREGIDO
-            dgv.AlternatingRowsDefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal; // ◄── CORREGIDO
+            dgv.AlternatingRowsDefaultCellStyle.SelectionBackColor = Color.FromArgb(215, 230, 250);
+            dgv.AlternatingRowsDefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal;
 
-            // Cabecera
+            // Cabeceras
             dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(239, 243, 248);
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(145, 155, 177);
             dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(239, 243, 248);
@@ -117,7 +123,18 @@ namespace SistemaAmbientesUAB
             btn.Cursor = Cursors.Hand;
         }
 
-        // ── DATOS ─────────────────────────────────────────────
+        private static void RedondearBoton(Button btn, int radio)
+        {
+            var gp = new GraphicsPath();
+            gp.AddArc(0, 0, radio * 2, radio * 2, 180, 90);
+            gp.AddArc(btn.Width - (radio * 2), 0, radio * 2, radio * 2, 270, 90);
+            gp.AddArc(btn.Width - (radio * 2), btn.Height - (radio * 2), radio * 2, radio * 2, 0, 90);
+            gp.AddArc(0, btn.Height - (radio * 2), radio * 2, radio * 2, 90, 90);
+            gp.CloseFigure();
+            btn.Region = new Region(gp);
+        }
+
+        // ── DATOS (Query Corregida con símbolos universales para evitar el '?') ───
         private void CargarBloques()
         {
             try
@@ -155,15 +172,15 @@ namespace SistemaAmbientesUAB
 
                     string query = $@"
                         SELECT
-                            a.id_ambiente  AS ID,
-                            b.nombre       AS Bloque,
-                            a.codigo       AS Código,
-                            a.tipo         AS Tipo,
-                            a.capacidad    AS Capacidad,
-                            CASE WHEN a.tiene_proyector    = 1 THEN '✅' ELSE '❌' END AS Proyector,
-                            CASE WHEN a.tiene_computadoras = 1 THEN '✅' ELSE '❌' END AS Computadoras,
-                            CASE WHEN a.tiene_enchufes     = 1 THEN '✅' ELSE '❌' END AS Enchufes,
-                            a.estado       AS Estado
+                            a.id_ambiente   AS ID,
+                            b.nombre        AS Bloque,
+                            a.codigo        AS Código,
+                            a.tipo          AS Tipo,
+                            a.capacidad     AS Capacidad,
+                            CASE WHEN a.tiene_proyector    = 1 THEN 'Si' ELSE '—' END AS Proyector,
+                            CASE WHEN a.tiene_computadoras = 1 THEN 'Si' ELSE '—' END AS Computadoras,
+                            CASE WHEN a.tiene_enchufes     = 1 THEN 'Si' ELSE '—' END AS Enchufes,
+                            a.estado        AS Estado
                         FROM Ambiente a
                         INNER JOIN Bloque b ON a.id_bloque = b.id_bloque
                         WHERE 1=1 {filtroBloque} {filtroTipo} {filtroBuscar}
@@ -179,7 +196,6 @@ namespace SistemaAmbientesUAB
                     da.Fill(dt);
                     dgvAmbientes.DataSource = dt;
 
-                    // Ocultar ID
                     if (dgvAmbientes.Columns.Contains("ID"))
                         dgvAmbientes.Columns["ID"].Visible = false;
 
@@ -190,19 +206,40 @@ namespace SistemaAmbientesUAB
             catch (Exception ex) { MessageBox.Show("Error al cargar ambientes: " + ex.Message); }
         }
 
-        // ── PINTURA DE CELDAS ─────────────────────────────────
+        // ── PINTURA DE CELDAS DINÁMICAS (Badges y Checks de características) ───
         private void dgvAmbientes_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0) return;
+
+            // 1. Columna Estado (Badges Redondeados)
             if (dgvAmbientes.Columns[e.ColumnIndex].Name == "Estado")
+            {
                 PintarBadgeEstadoAmbiente(e);
+                return;
+            }
+
+            // 2. Columnas de Características (Muestra 'Si' Verde o '—' Gris)
+            string colName = dgvAmbientes.Columns[e.ColumnIndex].Name;
+            if (colName == "Proyector" || colName == "Computadoras" || colName == "Enchufes")
+            {
+                e.Handled = true;
+                PintarFondoCelda(e); // Mantiene el fondo de la fila y selección celeste
+
+                string valor = Convert.ToString(e.Value);
+
+                // Si dice "Si", lo pintamos verde esmeralda, si es un guion un gris neutro
+                Color colorTexto = (valor == "Si") ? Color.FromArgb(16, 185, 129) : Color.FromArgb(180, 188, 205);
+                Font fontCelda = new Font("Segoe UI", 9.5F, (valor == "Si") ? FontStyle.Bold : FontStyle.Regular);
+
+                // Renderizado perfectamente centrado
+                TextRenderer.DrawText(e.Graphics, valor, fontCelda, e.CellBounds, colorTexto,
+                    TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+            }
         }
 
         private void PintarBadgeEstadoAmbiente(DataGridViewCellPaintingEventArgs e)
         {
             e.Handled = true;
-
-            // MODIFICADO: Pintar el fondo respetando si la fila está seleccionada o no
             PintarFondoCelda(e);
 
             string estado = Convert.ToString(e.Value);
@@ -237,11 +274,10 @@ namespace SistemaAmbientesUAB
 
         private void PintarFondoCelda(DataGridViewCellPaintingEventArgs e)
         {
-            // MODIFICADO: Si la celda está seleccionada, pintamos con el color de selección
             Color fondo;
             if ((e.State & DataGridViewElementStates.Selected) == DataGridViewElementStates.Selected)
             {
-                fondo = Color.FromArgb(226, 238, 253);
+                fondo = e.RowIndex % 2 == 0 ? Color.FromArgb(224, 236, 252) : Color.FromArgb(215, 230, 250);
             }
             else
             {
@@ -250,6 +286,7 @@ namespace SistemaAmbientesUAB
 
             using (var br = new SolidBrush(fondo))
                 e.Graphics.FillRectangle(br, e.CellBounds);
+
             using (var pen = new Pen(Color.FromArgb(230, 235, 243)))
                 e.Graphics.DrawLine(pen, e.CellBounds.Left, e.CellBounds.Bottom - 1,
                                          e.CellBounds.Right, e.CellBounds.Bottom - 1);
@@ -267,7 +304,12 @@ namespace SistemaAmbientesUAB
             return gp;
         }
 
-        // ── PLACEHOLDER BUSCADOR ──────────────────────────────
+        private void dgvAmbientes_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.RowIndex >= 0) dgvAmbientes.Rows[e.RowIndex].Selected = true;
+        }
+
+        // ── PLACEHOLDER BUSCADOR REACTIVO ───
         private string ObtenerTextoBusqueda()
         {
             string t = txtBuscar.Text.Trim();
@@ -297,7 +339,7 @@ namespace SistemaAmbientesUAB
             CargarAmbientes(idBloque, cmbTipo.SelectedItem?.ToString() ?? "Todos");
         }
 
-        // ── EVENTOS ───────────────────────────────────────────
+        // ── EVENTOS DE ACCIÓN ───
         private void btnFiltrar_Click(object sender, EventArgs e)
         {
             int idBloque = 0;
@@ -316,8 +358,7 @@ namespace SistemaAmbientesUAB
         {
             if (dgvAmbientes.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Selecciona un ambiente para editar.", "Aviso",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Selecciona un ambiente para editar.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             int id = Convert.ToInt32(dgvAmbientes.SelectedRows[0].Cells["ID"].Value);
@@ -329,8 +370,7 @@ namespace SistemaAmbientesUAB
         {
             if (dgvAmbientes.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Selecciona un ambiente.", "Aviso",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Selecciona un ambiente.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -338,20 +378,16 @@ namespace SistemaAmbientesUAB
             string estadoActual = dgvAmbientes.SelectedRows[0].Cells["Estado"].Value?.ToString();
             string codigo = dgvAmbientes.SelectedRows[0].Cells["Código"].Value?.ToString();
             string nuevoEstado = estadoActual == "disponible" ? "mantenimiento"
-                                : estadoActual == "mantenimiento" ? "inhabilitado"
-                                : "disponible";
+                               : estadoActual == "mantenimiento" ? "inhabilitado" : "disponible";
 
-            if (MessageBox.Show($"¿Cambiar {codigo} de '{estadoActual}' a '{nuevoEstado}'?",
-                    "Cambiar Estado", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-                != DialogResult.Yes) return;
+            if (MessageBox.Show($"¿Cambiar {codigo} de '{estadoActual}' a '{nuevoEstado}'?", "Cambiar Estado", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
 
             try
             {
                 using (SqlConnection con = Conexion.ObtenerConexion())
                 {
                     con.Open();
-                    SqlCommand cmd = new SqlCommand(
-                        "UPDATE Ambiente SET estado=@estado WHERE id_ambiente=@id", con);
+                    SqlCommand cmd = new SqlCommand("UPDATE Ambiente SET estado=@estado WHERE id_ambiente=@id", con);
                     cmd.Parameters.AddWithValue("@estado", nuevoEstado);
                     cmd.Parameters.AddWithValue("@id", id);
                     cmd.ExecuteNonQuery();
@@ -367,8 +403,7 @@ namespace SistemaAmbientesUAB
         {
             if (dgvAmbientes.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Por favor, selecciona un ambiente de la tabla para poder eliminarlo.", "Aviso",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Por favor, selecciona un ambiente de la tabla para poder eliminarlo.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -380,8 +415,6 @@ namespace SistemaAmbientesUAB
                 using (SqlConnection con = Conexion.ObtenerConexion())
                 {
                     con.Open();
-
-                    // Comprobar integridad referencial (si posee reservas vinculadas)
                     string queryCheck = "SELECT COUNT(*) FROM Reserva WHERE id_ambiente = @idAmbiente";
                     using (SqlCommand cmdCheck = new SqlCommand(queryCheck, con))
                     {
@@ -390,21 +423,14 @@ namespace SistemaAmbientesUAB
 
                         if (conteoReservas > 0)
                         {
-                            MessageBox.Show($"No se puede eliminar el ambiente '{codigoAmbiente}' porque cuenta con {conteoReservas} reserva(s) registrada(s) en el sistema.\n\n" +
-                                            $"💡 Sugerencia: Si el ambiente ya no se utilizará, cámbielo a estado 'inhabilitado'.",
-                                "Eliminación Denegada", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                            MessageBox.Show($"No se puede eliminar el ambiente '{codigoAmbiente}' porque cuenta con {conteoReservas} reserva(s) registrada(s).\n\n💡 Sugerencia: Inhabilítelo.", "Eliminación Denegada", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                             return;
                         }
                     }
 
-                    // Confirmación de seguridad
-                    string mensajeConfirmacion = $"¿Está seguro de que desea eliminar permanentemente el ambiente '{codigoAmbiente}' de la base de datos?";
-                    if (MessageBox.Show(mensajeConfirmacion, "Confirmar Eliminación",
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+                    if (MessageBox.Show($"¿Está seguro de que desea eliminar permanentemente el ambiente '{codigoAmbiente}'?", "Confirmar Eliminación", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
 
-                    // Borrado físico
-                    string queryDelete = "DELETE FROM Ambiente WHERE id_ambiente = @idAmbiente";
-                    using (SqlCommand cmdDelete = new SqlCommand(queryDelete, con))
+                    using (SqlCommand cmdDelete = new SqlCommand("DELETE FROM Ambiente WHERE id_ambiente = @idAmbiente", con))
                     {
                         cmdDelete.Parameters.AddWithValue("@idAmbiente", idAmbiente);
                         cmdDelete.ExecuteNonQuery();
@@ -413,18 +439,13 @@ namespace SistemaAmbientesUAB
                     lblMensaje.Text = $"❌ Ambiente '{codigoAmbiente}' eliminado.";
                     lblMensaje.ForeColor = TemaManager.Peligro;
 
-                    // Refrescar grilla respetando los filtros seleccionados
                     int idBloqueActual = 0;
                     dynamic sel = cmbBloque.SelectedItem;
                     if (sel != null) idBloqueActual = (int)sel.id;
                     CargarAmbientes(idBloqueActual, cmbTipo.SelectedItem?.ToString() ?? "Todos");
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Ocurrió un error inesperado al intentar eliminar el ambiente:\n" + ex.Message,
-                    "Error de Operación", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            catch (Exception ex) { MessageBox.Show("Error: " + ex.Message, "Error de Operación", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
     }
 }

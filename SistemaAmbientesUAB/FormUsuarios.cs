@@ -27,61 +27,62 @@ namespace SistemaAmbientesUAB
         {
             this.BackColor = Color.White;
 
-            lblTitulo.ForeColor      = TemaManager.TextoPrincipal;
-            lblTitulo.Font           = new Font("Segoe UI", 15F, FontStyle.Bold);
-            lblBuscar.ForeColor      = TemaManager.TextoSecundario;
-            lblTipoFiltro.ForeColor  = TemaManager.TextoSecundario;
-            lblMensaje.ForeColor     = TemaManager.TextoMuted;
+            lblTitulo.ForeColor = TemaManager.TextoPrincipal;
+            lblTitulo.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
+            lblBuscar.ForeColor = TemaManager.TextoSecundario;
+            lblTipoFiltro.ForeColor = TemaManager.TextoSecundario;
+            lblMensaje.ForeColor = TemaManager.TextoMuted;
 
             AplicarEstiloTabla(dgvUsuarios);
 
-            txtBuscar.BackColor    = Color.White;
-            txtBuscar.ForeColor    = TemaManager.TextoMuted;
-            txtBuscar.BorderStyle  = BorderStyle.FixedSingle;
+            txtBuscar.BackColor = Color.White;
+            txtBuscar.ForeColor = TemaManager.TextoMuted;
+            txtBuscar.BorderStyle = BorderStyle.FixedSingle;
 
             cmbTipoFiltro.BackColor = Color.White;
             cmbTipoFiltro.ForeColor = TemaManager.TextoPrincipal;
             cmbTipoFiltro.FlatStyle = FlatStyle.Flat;
 
-            EstiloBotonOutline(btnFiltrar,       TemaManager.Acento);
-            EstiloBotonSolido(btnNuevo,          Color.FromArgb(40, 120, 40));
-            EstiloBotonSolido(btnEditar,         Color.FromArgb(40, 80, 160));
-            EstiloBotonSolido(btnToggleEstado,   Color.FromArgb(160, 100, 0));
+            EstiloBotonOutline(btnFiltrar, TemaManager.Acento);
+            EstiloBotonSolido(btnNuevo, Color.FromArgb(40, 120, 40));
+            EstiloBotonSolido(btnEditar, Color.FromArgb(40, 80, 160));
+            EstiloBotonSolido(btnToggleEstado, Color.FromArgb(160, 100, 0));
+            EstiloBotonSolido(btnEliminar, Color.FromArgb(190, 40, 40));
         }
 
         private static void AplicarEstiloTabla(DataGridView dgv)
         {
             dgv.EnableHeadersVisualStyles = false;
-            dgv.BackgroundColor           = Color.White;
-            dgv.GridColor                 = Color.FromArgb(230, 235, 243);
-            dgv.BorderStyle               = BorderStyle.None;
-            dgv.RowHeadersVisible         = false;
-            dgv.AllowUserToAddRows        = false;
-            dgv.AllowUserToDeleteRows     = false;
-            dgv.ReadOnly                  = true;
-            dgv.SelectionMode             = DataGridViewSelectionMode.FullRowSelect;
-            dgv.MultiSelect               = false;
-            dgv.AutoSizeColumnsMode       = DataGridViewAutoSizeColumnsMode.Fill;
-            dgv.RowTemplate.Height        = 36;
-            dgv.CellBorderStyle           = DataGridViewCellBorderStyle.SingleHorizontal;
+            dgv.BackgroundColor = Color.White;
+            dgv.GridColor = Color.FromArgb(230, 235, 243);
+            dgv.BorderStyle = BorderStyle.None;
+            dgv.RowHeadersVisible = false;
+            dgv.AllowUserToAddRows = false;
+            dgv.AllowUserToDeleteRows = false;
+            dgv.ReadOnly = true;
+            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgv.MultiSelect = false;
+            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgv.RowTemplate.Height = 36;
+            dgv.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
 
-            dgv.DefaultCellStyle.BackColor           = Color.White;
-            dgv.DefaultCellStyle.ForeColor           = TemaManager.TextoPrincipal;
-            dgv.DefaultCellStyle.SelectionBackColor  = Color.White;
-            dgv.DefaultCellStyle.SelectionForeColor  = TemaManager.TextoPrincipal;
-            dgv.DefaultCellStyle.Font                = new Font("Segoe UI", 9F);
-            dgv.DefaultCellStyle.Padding             = new Padding(9, 0, 9, 0);
+            dgv.DefaultCellStyle.BackColor = Color.White;
+            dgv.DefaultCellStyle.ForeColor = TemaManager.TextoPrincipal;
+            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(224, 236, 252); // Celeste de selección de tu imagen
+            dgv.DefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal;
+            dgv.DefaultCellStyle.Font = new Font("Segoe UI", 9F);
+            dgv.DefaultCellStyle.Padding = new Padding(9, 0, 9, 0);
 
-            dgv.AlternatingRowsDefaultCellStyle.BackColor          = Color.FromArgb(247, 249, 252);
-            dgv.AlternatingRowsDefaultCellStyle.SelectionBackColor = Color.FromArgb(247, 249, 252);
+            dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(247, 249, 252);
+            dgv.AlternatingRowsDefaultCellStyle.SelectionBackColor = Color.FromArgb(215, 230, 250); // Celeste levemente más oscuro para alternada
             dgv.AlternatingRowsDefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal;
 
-            dgv.ColumnHeadersDefaultCellStyle.BackColor          = Color.FromArgb(239, 243, 248);
-            dgv.ColumnHeadersDefaultCellStyle.ForeColor          = Color.FromArgb(145, 155, 177);
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(239, 243, 248);
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(145, 155, 177);
             dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(239, 243, 248);
             dgv.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.FromArgb(145, 155, 177);
-            dgv.ColumnHeadersDefaultCellStyle.Font               = new Font("Segoe UI Semibold", 8.5F, FontStyle.Bold);
-            dgv.ColumnHeadersDefaultCellStyle.Padding            = new Padding(9, 0, 9, 0);
+            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 8.5F, FontStyle.Bold);
+            dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(9, 0, 9, 0);
             dgv.ColumnHeadersHeight = 36;
             dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
         }
@@ -92,7 +93,7 @@ namespace SistemaAmbientesUAB
             btn.ForeColor = color;
             btn.FlatStyle = FlatStyle.Flat;
             btn.FlatAppearance.BorderColor = color;
-            btn.FlatAppearance.BorderSize  = 1;
+            btn.FlatAppearance.BorderSize = 1;
             btn.Cursor = Cursors.Hand;
         }
 
@@ -134,7 +135,7 @@ namespace SistemaAmbientesUAB
 
                     SqlCommand cmd = new SqlCommand(query, con);
                     if (!string.IsNullOrWhiteSpace(buscar)) cmd.Parameters.AddWithValue("@buscar", $"%{buscar}%");
-                    if (tipo != "Todos")                    cmd.Parameters.AddWithValue("@tipo", tipo);
+                    if (tipo != "Todos") cmd.Parameters.AddWithValue("@tipo", tipo);
 
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
@@ -172,7 +173,7 @@ namespace SistemaAmbientesUAB
             Color fondo = estado == "activo"
                 ? Color.FromArgb(220, 252, 231) : Color.FromArgb(254, 226, 226);
             Color texto = estado == "activo"
-                ? Color.FromArgb(16, 185, 129)  : Color.FromArgb(239, 68, 68);
+                ? Color.FromArgb(16, 185, 129) : Color.FromArgb(239, 68, 68);
 
             PintarBadge(e, estado, fondo, texto);
         }
@@ -187,7 +188,7 @@ namespace SistemaAmbientesUAB
             switch (tipo)
             {
                 case "docente":
-                    fondo = Color.FromArgb(209, 250, 229); texto = Color.FromArgb(6, 95, 70);  break;
+                    fondo = Color.FromArgb(209, 250, 229); texto = Color.FromArgb(6, 95, 70); break;
                 case "estudiante":
                     fondo = Color.FromArgb(219, 234, 254); texto = Color.FromArgb(30, 64, 175); break;
                 case "iglesia":
@@ -220,9 +221,24 @@ namespace SistemaAmbientesUAB
 
         private void PintarFondoCelda(DataGridViewCellPaintingEventArgs e)
         {
-            Color fondo = e.RowIndex % 2 == 0 ? Color.White : Color.FromArgb(247, 249, 252);
+            // Detectamos si la celda o fila está actualmente seleccionada por el usuario
+            bool seleccionada = (e.State & DataGridViewElementStates.Selected) == DataGridViewElementStates.Selected;
+
+            Color fondo;
+            if (seleccionada)
+            {
+                // Si está seleccionada, aplicamos los celestes limpios que se ven en tu imagen
+                fondo = e.RowIndex % 2 == 0 ? Color.FromArgb(224, 236, 252) : Color.FromArgb(215, 230, 250);
+            }
+            else
+            {
+                // Si no está seleccionada, mantiene su blanco / gris alterno normal
+                fondo = e.RowIndex % 2 == 0 ? Color.White : Color.FromArgb(247, 249, 252);
+            }
+
             using (var br = new SolidBrush(fondo))
                 e.Graphics.FillRectangle(br, e.CellBounds);
+
             using (var pen = new Pen(Color.FromArgb(230, 235, 243)))
                 e.Graphics.DrawLine(pen, e.CellBounds.Left, e.CellBounds.Bottom - 1,
                                          e.CellBounds.Right, e.CellBounds.Bottom - 1);
@@ -232,12 +248,20 @@ namespace SistemaAmbientesUAB
         {
             int d = radio;
             var gp = new GraphicsPath();
-            gp.AddArc(r.X,         r.Y,          d, d, 180, 90);
-            gp.AddArc(r.Right - d, r.Y,          d, d, 270, 90);
-            gp.AddArc(r.Right - d, r.Bottom - d, d, d, 0,   90);
-            gp.AddArc(r.X,         r.Bottom - d, d, d, 90,  90);
+            gp.AddArc(r.X, r.Y, d, d, 180, 90);
+            gp.AddArc(r.Right - d, r.Y, d, d, 270, 90);
+            gp.AddArc(r.Right - d, r.Bottom - d, d, d, 0, 90);
+            gp.AddArc(r.X, r.Bottom - d, d, d, 90, 90);
             gp.CloseFigure();
             return gp;
+        }
+
+        private void dgvUsuarios_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                dgvUsuarios.Rows[e.RowIndex].Selected = true;
+            }
         }
 
         // ── PLACEHOLDER BUSCADOR ──────────────────────────────
@@ -250,14 +274,14 @@ namespace SistemaAmbientesUAB
         private void txtBuscar_Enter(object sender, EventArgs e)
         {
             if (txtBuscar.Text != BuscarPlaceholder) return;
-            txtBuscar.Text      = "";
+            txtBuscar.Text = "";
             txtBuscar.ForeColor = TemaManager.TextoPrincipal;
         }
 
         private void txtBuscar_Leave(object sender, EventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(txtBuscar.Text)) return;
-            txtBuscar.Text      = BuscarPlaceholder;
+            txtBuscar.Text = BuscarPlaceholder;
             txtBuscar.ForeColor = TemaManager.TextoMuted;
         }
 
@@ -299,10 +323,10 @@ namespace SistemaAmbientesUAB
                 return;
             }
 
-            int    id           = Convert.ToInt32(dgvUsuarios.SelectedRows[0].Cells["ID"].Value);
+            int id = Convert.ToInt32(dgvUsuarios.SelectedRows[0].Cells["ID"].Value);
             string estadoActual = dgvUsuarios.SelectedRows[0].Cells["Estado"].Value?.ToString();
-            string nombre       = dgvUsuarios.SelectedRows[0].Cells["Nombre"].Value?.ToString();
-            string nuevoEstado  = estadoActual == "activo" ? "inactivo" : "activo";
+            string nombre = dgvUsuarios.SelectedRows[0].Cells["Nombre"].Value?.ToString();
+            string nuevoEstado = estadoActual == "activo" ? "inactivo" : "activo";
 
             if (MessageBox.Show($"¿Cambiar estado de '{nombre}' a '{nuevoEstado}'?",
                     "Cambiar Estado", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
@@ -319,11 +343,59 @@ namespace SistemaAmbientesUAB
                     cmd.Parameters.AddWithValue("@id", id);
                     cmd.ExecuteNonQuery();
                 }
-                lblMensaje.Text      = $"✅ '{nombre}' ahora está {nuevoEstado}.";
+                lblMensaje.Text = $"✅ '{nombre}' ahora está {nuevoEstado}.";
                 lblMensaje.ForeColor = TemaManager.Exito;
                 CargarUsuarios();
             }
             catch (Exception ex) { MessageBox.Show("Error: " + ex.Message); }
+        }
+
+        private void btnEliminar_Click(object sender, EventArgs e)
+        {
+            if (dgvUsuarios.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Selecciona un usuario para eliminar.", "Aviso",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int id = Convert.ToInt32(dgvUsuarios.SelectedRows[0].Cells["ID"].Value);
+            string nombre = dgvUsuarios.SelectedRows[0].Cells["Nombre"].Value?.ToString();
+
+            if (MessageBox.Show($"¿Estás seguro de eliminar permanentemente al usuario '{nombre}'?\nEsta acción no se puede revertir.",
+                    "Confirmar Eliminación", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+                != DialogResult.Yes) return;
+
+            try
+            {
+                using (SqlConnection con = Conexion.ObtenerConexion())
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("DELETE FROM Usuario WHERE id_usuario = @id", con);
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
+                }
+
+                lblMensaje.Text = $"❌ '{nombre}' fue eliminado completamente.";
+                lblMensaje.ForeColor = Color.FromArgb(220, 40, 40);
+                CargarUsuarios();
+            }
+            catch (SqlException ex)
+            {
+                if (ex.Number == 547)
+                {
+                    MessageBox.Show("No se puede eliminar el usuario porque cuenta con registros dependientes (ej. Reservas creadas).\nInactívelo en su lugar utilizando 'Cambiar Estado'.",
+                        "Incapaz de Eliminar", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                }
+                else
+                {
+                    MessageBox.Show("Error en Base de Datos: " + ex.Message, "Error SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message, "Error General", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

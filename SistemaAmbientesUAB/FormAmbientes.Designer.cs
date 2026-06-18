@@ -46,8 +46,8 @@ namespace SistemaAmbientesUAB
             this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
             this.lblTitulo.ForeColor = TemaManager.TextoPrincipal;
 
-            // BARRA DE FILTROS (y = 66)
-            int yF = 66; int h = 30;
+            // BARRA DE FILTROS (yF movido a 78 para solucionar definitivamente los textos cortados)
+            int yF = 78; int h = 30;
 
             this.lblBloque.Text = "Bloque";
             this.lblBloque.Location = new System.Drawing.Point(20, yF - 18);
@@ -71,7 +71,7 @@ namespace SistemaAmbientesUAB
             this.cmbTipo.Items.AddRange(new object[] { "Todos", "aula", "laboratorio", "auditorio", "coliseo" });
             this.cmbTipo.SelectedIndex = 0;
 
-            // Buscador
+            // BUSCADOR INTEGRADO
             this.txtBuscar.Location = new System.Drawing.Point(336, yF);
             this.txtBuscar.Size = new System.Drawing.Size(220, h);
             this.txtBuscar.Font = new System.Drawing.Font("Segoe UI", 9.5F);
@@ -89,9 +89,9 @@ namespace SistemaAmbientesUAB
             this.btnFiltrar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnFiltrar.Click += new System.EventHandler(this.btnFiltrar_Click);
 
-            // DATAGRIDVIEW
-            this.dgvAmbientes.Location = new System.Drawing.Point(20, 112);
-            this.dgvAmbientes.Size = new System.Drawing.Size(892, 390);
+            // DATAGRIDVIEW (Ajustada posición Y por cambio de filtros)
+            this.dgvAmbientes.Location = new System.Drawing.Point(20, 122);
+            this.dgvAmbientes.Size = new System.Drawing.Size(892, 380);
             this.dgvAmbientes.BackgroundColor = System.Drawing.Color.White;
             this.dgvAmbientes.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dgvAmbientes.RowHeadersVisible = false;
@@ -106,8 +106,9 @@ namespace SistemaAmbientesUAB
             this.dgvAmbientes.RowTemplate.Height = 36;
             this.dgvAmbientes.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
             this.dgvAmbientes.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvAmbientes_CellPainting);
+            this.dgvAmbientes.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvAmbientes_CellMouseDown);
 
-            // BOTONES INFERIORES
+            // BOTONES INFERIORES REDONDEADOS
             int yB = 516;
             this.btnNuevo.Text = "➕ Nuevo";
             this.btnNuevo.Location = new System.Drawing.Point(20, yB);
@@ -143,7 +144,7 @@ namespace SistemaAmbientesUAB
             this.lblMensaje.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.lblMensaje.ForeColor = System.Drawing.Color.DarkGray;
 
-            // AGREGAR AL FORM
+            // AGREGAR AL FORM CONTROLS
             this.Controls.Add(this.lblTitulo);
             this.Controls.Add(this.lblBloque);
             this.Controls.Add(this.cmbBloque);
