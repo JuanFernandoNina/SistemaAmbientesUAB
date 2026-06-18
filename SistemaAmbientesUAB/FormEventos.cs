@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.Logging;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
@@ -22,7 +23,7 @@ namespace SistemaAmbientesUAB
             CargarEventos();
         }
 
-        // ── TEMA MINIMALISTA (mismo estilo que FormAmbientes / FormUsuarios) ──
+        // ── TEMA MINIMALISTA ──
         private void AplicarTema()
         {
             this.BackColor = Color.White;
@@ -38,7 +39,6 @@ namespace SistemaAmbientesUAB
             txtBuscar.ForeColor = TemaManager.TextoMuted;
             txtBuscar.BorderStyle = BorderStyle.FixedSingle;
 
-            EstiloBotonOutline(btnFiltrar, TemaManager.Acento);
             EstiloBotonSolido(btnNuevo, Color.FromArgb(40, 120, 40));
             EstiloBotonSolido(btnEditar, Color.FromArgb(40, 80, 160));
             EstiloBotonSolido(btnEliminar, Color.FromArgb(160, 40, 40));
@@ -81,16 +81,6 @@ namespace SistemaAmbientesUAB
             dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
         }
 
-        private static void EstiloBotonOutline(Button btn, Color color)
-        {
-            btn.BackColor = Color.White;
-            btn.ForeColor = color;
-            btn.FlatStyle = FlatStyle.Flat;
-            btn.FlatAppearance.BorderColor = color;
-            btn.FlatAppearance.BorderSize = 1;
-            btn.Cursor = Cursors.Hand;
-        }
-
         private static void EstiloBotonSolido(Button btn, Color color)
         {
             btn.BackColor = color;
@@ -111,10 +101,10 @@ namespace SistemaAmbientesUAB
 
                     string buscar = ObtenerTextoBusqueda();
                     string filtroBuscar = !string.IsNullOrWhiteSpace(buscar)
-                        ? @"AND (e.nombre_evento LIKE @buscar
-                              OR u.nombre_completo LIKE @buscar
-                              OR e.requerimientos LIKE @buscar)"
-                        : "";
+                      ? @"AND (e.nombre_evento LIKE @buscar
+                               OR u.nombre_completo LIKE @buscar
+                               OR e.requerimientos LIKE @buscar)"
+                      : "";
 
                     string query = $@"
                         SELECT
@@ -184,9 +174,9 @@ namespace SistemaAmbientesUAB
 
             Size ts = TextRenderer.MeasureText(estado, new Font("Segoe UI Semibold", 8F, FontStyle.Bold));
             Rectangle badge = new Rectangle(
-                e.CellBounds.Left + 9,
-                e.CellBounds.Top + (e.CellBounds.Height - 22) / 2,
-                ts.Width + 18, 22);
+              e.CellBounds.Left + 9,
+              e.CellBounds.Top + (e.CellBounds.Height - 22) / 2,
+              ts.Width + 18, 22);
 
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             using (var gp = RoundedPath(badge, badge.Height))
@@ -194,9 +184,9 @@ namespace SistemaAmbientesUAB
                 e.Graphics.FillPath(br, gp);
 
             TextRenderer.DrawText(e.Graphics, estado,
-                new Font("Segoe UI Semibold", 8F, FontStyle.Bold),
-                badge, texto,
-                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+              new Font("Segoe UI Semibold", 8F, FontStyle.Bold),
+              badge, texto,
+              TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
         }
 
         private void PintarFondoCelda(DataGridViewCellPaintingEventArgs e)
@@ -206,7 +196,7 @@ namespace SistemaAmbientesUAB
                 e.Graphics.FillRectangle(br, e.CellBounds);
             using (var pen = new Pen(Color.FromArgb(230, 235, 243)))
                 e.Graphics.DrawLine(pen, e.CellBounds.Left, e.CellBounds.Bottom - 1,
-                                         e.CellBounds.Right, e.CellBounds.Bottom - 1);
+                                            e.CellBounds.Right, e.CellBounds.Bottom - 1);
         }
 
         private GraphicsPath RoundedPath(Rectangle r, int radio)
@@ -249,8 +239,6 @@ namespace SistemaAmbientesUAB
         }
 
         // ── EVENTOS ───────────────────────────────────────────
-        private void btnFiltrar_Click(object sender, EventArgs e) => CargarEventos();
-
         private void btnNuevo_Click(object sender, EventArgs e)
         {
             new FormEventoDetalle(0).ShowDialog();
@@ -262,7 +250,7 @@ namespace SistemaAmbientesUAB
             if (dgvEventos.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Selecciona un evento para editar.", "Aviso",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             int id = Convert.ToInt32(dgvEventos.SelectedRows[0].Cells["ID"].Value);
@@ -275,7 +263,7 @@ namespace SistemaAmbientesUAB
             if (dgvEventos.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Selecciona un evento para eliminar.", "Aviso",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -284,13 +272,13 @@ namespace SistemaAmbientesUAB
             string estadoReserva = dgvEventos.SelectedRows[0].Cells["Estado Reserva"].Value?.ToString();
 
             string advertenciaReserva = estadoReserva == "activa"
-                ? "\n\n⚠️ Este evento tiene una reserva ACTIVA asociada. " +
-                  "La reserva quedará sin evento vinculado (no se cancela ni se borra)."
-                : "";
+              ? "\n\n⚠️ Este evento tiene una reserva ACTIVA asociada. " +
+                "La reserva quedará sin evento vinculado (no se cancela ni se borra)."
+              : "";
 
             if (MessageBox.Show($"¿Eliminar el evento '{nombre}'?{advertenciaReserva}",
-                    "Eliminar Evento", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-                != DialogResult.Yes) return;
+                "Eliminar Evento", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+              != DialogResult.Yes) return;
 
             try
             {
@@ -298,15 +286,13 @@ namespace SistemaAmbientesUAB
                 {
                     con.Open();
 
-                    // Desvincular la reserva (si existe) antes de borrar el evento,
-                    // porque Reserva.id_evento es FK nullable hacia Evento.
                     SqlCommand cmdDesvincular = new SqlCommand(
-                        "UPDATE Reserva SET id_evento = NULL WHERE id_evento = @id", con);
+            "UPDATE Reserva SET id_evento = NULL WHERE id_evento = @id", con);
                     cmdDesvincular.Parameters.AddWithValue("@id", id);
                     cmdDesvincular.ExecuteNonQuery();
 
                     SqlCommand cmdEliminar = new SqlCommand(
-                        "DELETE FROM Evento WHERE id_evento = @id", con);
+                      "DELETE FROM Evento WHERE id_evento = @id", con);
                     cmdEliminar.Parameters.AddWithValue("@id", id);
                     cmdEliminar.ExecuteNonQuery();
                 }

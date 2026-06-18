@@ -14,7 +14,6 @@
         private System.Windows.Forms.Label lblTitulo;
         private System.Windows.Forms.Label lblBuscar;
         private System.Windows.Forms.TextBox txtBuscar;
-        private System.Windows.Forms.Button btnFiltrar;
         private System.Windows.Forms.DataGridView dgvEventos;
         private System.Windows.Forms.Button btnNuevo;
         private System.Windows.Forms.Button btnEditar;
@@ -26,7 +25,6 @@
             this.lblTitulo = new System.Windows.Forms.Label();
             this.lblBuscar = new System.Windows.Forms.Label();
             this.txtBuscar = new System.Windows.Forms.TextBox();
-            this.btnFiltrar = new System.Windows.Forms.Button();
             this.dgvEventos = new System.Windows.Forms.DataGridView();
             this.btnNuevo = new System.Windows.Forms.Button();
             this.btnEditar = new System.Windows.Forms.Button();
@@ -50,52 +48,53 @@
             this.lblTitulo.Location = new System.Drawing.Point(20, 18);
             this.lblTitulo.Size = new System.Drawing.Size(380, 36);
             this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
-            this.lblTitulo.ForeColor = TemaManager.TextoPrincipal;
 
-            // BARRA DE BÚSQUEDA (Continuación)
-            int yF = 66; int h = 30;
+            // BARRA DE BÚSQUEDA (Posición corregida para evitar que se corte)
+            int yF = 75;
+            int h = 30;
 
             this.lblBuscar.Text = "Buscar por nombre";
-            this.lblBuscar.Location = new System.Drawing.Point(20, yF - 18);
+            this.lblBuscar.Location = new System.Drawing.Point(20, yF - 20);
             this.lblBuscar.Size = new System.Drawing.Size(120, 16);
             this.lblBuscar.Font = new System.Drawing.Font("Segoe UI", 8F);
 
             this.txtBuscar.Location = new System.Drawing.Point(20, yF);
-            this.txtBuscar.Size = new System.Drawing.Size(320, h);
+            this.txtBuscar.Size = new System.Drawing.Size(350, h);
             this.txtBuscar.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.txtBuscar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left))));
             this.txtBuscar.TextChanged += new System.EventHandler(this.txtBuscar_TextChanged);
+            this.txtBuscar.Enter += new System.EventHandler(this.txtBuscar_Enter);
+            this.txtBuscar.Leave += new System.EventHandler(this.txtBuscar_Leave);
 
-            this.btnFiltrar.Text = "🔍 Limpiar Filtro";
-            this.btnFiltrar.Location = new System.Drawing.Point(348, yF - 1);
-            this.btnFiltrar.Size = new System.Drawing.Size(120, 28);
-            this.btnFiltrar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.btnFiltrar.Click += new System.EventHandler(this.btnFiltrar_Click);
-
-            // BOTONES PRINCIPALES (Alineados a la derecha de la barra superior)
+            // BOTONES PRINCIPALES (Con Anchor derecho para comportamiento responsive)
             this.btnNuevo.Text = "➕ Nuevo Evento";
-            this.btnNuevo.Location = new System.Drawing.Point(520, yF - 1);
+            this.btnNuevo.Location = new System.Drawing.Point(550, yF - 1);
             this.btnNuevo.Size = new System.Drawing.Size(120, 28);
             this.btnNuevo.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btnNuevo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnNuevo.Click += new System.EventHandler(this.btnNuevo_Click);
 
             this.btnEditar.Text = "✏️ Editar";
-            this.btnEditar.Location = new System.Drawing.Point(646, yF - 1);
+            this.btnEditar.Location = new System.Drawing.Point(676, yF - 1);
             this.btnEditar.Size = new System.Drawing.Size(100, 28);
             this.btnEditar.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnEditar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnEditar.Click += new System.EventHandler(this.btnEditar_Click);
 
             this.btnEliminar.Text = "❌ Eliminar";
-            this.btnEliminar.Location = new System.Drawing.Point(752, yF - 1);
+            this.btnEliminar.Location = new System.Drawing.Point(782, yF - 1);
             this.btnEliminar.Size = new System.Drawing.Size(100, 28);
             this.btnEliminar.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnEliminar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnEliminar.Click += new System.EventHandler(this.btnEliminar_Click);
 
-            // TABLA DE EVENTOS (Abarca el resto del formulario)
-            this.dgvEventos.Location = new System.Drawing.Point(20, 110);
-            this.dgvEventos.Size = new System.Drawing.Size(884, 400);
+            // TABLA DE EVENTOS (Abarca todo el ancho y alto responsive)
+            this.dgvEventos.Location = new System.Drawing.Point(20, 125);
+            this.dgvEventos.Size = new System.Drawing.Size(884, 385);
             this.dgvEventos.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgvEventos.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvEventos_CellPainting);
 
             // LBL MENSAJE DE ESTADO (Pie de página)
             this.lblMensaje.Text = "Cargando eventos...";
@@ -108,7 +107,6 @@
             this.Controls.Add(this.lblTitulo);
             this.Controls.Add(this.lblBuscar);
             this.Controls.Add(this.txtBuscar);
-            this.Controls.Add(this.btnFiltrar);
             this.Controls.Add(this.dgvEventos);
             this.Controls.Add(this.btnNuevo);
             this.Controls.Add(this.btnEditar);

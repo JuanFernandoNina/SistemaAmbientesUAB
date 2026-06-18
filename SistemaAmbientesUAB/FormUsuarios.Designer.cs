@@ -45,8 +45,8 @@ namespace SistemaAmbientesUAB
             this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
             this.lblTitulo.ForeColor = TemaManager.TextoPrincipal;
 
-            // BARRA DE FILTROS
-            int yF = 66; int h = 30;
+            // BARRA DE FILTROS (yF corregido a 78 para dar espacio y que no se corten los labels)
+            int yF = 78; int h = 30;
 
             this.lblBuscar.Text = "Buscar";
             this.lblBuscar.Location = new System.Drawing.Point(20, yF - 18);
@@ -83,9 +83,9 @@ namespace SistemaAmbientesUAB
             this.btnFiltrar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnFiltrar.Click += new System.EventHandler(this.btnFiltrar_Click);
 
-            // DATAGRIDVIEW
-            this.dgvUsuarios.Location = new System.Drawing.Point(20, 112);
-            this.dgvUsuarios.Size = new System.Drawing.Size(910, 390);
+            // DATAGRIDVIEW (Ajustado inicio Y a 122 por reubicación de barra de filtros)
+            this.dgvUsuarios.Location = new System.Drawing.Point(20, 122);
+            this.dgvUsuarios.Size = new System.Drawing.Size(910, 380);
             this.dgvUsuarios.BackgroundColor = System.Drawing.Color.White;
             this.dgvUsuarios.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dgvUsuarios.RowHeadersVisible = false;
