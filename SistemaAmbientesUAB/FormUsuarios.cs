@@ -20,6 +20,12 @@ namespace SistemaAmbientesUAB
         {
             AplicarTema();
             CargarUsuarios();
+
+            // Aplicar bordes redondeados modernos a los botones inferiores
+            RedondearBoton(btnNuevo, 6);
+            RedondearBoton(btnEditar, 6);
+            RedondearBoton(btnToggleEstado, 6);
+            RedondearBoton(btnEliminar, 6);
         }
 
         // ── TEMA MINIMALISTA ──────────────────────────────────
@@ -68,13 +74,13 @@ namespace SistemaAmbientesUAB
 
             dgv.DefaultCellStyle.BackColor = Color.White;
             dgv.DefaultCellStyle.ForeColor = TemaManager.TextoPrincipal;
-            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(224, 236, 252); // Celeste de selección de tu imagen
+            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(224, 236, 252);
             dgv.DefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal;
             dgv.DefaultCellStyle.Font = new Font("Segoe UI", 9F);
             dgv.DefaultCellStyle.Padding = new Padding(9, 0, 9, 0);
 
             dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(247, 249, 252);
-            dgv.AlternatingRowsDefaultCellStyle.SelectionBackColor = Color.FromArgb(215, 230, 250); // Celeste levemente más oscuro para alternada
+            dgv.AlternatingRowsDefaultCellStyle.SelectionBackColor = Color.FromArgb(215, 230, 250);
             dgv.AlternatingRowsDefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal;
 
             dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(239, 243, 248);
@@ -106,7 +112,18 @@ namespace SistemaAmbientesUAB
             btn.Cursor = Cursors.Hand;
         }
 
-        // ── DATOS ─────────────────────────────────────────────
+        private static void RedondearBoton(Button btn, int radio)
+        {
+            var gp = new GraphicsPath();
+            gp.AddArc(0, 0, radio * 2, radio * 2, 180, 90);
+            gp.AddArc(btn.Width - (radio * 2), 0, radio * 2, radio * 2, 270, 90);
+            gp.AddArc(btn.Width - (radio * 2), btn.Height - (radio * 2), radio * 2, radio * 2, 0, 90);
+            gp.AddArc(0, btn.Height - (radio * 2), radio * 2, radio * 2, 90, 90);
+            gp.CloseFigure();
+            btn.Region = new Region(gp);
+        }
+
+        // ── DATOS (Query Corregida con texto plano 'Si' evitamos el '?') ───────────────────────
         private void CargarUsuarios(string buscar = "", string tipo = "Todos")
         {
             try
@@ -127,7 +144,7 @@ namespace SistemaAmbientesUAB
                             carrera_area    AS [Carrera/Área],
                             correo          AS Correo,
                             username        AS Usuario,
-                            CASE WHEN es_admin=1 THEN '✅' ELSE '❌' END AS Admin,
+                            CASE WHEN es_admin=1 THEN 'Si' ELSE '—' END AS Admin,
                             estado          AS Estado
                         FROM Usuario
                         WHERE 1=1 {filtroBuscar} {filtroTipo}
@@ -146,22 +163,44 @@ namespace SistemaAmbientesUAB
                         dgvUsuarios.Columns["ID"].Visible = false;
 
                     lblMensaje.Text = $"Total: {dt.Rows.Count} usuario(s)";
+                    lblMensaje.ForeColor = TemaManager.TextoMuted;
                 }
             }
             catch (Exception ex) { MessageBox.Show("Error al cargar usuarios: " + ex.Message); }
         }
 
-        // ── PINTURA DE CELDAS ─────────────────────────────────
+        // ── PINTURA DE CELDAS (Badges y renderizado limpio de la columna Admin) ─────────────────
         private void dgvUsuarios_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0) return;
 
-            string col = dgvUsuarios.Columns[e.ColumnIndex].Name;
+            string colName = dgvUsuarios.Columns[e.ColumnIndex].Name;
 
-            if (col == "Estado")
+            if (colName == "Estado")
+            {
                 PintarBadgeEstadoUsuario(e);
-            else if (col == "Tipo")
+                return;
+            }
+
+            if (colName == "Tipo")
+            {
                 PintarBadgeTipo(e);
+                return;
+            }
+
+            // Renderizar Columna Admin Centrada, con texto 'Si' en Verde Esmeralda
+            if (colName == "Admin")
+            {
+                e.Handled = true;
+                PintarFondoCelda(e);
+
+                string valor = Convert.ToString(e.Value);
+                Color colorTexto = (valor == "Si") ? Color.FromArgb(16, 185, 129) : Color.FromArgb(180, 188, 205);
+                Font fontCelda = new Font("Segoe UI", 9.5F, (valor == "Si") ? FontStyle.Bold : FontStyle.Regular);
+
+                TextRenderer.DrawText(e.Graphics, valor, fontCelda, e.CellBounds, colorTexto,
+                    TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+            }
         }
 
         private void PintarBadgeEstadoUsuario(DataGridViewCellPaintingEventArgs e)
@@ -170,10 +209,8 @@ namespace SistemaAmbientesUAB
             PintarFondoCelda(e);
 
             string estado = Convert.ToString(e.Value);
-            Color fondo = estado == "activo"
-                ? Color.FromArgb(220, 252, 231) : Color.FromArgb(254, 226, 226);
-            Color texto = estado == "activo"
-                ? Color.FromArgb(16, 185, 129) : Color.FromArgb(239, 68, 68);
+            Color fondo = estado == "activo" ? Color.FromArgb(220, 252, 231) : Color.FromArgb(254, 226, 226);
+            Color texto = estado == "activo" ? Color.FromArgb(16, 185, 129) : Color.FromArgb(239, 68, 68);
 
             PintarBadge(e, estado, fondo, texto);
         }
@@ -221,18 +258,15 @@ namespace SistemaAmbientesUAB
 
         private void PintarFondoCelda(DataGridViewCellPaintingEventArgs e)
         {
-            // Detectamos si la celda o fila está actualmente seleccionada por el usuario
             bool seleccionada = (e.State & DataGridViewElementStates.Selected) == DataGridViewElementStates.Selected;
 
             Color fondo;
             if (seleccionada)
             {
-                // Si está seleccionada, aplicamos los celestes limpios que se ven en tu imagen
                 fondo = e.RowIndex % 2 == 0 ? Color.FromArgb(224, 236, 252) : Color.FromArgb(215, 230, 250);
             }
             else
             {
-                // Si no está seleccionada, mantiene su blanco / gris alterno normal
                 fondo = e.RowIndex % 2 == 0 ? Color.White : Color.FromArgb(247, 249, 252);
             }
 
@@ -258,13 +292,10 @@ namespace SistemaAmbientesUAB
 
         private void dgvUsuarios_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (e.RowIndex >= 0)
-            {
-                dgvUsuarios.Rows[e.RowIndex].Selected = true;
-            }
+            if (e.RowIndex >= 0) dgvUsuarios.Rows[e.RowIndex].Selected = true;
         }
 
-        // ── PLACEHOLDER BUSCADOR ──────────────────────────────
+        // ── PLACEHOLDER BUSCADOR REACTIVO ──────────────────────────────
         private string ObtenerTextoBusqueda()
         {
             string t = txtBuscar.Text.Trim();
@@ -291,7 +322,7 @@ namespace SistemaAmbientesUAB
             CargarUsuarios(ObtenerTextoBusqueda(), cmbTipoFiltro.SelectedItem?.ToString() ?? "Todos");
         }
 
-        // ── EVENTOS ───────────────────────────────────────────
+        // ── EVENTOS DE ACCIÓN ───────────────────────────────────────────
         private void btnFiltrar_Click(object sender, EventArgs e) =>
             CargarUsuarios(ObtenerTextoBusqueda(), cmbTipoFiltro.SelectedItem?.ToString() ?? "Todos");
 
@@ -305,8 +336,7 @@ namespace SistemaAmbientesUAB
         {
             if (dgvUsuarios.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Selecciona un usuario para editar.", "Aviso",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Selecciona un usuario para editar.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             int id = Convert.ToInt32(dgvUsuarios.SelectedRows[0].Cells["ID"].Value);
@@ -318,8 +348,7 @@ namespace SistemaAmbientesUAB
         {
             if (dgvUsuarios.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Selecciona un usuario.", "Aviso",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Selecciona un usuario.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -328,17 +357,14 @@ namespace SistemaAmbientesUAB
             string nombre = dgvUsuarios.SelectedRows[0].Cells["Nombre"].Value?.ToString();
             string nuevoEstado = estadoActual == "activo" ? "inactivo" : "activo";
 
-            if (MessageBox.Show($"¿Cambiar estado de '{nombre}' a '{nuevoEstado}'?",
-                    "Cambiar Estado", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-                != DialogResult.Yes) return;
+            if (MessageBox.Show($"¿Cambiar estado de '{nombre}' a '{nuevoEstado}'?", "Cambiar Estado", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
 
             try
             {
                 using (SqlConnection con = Conexion.ObtenerConexion())
                 {
                     con.Open();
-                    SqlCommand cmd = new SqlCommand(
-                        "UPDATE Usuario SET estado=@estado WHERE id_usuario=@id", con);
+                    SqlCommand cmd = new SqlCommand("UPDATE Usuario SET estado=@estado WHERE id_usuario=@id", con);
                     cmd.Parameters.AddWithValue("@estado", nuevoEstado);
                     cmd.Parameters.AddWithValue("@id", id);
                     cmd.ExecuteNonQuery();
@@ -354,17 +380,14 @@ namespace SistemaAmbientesUAB
         {
             if (dgvUsuarios.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Selecciona un usuario para eliminar.", "Aviso",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Selecciona un usuario para eliminar.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             int id = Convert.ToInt32(dgvUsuarios.SelectedRows[0].Cells["ID"].Value);
             string nombre = dgvUsuarios.SelectedRows[0].Cells["Nombre"].Value?.ToString();
 
-            if (MessageBox.Show($"¿Estás seguro de eliminar permanentemente al usuario '{nombre}'?\nEsta acción no se puede revertir.",
-                    "Confirmar Eliminación", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-                != DialogResult.Yes) return;
+            if (MessageBox.Show($"¿Estás seguro de eliminar permanentemente al usuario '{nombre}'?\nEsta acción no se puede revertir.", "Confirmar Eliminación", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
 
             try
             {
@@ -384,8 +407,7 @@ namespace SistemaAmbientesUAB
             {
                 if (ex.Number == 547)
                 {
-                    MessageBox.Show("No se puede eliminar el usuario porque cuenta con registros dependientes (ej. Reservas creadas).\nInactívelo en su lugar utilizando 'Cambiar Estado'.",
-                        "Incapaz de Eliminar", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    MessageBox.Show("No se puede eliminar el usuario porque cuenta con registros dependientes (ej. Reservas creadas).\nInactívelo en su lugar utilizando 'Cambiar Estado'.", "Incapaz de Eliminar", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 }
                 else
                 {
