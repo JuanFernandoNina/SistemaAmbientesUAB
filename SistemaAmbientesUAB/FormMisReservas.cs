@@ -18,26 +18,27 @@ namespace SistemaAmbientesUAB
         private int _totalPaginas = 1;
         private DataTable _reservas = new DataTable();
 
-        // ── Constructor sin cambios para usuarios normales ────
         public FormMisReservas(int idUsuario)
             : this(idUsuario, false) { }
 
-        // ── Constructor extendido para admin ──────────────────
         public FormMisReservas(int idUsuario, bool esAdmin)
         {
             InitializeComponent();
             _idUsuario = idUsuario;
             _esAdmin = esAdmin;
+
+            this.btnEditar.Click += new System.EventHandler(this.btnEditar_Click);
+            this.btnCancelarReserva.Click += new System.EventHandler(this.btnCancelarReserva_Click);
         }
 
         private void FormMisReservas_Load(object sender, EventArgs e)
         {
-            // Título diferenciado
             lblTitulo.Text = _esAdmin ? "Todas las reservas" : "Mis reservas";
 
             AplicarTema();
             AjustarLayoutResponsive();
             CargarReservas("Todas");
+            EvaluarEstadoBotonesAccion();
         }
 
         private void AplicarTema()
@@ -57,13 +58,23 @@ namespace SistemaAmbientesUAB
             cmbFiltroEstado.ForeColor = TemaManager.TextoPrincipal;
             cmbFiltroEstado.FlatStyle = FlatStyle.Flat;
 
-            btnActualizar.BackColor = Color.White;
-            btnActualizar.ForeColor = TemaManager.Acento;
-            btnActualizar.FlatStyle = FlatStyle.Flat;
-            btnActualizar.FlatAppearance.BorderColor = TemaManager.Borde;
-            btnActualizar.FlatAppearance.BorderSize = 1;
+            EstilarBotonBorde(btnActualizar, TemaManager.Acento);
+            EstilarBotonBorde(btnEditar, TemaManager.Acento);
+            EstilarBotonBorde(btnCancelarReserva, TemaManager.Peligro);
+            EstilarBotonBorde(btnEliminar, Color.FromArgb(100, 116, 139)); // Gris pizarra elegante
 
             AplicarEstiloTabla();
+        }
+
+        private void EstilarBotonBorde(Button btn, Color colorTema)
+        {
+            btn.BackColor = Color.White;
+            btn.ForeColor = colorTema;
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.FlatAppearance.BorderColor = Color.FromArgb(220, 225, 235);
+            btn.FlatAppearance.BorderSize = 1;
+            btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(245, 248, 253);
+            btn.Cursor = Cursors.Hand;
         }
 
         private void AplicarEstiloTabla()
@@ -74,13 +85,13 @@ namespace SistemaAmbientesUAB
 
             dgvReservas.DefaultCellStyle.BackColor = Color.White;
             dgvReservas.DefaultCellStyle.ForeColor = TemaManager.TextoPrincipal;
-            dgvReservas.DefaultCellStyle.SelectionBackColor = Color.White;
+            dgvReservas.DefaultCellStyle.SelectionBackColor = Color.FromArgb(240, 244, 253);
             dgvReservas.DefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal;
             dgvReservas.DefaultCellStyle.Font = new Font("Segoe UI", 9F);
             dgvReservas.DefaultCellStyle.Padding = new Padding(9, 0, 9, 0);
 
             dgvReservas.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(247, 249, 252);
-            dgvReservas.AlternatingRowsDefaultCellStyle.SelectionBackColor = Color.FromArgb(247, 249, 252);
+            dgvReservas.AlternatingRowsDefaultCellStyle.SelectionBackColor = Color.FromArgb(240, 244, 253);
             dgvReservas.AlternatingRowsDefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal;
 
             dgvReservas.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(239, 243, 248);
@@ -97,6 +108,7 @@ namespace SistemaAmbientesUAB
             int altoAcciones = 48;
             int topTabla = 114;
 
+            // Panel inferior de paginación y botones de operación
             panelAcciones.Left = margen;
             panelAcciones.Width = Math.Max(320, ClientSize.Width - margen * 2);
             panelAcciones.Height = altoAcciones;
@@ -107,6 +119,7 @@ namespace SistemaAmbientesUAB
             panelTabla.Width = panelAcciones.Width;
             panelTabla.Height = Math.Max(96, panelAcciones.Top - panelTabla.Top - 10);
 
+            // Acomodar botones numéricos de paginación a la derecha del panel inferior
             int x = panelAcciones.Width - 194;
             btnAnterior.Left = x;
             btnPagina1.Left = x + 40;
@@ -115,7 +128,6 @@ namespace SistemaAmbientesUAB
             btnSiguiente.Left = x + 160;
         }
 
-        // ── CARGA DE DATOS ────────────────────────────────────
         private void CargarReservas(string filtro)
         {
             try
@@ -136,10 +148,7 @@ namespace SistemaAmbientesUAB
                           OR r.estado              LIKE @buscar
                           OR u.nombre_completo     LIKE @buscar)";
 
-                    // Si es admin incluye la columna Usuario; si no, la omite
-                    string colUsuario = _esAdmin
-                        ? "u.nombre_completo AS Usuario,"
-                        : "";
+                    string colUsuario = _esAdmin ? "u.nombre_completo AS Usuario," : "";
 
                     string query = $@"
                         SELECT
@@ -199,34 +208,10 @@ namespace SistemaAmbientesUAB
 
             dgvReservas.Columns.Clear();
             dgvReservas.DataSource = pagina;
-            AgregarColumnasAccion();
             AjustarColumnas();
             AplicarEstiloTabla();
             ActualizarPaginacion(inicio, fin);
-        }
-
-        private void AgregarColumnasAccion()
-        {
-            if (dgvReservas.Columns.Contains("Editar")) return;
-
-            DataGridViewTextBoxColumn editar = new DataGridViewTextBoxColumn();
-            editar.Name = "Editar";
-            editar.HeaderText = "";
-            editar.ReadOnly = true;
-            editar.SortMode = DataGridViewColumnSortMode.NotSortable;
-            editar.Width = 44;
-            editar.MinimumWidth = 44;
-
-            DataGridViewTextBoxColumn eliminar = new DataGridViewTextBoxColumn();
-            eliminar.Name = "Eliminar";
-            eliminar.HeaderText = "";
-            eliminar.ReadOnly = true;
-            eliminar.SortMode = DataGridViewColumnSortMode.NotSortable;
-            eliminar.Width = 44;
-            eliminar.MinimumWidth = 44;
-
-            dgvReservas.Columns.Add(editar);
-            dgvReservas.Columns.Add(eliminar);
+            EvaluarEstadoBotonesAccion();
         }
 
         private void ActualizarPaginacion(int inicio, int fin)
@@ -258,14 +243,12 @@ namespace SistemaAmbientesUAB
             boton.Invalidate();
         }
 
-        // ── AJUSTE DE COLUMNAS ────────────────────────────────
         private void AjustarColumnas()
         {
             if (dgvReservas.Columns.Count == 0) return;
 
             dgvReservas.Columns["ID"].Visible = false;
 
-            // Columna Usuario solo existe en vista admin
             if (dgvReservas.Columns.Contains("Usuario"))
                 dgvReservas.Columns["Usuario"].MinimumWidth = 140;
 
@@ -278,8 +261,6 @@ namespace SistemaAmbientesUAB
             dgvReservas.Columns["Motivo"].MinimumWidth = 135;
             dgvReservas.Columns["Asistentes"].MinimumWidth = 80;
             dgvReservas.Columns["Estado"].MinimumWidth = 110;
-            dgvReservas.Columns["Editar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dgvReservas.Columns["Eliminar"].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
 
             dgvReservas.Columns["Motivo"].FillWeight = 150;
             dgvReservas.Columns["Ambiente"].FillWeight = 82;
@@ -287,14 +268,12 @@ namespace SistemaAmbientesUAB
             dgvReservas.Columns["Estado"].FillWeight = 90;
         }
 
-        // ── PINTURA ───────────────────────────────────────────
         private void dgvReservas_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0) return;
 
             string col = dgvReservas.Columns[e.ColumnIndex].Name;
             if (col == "Estado") { PintarBadgeEstado(e); return; }
-            if (col == "Editar" || col == "Eliminar") PintarIconoAccion(e, col);
         }
 
         private void PintarBadgeEstado(DataGridViewCellPaintingEventArgs e)
@@ -337,25 +316,6 @@ namespace SistemaAmbientesUAB
                 TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
         }
 
-        private void PintarIconoAccion(DataGridViewCellPaintingEventArgs e, string columnName)
-        {
-            e.Handled = true;
-            PintarFondoCelda(e);
-
-            string estado = Convert.ToString(dgvReservas.Rows[e.RowIndex].Cells["Estado"].Value);
-            bool activa = estado == "activa";
-
-            string icono = columnName == "Editar" ? "✏" : "🗑";
-            Color color = !activa
-                ? Color.FromArgb(205, 212, 226)
-                : (columnName == "Editar" ? TemaManager.Acento : TemaManager.Peligro);
-
-            TextRenderer.DrawText(e.Graphics, icono,
-                new Font("Segoe UI Emoji", 11F),
-                e.CellBounds, color,
-                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
-        }
-
         private void PintarFondoCelda(DataGridViewCellPaintingEventArgs e)
         {
             Color fondo = e.RowIndex % 2 == 0 ? Color.White : Color.FromArgb(247, 249, 252);
@@ -366,12 +326,154 @@ namespace SistemaAmbientesUAB
                                          e.CellBounds.Right, e.CellBounds.Bottom - 1);
         }
 
-        // ── PAGINACIÓN — PINTURA REDONDEADA ───────────────────
+        private void EvaluarEstadoBotonesAccion()
+        {
+            if (dgvReservas.SelectedRows.Count == 0)
+            {
+                btnEditar.Enabled = false;
+                btnCancelarReserva.Enabled = false;
+                btnEliminar.Enabled = false;
+                return;
+            }
+
+            // Validamos el estado ignorando espacios vacíos y asegurando minúsculas
+            string estado = Convert.ToString(dgvReservas.SelectedRows[0].Cells["Estado"].Value).Trim().ToLower();
+
+            // Si el estado es "activa", habilitamos editar y cancelar
+            bool esActiva = (estado == "activa");
+
+            btnEditar.Enabled = esActiva;
+            btnCancelarReserva.Enabled = esActiva;
+            btnEliminar.Enabled = true;
+        }
+
+        private void dgvReservas_SelectionChanged(object sender, EventArgs e)
+        {
+            EvaluarEstadoBotonesAccion();
+        }
+
+        // ── BOTONES DE ACCIONES FÍSICOS (CORREGIDOS CON DETECCIÓN DE ERRORES) ────────────────────────
+        private void btnEditar_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dgvReservas.SelectedRows.Count == 0) return;
+
+                int rowIndex = dgvReservas.SelectedRows[0].Index;
+                int idReserva = Convert.ToInt32(dgvReservas.Rows[rowIndex].Cells["ID"].Value);
+                string estado = Convert.ToString(dgvReservas.Rows[rowIndex].Cells["Estado"].Value).Trim().ToLower();
+
+                if (estado != "activa")
+                {
+                    MessageBox.Show("Solo puedes editar reservas que se encuentren en estado 'activa'.", "Aviso",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                FormDetalleMisReservas frmDetalle = new FormDetalleMisReservas(idReserva, false);
+                if (frmDetalle.ShowDialog() == DialogResult.OK)
+                {
+                    CargarReservas(cmbFiltroEstado.SelectedItem?.ToString() ?? "Todas");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al intentar abrir la ventana de edición:\n" + ex.Message, "Error de Sistema", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnCancelarReserva_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dgvReservas.SelectedRows.Count == 0) return;
+
+                int rowIndex = dgvReservas.SelectedRows[0].Index;
+                int idReserva = Convert.ToInt32(dgvReservas.Rows[rowIndex].Cells["ID"].Value);
+                string estado = Convert.ToString(dgvReservas.Rows[rowIndex].Cells["Estado"].Value).Trim().ToLower();
+
+                if (estado != "activa")
+                {
+                    MessageBox.Show("Esta reserva ya no se encuentra activa para ser cancelada.", "Aviso",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                FormDetalleMisReservas frmCancelar = new FormDetalleMisReservas(idReserva, true);
+                if (frmCancelar.ShowDialog() == DialogResult.OK)
+                {
+                    CargarReservas(cmbFiltroEstado.SelectedItem?.ToString() ?? "Todas");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al intentar abrir la ventana de cancelación:\n" + ex.Message, "Error de Sistema", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnEliminar_Click(object sender, EventArgs e)
+        {
+            if (dgvReservas.SelectedRows.Count == 0) return;
+
+            int rowIndex = dgvReservas.SelectedRows[0].Index;
+            int idReserva = Convert.ToInt32(dgvReservas.Rows[rowIndex].Cells["ID"].Value);
+
+            if (MessageBox.Show("¿Está completamente seguro de ELIMINAR permanentemente esta reserva?\nSi la reserva fue cancelada, se borrará también su historial de cancelación.",
+                    "Confirmar Eliminación", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+                != DialogResult.Yes) return;
+
+            try
+            {
+                using (SqlConnection con = Conexion.ObtenerConexion())
+                {
+                    con.Open();
+                    using (SqlTransaction transaccion = con.BeginTransaction())
+                    {
+                        try
+                        {
+                            // 1. Eliminamos primero de la tabla hija 'Cancelacion' para evitar el error de Foreign Key
+                            string queryHijo = "DELETE FROM Cancelacion WHERE id_reserva = @id";
+                            using (SqlCommand cmdHijo = new SqlCommand(queryHijo, con, transaccion))
+                            {
+                                cmdHijo.Parameters.AddWithValue("@id", idReserva);
+                                cmdHijo.ExecuteNonQuery();
+                            }
+
+                            // 2. Ahora sí, borramos la reserva principal de forma segura
+                            string queryPadre = "DELETE FROM Reserva WHERE id_reserva = @id";
+                            using (SqlCommand cmdPadre = new SqlCommand(queryPadre, con, transaccion))
+                            {
+                                cmdPadre.Parameters.AddWithValue("@id", idReserva);
+                                cmdPadre.ExecuteNonQuery();
+                            }
+
+                            transaccion.Commit();
+                            MessageBox.Show("La reserva y sus registros asociados fueron eliminados con éxito.",
+                                "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        catch (Exception exTrans)
+                        {
+                            transaccion.Rollback();
+                            throw new Exception("No se pudo completar la transacción de borrado: " + exTrans.Message);
+                        }
+                    }
+                }
+                CargarReservas(cmbFiltroEstado.SelectedItem.ToString());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error crítico al eliminar la reserva: " + ex.Message,
+                    "Error de Base de Datos", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+        // ── PINTURA Y RENDERIZADO CUSTOM ──────────────────────
         private void btnPaginacion_Paint(object sender, PaintEventArgs e)
         {
             Button boton = (Button)sender;
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            e.Graphics.Clear(panelAcciones.BackColor == Color.Transparent ? Color.White : panelAcciones.BackColor);
+            e.Graphics.Clear(Color.White);
 
             bool esActual = boton.Tag != null
                 && Convert.ToInt32(boton.Tag) == _paginaActual
@@ -423,127 +525,6 @@ namespace SistemaAmbientesUAB
             return texto == BuscarPlaceholder ? "" : texto;
         }
 
-        // ── CURSOR MANO SOBRE ICONOS ──────────────────────────
-        private void dgvReservas_CellMouseMove(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            if (e.RowIndex < 0) return;
-            string col = dgvReservas.Columns[e.ColumnIndex].Name;
-            dgvReservas.Cursor = (col == "Editar" || col == "Eliminar")
-                ? Cursors.Hand : Cursors.Default;
-        }
-
-        // ── CLIC EN CELDA ─────────────────────────────────────
-        private void dgvReservas_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0) return;
-
-            string col = dgvReservas.Columns[e.ColumnIndex].Name;
-            if (col != "Editar" && col != "Eliminar") return;
-
-            int idReserva = Convert.ToInt32(dgvReservas.Rows[e.RowIndex].Cells["ID"].Value);
-            string estado = Convert.ToString(dgvReservas.Rows[e.RowIndex].Cells["Estado"].Value);
-
-            if (col == "Editar")
-                EditarReserva(idReserva, estado, e.RowIndex);
-            else
-                EliminarReserva(idReserva, estado);
-        }
-
-        private void EditarReserva(int idReserva, string estado, int rowIndex)
-        {
-            if (estado != "activa")
-            {
-                MessageBox.Show("Solo puedes editar reservas activas.", "Aviso",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            string motivoActual = Convert.ToString(dgvReservas.Rows[rowIndex].Cells["Motivo"].Value);
-            string asistentesActual = Convert.ToString(dgvReservas.Rows[rowIndex].Cells["Asistentes"].Value);
-
-            string motivo = Microsoft.VisualBasic.Interaction.InputBox(
-                "Nuevo motivo:", "Editar reserva", motivoActual);
-            if (string.IsNullOrWhiteSpace(motivo)) return;
-
-            string asistentesTexto = Microsoft.VisualBasic.Interaction.InputBox(
-                "Cantidad de asistentes:", "Editar reserva", asistentesActual);
-            if (!int.TryParse(asistentesTexto, out int asistentes) || asistentes < 1)
-            {
-                MessageBox.Show("Ingresa una cantidad válida de asistentes.", "Aviso",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            try
-            {
-                using (SqlConnection con = Conexion.ObtenerConexion())
-                {
-                    con.Open();
-
-                    // Admin puede editar cualquier reserva; usuario normal solo la suya
-                    string whereUsuario = _esAdmin ? "" : "AND id_usuario = @idUsuario";
-
-                    SqlCommand cmd = new SqlCommand(
-                        $@"UPDATE Reserva
-                           SET motivo = @motivo, cantidad_asistentes = @asistentes
-                           WHERE id_reserva = @id AND estado = 'activa' {whereUsuario}", con);
-
-                    cmd.Parameters.AddWithValue("@motivo", motivo.Trim());
-                    cmd.Parameters.AddWithValue("@asistentes", asistentes);
-                    cmd.Parameters.AddWithValue("@id", idReserva);
-                    if (!_esAdmin)
-                        cmd.Parameters.AddWithValue("@idUsuario", _idUsuario);
-
-                    cmd.ExecuteNonQuery();
-                }
-
-                CargarReservas(cmbFiltroEstado.SelectedItem.ToString());
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al editar: " + ex.Message);
-            }
-        }
-
-        private void EliminarReserva(int idReserva, string estado)
-        {
-            if (estado != "activa")
-            {
-                MessageBox.Show("Solo puedes cancelar reservas activas.", "Aviso",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (MessageBox.Show("La reserva activa se marcará como cancelada. ¿Deseas continuar?",
-                    "Cancelar reserva", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-                != DialogResult.Yes) return;
-
-            string motivo = Microsoft.VisualBasic.Interaction.InputBox(
-                "Motivo de cancelación:", "Cancelar reserva", "");
-            if (string.IsNullOrWhiteSpace(motivo)) return;
-
-            try
-            {
-                using (SqlConnection con = Conexion.ObtenerConexion())
-                {
-                    con.Open();
-                    SqlCommand cmd = new SqlCommand("sp_CancelarReserva", con);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@id_reserva", idReserva);
-                    cmd.Parameters.AddWithValue("@id_usuario_cancela", _idUsuario);   // quien cancela = admin logueado
-                    cmd.Parameters.AddWithValue("@motivo", motivo);
-                    cmd.ExecuteNonQuery();
-                }
-
-                CargarReservas(cmbFiltroEstado.SelectedItem.ToString());
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al cancelar: " + ex.Message);
-            }
-        }
-
-        // ── EVENTOS DE CONTROLES ──────────────────────────────
         private void btnActualizar_Click(object sender, EventArgs e) =>
             CargarReservas(cmbFiltroEstado.SelectedItem.ToString());
 

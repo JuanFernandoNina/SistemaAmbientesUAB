@@ -1,4 +1,4 @@
-namespace SistemaAmbientesUAB
+﻿namespace SistemaAmbientesUAB
 {
     partial class FormMisReservas
     {
@@ -30,6 +30,9 @@ namespace SistemaAmbientesUAB
             this.btnPagina2 = new System.Windows.Forms.Button();
             this.btnPagina3 = new System.Windows.Forms.Button();
             this.btnSiguiente = new System.Windows.Forms.Button();
+            this.btnEditar = new System.Windows.Forms.Button();
+            this.btnCancelarReserva = new System.Windows.Forms.Button();
+            this.btnEliminar = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReservas)).BeginInit();
             this.panelBuscar.SuspendLayout();
             this.panelTabla.SuspendLayout();
@@ -38,8 +41,8 @@ namespace SistemaAmbientesUAB
 
             // FORM
             this.Text = "Mis Reservas";
-            this.Size = new System.Drawing.Size(900, 560);
-            this.MinimumSize = new System.Drawing.Size(720, 460);
+            this.Size = new System.Drawing.Size(960, 580);
+            this.MinimumSize = new System.Drawing.Size(800, 480);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.BackColor = System.Drawing.Color.White;
             this.Load += new System.EventHandler(this.FormMisReservas_Load);
@@ -57,23 +60,23 @@ namespace SistemaAmbientesUAB
             this.lblLinea.BackColor = System.Drawing.Color.FromArgb(231, 236, 243);
             this.lblLinea.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lblLinea.Location = new System.Drawing.Point(0, 50);
-            this.lblLinea.Size = new System.Drawing.Size(884, 1);
+            this.lblLinea.Size = new System.Drawing.Size(944, 1);
 
-            // BUSCADOR (panel con icono + textbox, bordeado y redondeado)
+            // BUSCADOR (panel con icono + textbox)
             this.panelBuscar.Location = new System.Drawing.Point(13, 68);
-            this.panelBuscar.Size = new System.Drawing.Size(260, 32);
+            this.panelBuscar.Size = new System.Drawing.Size(220, 32);
             this.panelBuscar.BackColor = System.Drawing.Color.White;
 
-            this.lblIconoBuscar.Text = "??";
-            this.lblIconoBuscar.Location = new System.Drawing.Point(10, 5);
+            this.lblIconoBuscar.Text = "🔍";
+            this.lblIconoBuscar.Location = new System.Drawing.Point(8, 5);
             this.lblIconoBuscar.Size = new System.Drawing.Size(20, 22);
             this.lblIconoBuscar.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.lblIconoBuscar.ForeColor = System.Drawing.Color.FromArgb(165, 176, 196);
             this.lblIconoBuscar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
-            this.txtBuscar.Location = new System.Drawing.Point(34, 5);
+            this.txtBuscar.Location = new System.Drawing.Point(32, 6);
             this.txtBuscar.Name = "txtBuscar";
-            this.txtBuscar.Size = new System.Drawing.Size(216, 22);
+            this.txtBuscar.Size = new System.Drawing.Size(180, 22);
             this.txtBuscar.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.txtBuscar.ForeColor = System.Drawing.Color.FromArgb(150, 161, 184);
             this.txtBuscar.Text = "Buscar reserva...";
@@ -86,10 +89,34 @@ namespace SistemaAmbientesUAB
             this.panelBuscar.Controls.Add(this.txtBuscar);
             this.panelBuscar.Paint += new System.Windows.Forms.PaintEventHandler(this.panelBuscar_Paint);
 
+            // BOTÓN FÍSICO: EDITAR RESERVA
+            this.btnEditar.Location = new System.Drawing.Point(245, 68);
+            this.btnEditar.Name = "btnEditar";
+            this.btnEditar.Size = new System.Drawing.Size(85, 32);
+            this.btnEditar.Text = "✏ Editar";
+            this.btnEditar.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            this.btnEditar.Click += new System.EventHandler(this.btnEditar_Click);
+
+            // BOTÓN FÍSICO: CANCELAR RESERVA
+            this.btnCancelarReserva.Location = new System.Drawing.Point(336, 68);
+            this.btnCancelarReserva.Name = "btnCancelarReserva";
+            this.btnCancelarReserva.Size = new System.Drawing.Size(100, 32);
+            this.btnCancelarReserva.Text = "🚫 Cancelar";
+            this.btnCancelarReserva.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            this.btnCancelarReserva.Click += new System.EventHandler(this.btnCancelarReserva_Click);
+
+            // BOTÓN FÍSICO: ELIMINAR RESERVA
+            this.btnEliminar.Location = new System.Drawing.Point(442, 68);
+            this.btnEliminar.Name = "btnEliminar";
+            this.btnEliminar.Size = new System.Drawing.Size(95, 32);
+            this.btnEliminar.Text = "🗑 Eliminar";
+            this.btnEliminar.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            this.btnEliminar.Click += new System.EventHandler(this.btnEliminar_Click);
+
             // FILTRO ESTADO
             this.lblFiltro.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblFiltro.Text = "Estado";
-            this.lblFiltro.Location = new System.Drawing.Point(574, 76);
+            this.lblFiltro.Location = new System.Drawing.Point(620, 74);
             this.lblFiltro.Size = new System.Drawing.Size(52, 21);
             this.lblFiltro.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblFiltro.ForeColor = System.Drawing.Color.FromArgb(87, 101, 126);
@@ -97,25 +124,19 @@ namespace SistemaAmbientesUAB
             this.cmbFiltroEstado.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbFiltroEstado.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbFiltroEstado.Items.AddRange(new object[] { "Todas", "activa", "cancelada", "finalizada" });
-            this.cmbFiltroEstado.Location = new System.Drawing.Point(632, 73);
+            this.cmbFiltroEstado.Location = new System.Drawing.Point(678, 71);
             this.cmbFiltroEstado.Name = "cmbFiltroEstado";
-            this.cmbFiltroEstado.Size = new System.Drawing.Size(140, 24);
+            this.cmbFiltroEstado.Size = new System.Drawing.Size(130, 24);
             this.cmbFiltroEstado.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.cmbFiltroEstado.SelectedIndex = 0;
             this.cmbFiltroEstado.SelectedIndexChanged += new System.EventHandler(this.cmbFiltroEstado_SelectedIndexChanged);
 
             this.btnActualizar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnActualizar.Text = "Actualizar";
-            this.btnActualizar.Location = new System.Drawing.Point(782, 71);
+            this.btnActualizar.Location = new System.Drawing.Point(818, 69);
             this.btnActualizar.Name = "btnActualizar";
-            this.btnActualizar.Size = new System.Drawing.Size(90, 28);
+            this.btnActualizar.Size = new System.Drawing.Size(95, 28);
             this.btnActualizar.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnActualizar.BackColor = System.Drawing.Color.White;
-            this.btnActualizar.ForeColor = System.Drawing.Color.FromArgb(37, 99, 235);
-            this.btnActualizar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnActualizar.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(221, 228, 238);
-            this.btnActualizar.FlatAppearance.BorderSize = 1;
-            this.btnActualizar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnActualizar.Click += new System.EventHandler(this.btnActualizar_Click);
 
             // TABLA
@@ -125,7 +146,7 @@ namespace SistemaAmbientesUAB
             this.panelTabla.BackColor = System.Drawing.Color.White;
             this.panelTabla.Location = new System.Drawing.Point(13, 114);
             this.panelTabla.Name = "panelTabla";
-            this.panelTabla.Size = new System.Drawing.Size(859, 314);
+            this.panelTabla.Size = new System.Drawing.Size(918, 314);
 
             this.dgvReservas.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvReservas.BackgroundColor = System.Drawing.Color.White;
@@ -139,17 +160,12 @@ namespace SistemaAmbientesUAB
             this.dgvReservas.MultiSelect = false;
             this.dgvReservas.TabStop = false;
             this.dgvReservas.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dgvReservas.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.None;
             this.dgvReservas.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
             this.dgvReservas.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.dgvReservas.ColumnHeadersHeight = 46;
             this.dgvReservas.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            this.dgvReservas.EnableHeadersVisualStyles = false;
-            this.dgvReservas.GridColor = System.Drawing.Color.FromArgb(230, 235, 243);
-            this.dgvReservas.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.dgvReservas.RowTemplate.Height = 44;
-            this.dgvReservas.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvReservas_CellClick);
-            this.dgvReservas.CellMouseMove += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvReservas_CellMouseMove);
+            this.dgvReservas.SelectionChanged += new System.EventHandler(this.dgvReservas_SelectionChanged);
             this.dgvReservas.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvReservas_CellPainting);
 
             this.panelTabla.Controls.Add(this.dgvReservas);
@@ -160,7 +176,7 @@ namespace SistemaAmbientesUAB
             this.panelAcciones.BackColor = System.Drawing.Color.Transparent;
             this.panelAcciones.Location = new System.Drawing.Point(13, 446);
             this.panelAcciones.Name = "panelAcciones";
-            this.panelAcciones.Size = new System.Drawing.Size(859, 48);
+            this.panelAcciones.Size = new System.Drawing.Size(918, 48);
 
             this.lblEstado.Text = "Showing 0 reservas";
             this.lblEstado.Location = new System.Drawing.Point(0, 12);
@@ -168,64 +184,49 @@ namespace SistemaAmbientesUAB
             this.lblEstado.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.lblEstado.ForeColor = System.Drawing.Color.FromArgb(139, 152, 176);
 
-            // Botones de paginaci�n redondeados (pintura custom v�a Paint)
+            // BOTONES DE PAGINACIÓN REDONDEADOS
             this.btnAnterior.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAnterior.Text = "�";
-            this.btnAnterior.Location = new System.Drawing.Point(665, 4);
-            this.btnAnterior.Name = "btnAnterior";
+            this.btnAnterior.Text = "‹";
             this.btnAnterior.Size = new System.Drawing.Size(34, 32);
             this.btnAnterior.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAnterior.FlatAppearance.BorderSize = 0;
             this.btnAnterior.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.btnAnterior.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnAnterior.Click += new System.EventHandler(this.btnAnterior_Click);
             this.btnAnterior.Paint += new System.Windows.Forms.PaintEventHandler(this.btnPaginacion_Paint);
 
             this.btnPagina1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPagina1.Text = "1";
-            this.btnPagina1.Location = new System.Drawing.Point(705, 4);
-            this.btnPagina1.Name = "btnPagina1";
             this.btnPagina1.Size = new System.Drawing.Size(34, 32);
             this.btnPagina1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPagina1.FlatAppearance.BorderSize = 0;
             this.btnPagina1.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnPagina1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnPagina1.Click += new System.EventHandler(this.btnPagina_Click);
             this.btnPagina1.Paint += new System.Windows.Forms.PaintEventHandler(this.btnPaginacion_Paint);
 
             this.btnPagina2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPagina2.Text = "2";
-            this.btnPagina2.Location = new System.Drawing.Point(745, 4);
-            this.btnPagina2.Name = "btnPagina2";
             this.btnPagina2.Size = new System.Drawing.Size(34, 32);
             this.btnPagina2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPagina2.FlatAppearance.BorderSize = 0;
             this.btnPagina2.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnPagina2.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnPagina2.Click += new System.EventHandler(this.btnPagina_Click);
             this.btnPagina2.Paint += new System.Windows.Forms.PaintEventHandler(this.btnPaginacion_Paint);
 
             this.btnPagina3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPagina3.Text = "3";
-            this.btnPagina3.Location = new System.Drawing.Point(785, 4);
-            this.btnPagina3.Name = "btnPagina3";
             this.btnPagina3.Size = new System.Drawing.Size(34, 32);
             this.btnPagina3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPagina3.FlatAppearance.BorderSize = 0;
             this.btnPagina3.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnPagina3.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnPagina3.Click += new System.EventHandler(this.btnPagina_Click);
             this.btnPagina3.Paint += new System.Windows.Forms.PaintEventHandler(this.btnPaginacion_Paint);
 
             this.btnSiguiente.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSiguiente.Text = "�";
-            this.btnSiguiente.Location = new System.Drawing.Point(825, 4);
-            this.btnSiguiente.Name = "btnSiguiente";
+            this.btnSiguiente.Text = "›";
             this.btnSiguiente.Size = new System.Drawing.Size(34, 32);
             this.btnSiguiente.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSiguiente.FlatAppearance.BorderSize = 0;
             this.btnSiguiente.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.btnSiguiente.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSiguiente.Click += new System.EventHandler(this.btnSiguiente_Click);
             this.btnSiguiente.Paint += new System.Windows.Forms.PaintEventHandler(this.btnPaginacion_Paint);
 
@@ -236,10 +237,13 @@ namespace SistemaAmbientesUAB
             this.panelAcciones.Controls.Add(this.btnPagina3);
             this.panelAcciones.Controls.Add(this.btnSiguiente);
 
-            // CONTROLES
+            // CONTROLES AL FORM
             this.Controls.Add(this.lblTitulo);
             this.Controls.Add(this.lblLinea);
             this.Controls.Add(this.panelBuscar);
+            this.Controls.Add(this.btnEditar);
+            this.Controls.Add(this.btnCancelarReserva);
+            this.Controls.Add(this.btnEliminar);
             this.Controls.Add(this.lblFiltro);
             this.Controls.Add(this.cmbFiltroEstado);
             this.Controls.Add(this.btnActualizar);
@@ -272,5 +276,10 @@ namespace SistemaAmbientesUAB
         private System.Windows.Forms.Button btnPagina2;
         private System.Windows.Forms.Button btnPagina3;
         private System.Windows.Forms.Button btnSiguiente;
+
+        // Nuevos componentes físicos agregados
+        private System.Windows.Forms.Button btnEditar;
+        private System.Windows.Forms.Button btnCancelarReserva;
+        private System.Windows.Forms.Button btnEliminar;
     }
 }
