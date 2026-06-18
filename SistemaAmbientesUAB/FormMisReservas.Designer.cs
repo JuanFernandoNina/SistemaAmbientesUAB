@@ -39,10 +39,10 @@
             this.panelAcciones.SuspendLayout();
             this.SuspendLayout();
 
-            // FORM
+            // FORM BASE
             this.Text = "Mis Reservas";
-            this.Size = new System.Drawing.Size(960, 580);
-            this.MinimumSize = new System.Drawing.Size(800, 480);
+            this.Size = new System.Drawing.Size(1120, 650);
+            this.MinimumSize = new System.Drawing.Size(1040, 540);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.BackColor = System.Drawing.Color.White;
             this.Load += new System.EventHandler(this.FormMisReservas_Load);
@@ -51,32 +51,36 @@
             // TITULO
             this.lblTitulo.AutoSize = true;
             this.lblTitulo.Text = "Mis reservas";
-            this.lblTitulo.Location = new System.Drawing.Point(13, 14);
-            this.lblTitulo.Font = new System.Drawing.Font("Segoe UI Semibold", 14F, System.Drawing.FontStyle.Bold);
+            this.lblTitulo.Location = new System.Drawing.Point(20, 16);
+            this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
             this.lblTitulo.ForeColor = System.Drawing.Color.FromArgb(28, 37, 58);
 
+            // LÍNEA DIVISORIA INSTITUCIONAL
             this.lblLinea.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblLinea.BackColor = System.Drawing.Color.FromArgb(231, 236, 243);
             this.lblLinea.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.lblLinea.Location = new System.Drawing.Point(0, 50);
-            this.lblLinea.Size = new System.Drawing.Size(944, 1);
+            this.lblLinea.Location = new System.Drawing.Point(0, 58);
+            this.lblLinea.Size = new System.Drawing.Size(1124, 1);
 
-            // BUSCADOR (panel con icono + textbox)
-            this.panelBuscar.Location = new System.Drawing.Point(13, 68);
-            this.panelBuscar.Size = new System.Drawing.Size(220, 32);
+            int yBarra = 78;
+            int hBarra = 32;
+
+            // PANEL BUSCADOR
+            this.panelBuscar.Location = new System.Drawing.Point(20, yBarra);
+            this.panelBuscar.Size = new System.Drawing.Size(200, hBarra);
             this.panelBuscar.BackColor = System.Drawing.Color.White;
 
             this.lblIconoBuscar.Text = "🔍";
-            this.lblIconoBuscar.Location = new System.Drawing.Point(8, 5);
+            this.lblIconoBuscar.Location = new System.Drawing.Point(6, 4);
             this.lblIconoBuscar.Size = new System.Drawing.Size(20, 22);
             this.lblIconoBuscar.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.lblIconoBuscar.ForeColor = System.Drawing.Color.FromArgb(165, 176, 196);
             this.lblIconoBuscar.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
-            this.txtBuscar.Location = new System.Drawing.Point(32, 6);
+            this.txtBuscar.Location = new System.Drawing.Point(28, 6);
             this.txtBuscar.Name = "txtBuscar";
-            this.txtBuscar.Size = new System.Drawing.Size(180, 22);
+            this.txtBuscar.Size = new System.Drawing.Size(164, 22);
             this.txtBuscar.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.txtBuscar.ForeColor = System.Drawing.Color.FromArgb(150, 161, 184);
             this.txtBuscar.Text = "Buscar reserva...";
@@ -89,65 +93,89 @@
             this.panelBuscar.Controls.Add(this.txtBuscar);
             this.panelBuscar.Paint += new System.Windows.Forms.PaintEventHandler(this.panelBuscar_Paint);
 
-            // BOTÓN FÍSICO: EDITAR RESERVA
-            this.btnEditar.Location = new System.Drawing.Point(245, 68);
+            // BOTÓN: EDITAR (Azul Sólido)
+            this.btnEditar.Location = new System.Drawing.Point(232, yBarra);
             this.btnEditar.Name = "btnEditar";
-            this.btnEditar.Size = new System.Drawing.Size(85, 32);
-            this.btnEditar.Text = "✏ Editar";
-            this.btnEditar.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            this.btnEditar.Size = new System.Drawing.Size(100, hBarra);
+            this.btnEditar.Text = "Editar";
+            this.btnEditar.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular);
+            this.btnEditar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnEditar.FlatAppearance.BorderSize = 0;
+            this.btnEditar.BackColor = System.Drawing.Color.FromArgb(39, 85, 166); // Azul institucional
+            this.btnEditar.ForeColor = System.Drawing.Color.White;
+            this.btnEditar.UseVisualStyleBackColor = false;
             this.btnEditar.Click += new System.EventHandler(this.btnEditar_Click);
 
-            // BOTÓN FÍSICO: CANCELAR RESERVA
-            this.btnCancelarReserva.Location = new System.Drawing.Point(336, 68);
+            // BOTÓN: CANCELAR RESERVA (Ocre)
+            this.btnCancelarReserva.Location = new System.Drawing.Point(342, yBarra);
             this.btnCancelarReserva.Name = "btnCancelarReserva";
-            this.btnCancelarReserva.Size = new System.Drawing.Size(100, 32);
-            this.btnCancelarReserva.Text = "🚫 Cancelar";
-            this.btnCancelarReserva.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            this.btnCancelarReserva.Size = new System.Drawing.Size(110, hBarra);
+            this.btnCancelarReserva.Text = "Cancelar";
+            this.btnCancelarReserva.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular);
+            this.btnCancelarReserva.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCancelarReserva.FlatAppearance.BorderSize = 0;
+            this.btnCancelarReserva.BackColor = System.Drawing.Color.FromArgb(161, 110, 13); // Tono ocre
+            this.btnCancelarReserva.ForeColor = System.Drawing.Color.White;
+            this.btnCancelarReserva.UseVisualStyleBackColor = false;
             this.btnCancelarReserva.Click += new System.EventHandler(this.btnCancelarReserva_Click);
 
-            // BOTÓN FÍSICO: ELIMINAR RESERVA
-            this.btnEliminar.Location = new System.Drawing.Point(442, 68);
+            // BOTÓN: ELIMINAR (Rojo Sólido)
+            this.btnEliminar.Location = new System.Drawing.Point(462, yBarra);
             this.btnEliminar.Name = "btnEliminar";
-            this.btnEliminar.Size = new System.Drawing.Size(95, 32);
-            this.btnEliminar.Text = "🗑 Eliminar";
-            this.btnEliminar.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            this.btnEliminar.Size = new System.Drawing.Size(100, hBarra);
+            this.btnEliminar.Text = "Eliminar";
+            this.btnEliminar.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular);
+            this.btnEliminar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnEliminar.FlatAppearance.BorderSize = 0;
+            this.btnEliminar.BackColor = System.Drawing.Color.FromArgb(186, 31, 37); // Rojo sólido
+            this.btnEliminar.ForeColor = System.Drawing.Color.White;
+            this.btnEliminar.UseVisualStyleBackColor = false;
             this.btnEliminar.Click += new System.EventHandler(this.btnEliminar_Click);
 
-            // FILTRO ESTADO
+            // ETIQUETA ESTADO FILTRO
             this.lblFiltro.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblFiltro.Text = "Estado";
-            this.lblFiltro.Location = new System.Drawing.Point(620, 74);
-            this.lblFiltro.Size = new System.Drawing.Size(52, 21);
-            this.lblFiltro.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            this.lblFiltro.Location = new System.Drawing.Point(745, yBarra + 6);
+            this.lblFiltro.Size = new System.Drawing.Size(50, 20);
+            this.lblFiltro.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold);
             this.lblFiltro.ForeColor = System.Drawing.Color.FromArgb(87, 101, 126);
 
+            // COMBOBOX FILTRO ESTADO
             this.cmbFiltroEstado.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbFiltroEstado.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbFiltroEstado.Items.AddRange(new object[] { "Todas", "activa", "cancelada", "finalizada" });
-            this.cmbFiltroEstado.Location = new System.Drawing.Point(678, 71);
+            this.cmbFiltroEstado.Location = new System.Drawing.Point(800, yBarra);
             this.cmbFiltroEstado.Name = "cmbFiltroEstado";
-            this.cmbFiltroEstado.Size = new System.Drawing.Size(130, 24);
-            this.cmbFiltroEstado.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.cmbFiltroEstado.Size = new System.Drawing.Size(130, 25);
+            this.cmbFiltroEstado.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.cmbFiltroEstado.SelectedIndex = 0;
             this.cmbFiltroEstado.SelectedIndexChanged += new System.EventHandler(this.cmbFiltroEstado_SelectedIndexChanged);
 
+            // BOTÓN: ACTUALIZAR
             this.btnActualizar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnActualizar.Text = "Actualizar";
-            this.btnActualizar.Location = new System.Drawing.Point(818, 69);
+            this.btnActualizar.Location = new System.Drawing.Point(942, yBarra);
             this.btnActualizar.Name = "btnActualizar";
-            this.btnActualizar.Size = new System.Drawing.Size(95, 28);
-            this.btnActualizar.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnActualizar.Size = new System.Drawing.Size(140, hBarra);
+            this.btnActualizar.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F);
+            this.btnActualizar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnActualizar.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(39, 85, 166);
+            this.btnActualizar.FlatAppearance.BorderSize = 1;
+            this.btnActualizar.BackColor = System.Drawing.Color.White;
+            this.btnActualizar.ForeColor = System.Drawing.Color.FromArgb(39, 85, 166);
+            this.btnActualizar.UseVisualStyleBackColor = false;
             this.btnActualizar.Click += new System.EventHandler(this.btnActualizar_Click);
 
-            // TABLA
+            // ── PANEL CONTENEDOR DE LA TABLA (CRÍTICO FIX) ──────────────────────────
             this.panelTabla.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelTabla.BackColor = System.Drawing.Color.White;
-            this.panelTabla.Location = new System.Drawing.Point(13, 114);
+            this.panelTabla.Location = new System.Drawing.Point(20, 130);
             this.panelTabla.Name = "panelTabla";
-            this.panelTabla.Size = new System.Drawing.Size(918, 314);
+            this.panelTabla.Size = new System.Drawing.Size(1062, 400);
 
+            // CONFIGURACIÓN INTERNA DE DATA GRID VIEW
             this.dgvReservas.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvReservas.BackgroundColor = System.Drawing.Color.White;
             this.dgvReservas.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -162,73 +190,89 @@
             this.dgvReservas.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvReservas.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
             this.dgvReservas.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            this.dgvReservas.ColumnHeadersHeight = 46;
+            this.dgvReservas.ColumnHeadersHeight = 40;
             this.dgvReservas.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            this.dgvReservas.RowTemplate.Height = 44;
+            this.dgvReservas.RowTemplate.Height = 38;
+
+            // Colores por defecto de selección celeste
+            this.dgvReservas.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(226, 236, 247); // Celeste claro
+            this.dgvReservas.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(28, 37, 58);
+
             this.dgvReservas.SelectionChanged += new System.EventHandler(this.dgvReservas_SelectionChanged);
             this.dgvReservas.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvReservas_CellPainting);
 
+            // AGREGAR LA TABLA AL PANEL CONTENEDOR (Esto soluciona que no se viera)
             this.panelTabla.Controls.Add(this.dgvReservas);
 
-            // ACCIONES / PAGINACION
+            // PANEL ACCIONES INFERIORES / PAGINACIÓN
             this.panelAcciones.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelAcciones.BackColor = System.Drawing.Color.Transparent;
-            this.panelAcciones.Location = new System.Drawing.Point(13, 446);
+            this.panelAcciones.Location = new System.Drawing.Point(20, 545);
             this.panelAcciones.Name = "panelAcciones";
-            this.panelAcciones.Size = new System.Drawing.Size(918, 48);
+            this.panelAcciones.Size = new System.Drawing.Size(1062, 45);
 
             this.lblEstado.Text = "Showing 0 reservas";
-            this.lblEstado.Location = new System.Drawing.Point(0, 12);
-            this.lblEstado.Size = new System.Drawing.Size(330, 24);
+            this.lblEstado.Location = new System.Drawing.Point(0, 10);
+            this.lblEstado.Size = new System.Drawing.Size(350, 24);
             this.lblEstado.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.lblEstado.ForeColor = System.Drawing.Color.FromArgb(139, 152, 176);
 
-            // BOTONES DE PAGINACIÓN REDONDEADOS
+            // BOTONES PAGINACIÓN
             this.btnAnterior.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAnterior.Text = "‹";
             this.btnAnterior.Size = new System.Drawing.Size(34, 32);
             this.btnAnterior.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAnterior.FlatAppearance.BorderSize = 0;
+            this.btnAnterior.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(218, 224, 233);
+            this.btnAnterior.BackColor = System.Drawing.Color.White;
+            this.btnAnterior.ForeColor = System.Drawing.Color.FromArgb(28, 37, 58);
             this.btnAnterior.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.btnAnterior.UseVisualStyleBackColor = false;
             this.btnAnterior.Click += new System.EventHandler(this.btnAnterior_Click);
-            this.btnAnterior.Paint += new System.Windows.Forms.PaintEventHandler(this.btnPaginacion_Paint);
 
             this.btnPagina1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPagina1.Text = "1";
             this.btnPagina1.Size = new System.Drawing.Size(34, 32);
             this.btnPagina1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnPagina1.FlatAppearance.BorderSize = 0;
+            this.btnPagina1.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(218, 224, 233);
+            this.btnPagina1.BackColor = System.Drawing.Color.White;
+            this.btnPagina1.ForeColor = System.Drawing.Color.FromArgb(28, 37, 58);
             this.btnPagina1.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnPagina1.UseVisualStyleBackColor = false;
             this.btnPagina1.Click += new System.EventHandler(this.btnPagina_Click);
-            this.btnPagina1.Paint += new System.Windows.Forms.PaintEventHandler(this.btnPaginacion_Paint);
 
             this.btnPagina2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPagina2.Text = "2";
             this.btnPagina2.Size = new System.Drawing.Size(34, 32);
             this.btnPagina2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnPagina2.FlatAppearance.BorderSize = 0;
+            this.btnPagina2.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(218, 224, 233);
+            this.btnPagina2.BackColor = System.Drawing.Color.White;
+            this.btnPagina2.ForeColor = System.Drawing.Color.FromArgb(28, 37, 58);
             this.btnPagina2.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnPagina2.UseVisualStyleBackColor = false;
             this.btnPagina2.Click += new System.EventHandler(this.btnPagina_Click);
-            this.btnPagina2.Paint += new System.Windows.Forms.PaintEventHandler(this.btnPaginacion_Paint);
 
             this.btnPagina3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPagina3.Text = "3";
             this.btnPagina3.Size = new System.Drawing.Size(34, 32);
             this.btnPagina3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnPagina3.FlatAppearance.BorderSize = 0;
+            this.btnPagina3.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(218, 224, 233);
+            this.btnPagina3.BackColor = System.Drawing.Color.White;
+            this.btnPagina3.ForeColor = System.Drawing.Color.FromArgb(28, 37, 58);
             this.btnPagina3.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnPagina3.UseVisualStyleBackColor = false;
             this.btnPagina3.Click += new System.EventHandler(this.btnPagina_Click);
-            this.btnPagina3.Paint += new System.Windows.Forms.PaintEventHandler(this.btnPaginacion_Paint);
 
             this.btnSiguiente.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSiguiente.Text = "›";
             this.btnSiguiente.Size = new System.Drawing.Size(34, 32);
             this.btnSiguiente.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSiguiente.FlatAppearance.BorderSize = 0;
+            this.btnSiguiente.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(218, 224, 233);
+            this.btnSiguiente.BackColor = System.Drawing.Color.White;
+            this.btnSiguiente.ForeColor = System.Drawing.Color.FromArgb(28, 37, 58);
             this.btnSiguiente.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.btnSiguiente.UseVisualStyleBackColor = false;
             this.btnSiguiente.Click += new System.EventHandler(this.btnSiguiente_Click);
-            this.btnSiguiente.Paint += new System.Windows.Forms.PaintEventHandler(this.btnPaginacion_Paint);
 
             this.panelAcciones.Controls.Add(this.lblEstado);
             this.panelAcciones.Controls.Add(this.btnAnterior);
@@ -237,7 +281,7 @@
             this.panelAcciones.Controls.Add(this.btnPagina3);
             this.panelAcciones.Controls.Add(this.btnSiguiente);
 
-            // CONTROLES AL FORM
+            // AGREGAR TODO AL FORMULARIO BASE
             this.Controls.Add(this.lblTitulo);
             this.Controls.Add(this.lblLinea);
             this.Controls.Add(this.panelBuscar);
@@ -276,8 +320,6 @@
         private System.Windows.Forms.Button btnPagina2;
         private System.Windows.Forms.Button btnPagina3;
         private System.Windows.Forms.Button btnSiguiente;
-
-        // Nuevos componentes físicos agregados
         private System.Windows.Forms.Button btnEditar;
         private System.Windows.Forms.Button btnCancelarReserva;
         private System.Windows.Forms.Button btnEliminar;
