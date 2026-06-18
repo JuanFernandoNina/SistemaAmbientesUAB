@@ -22,14 +22,12 @@ namespace SistemaAmbientesUAB
             CargarBloques();
             CargarAmbientes();
 
-            // Aplicar bordes redondeados modernos a los botones inferiores
-            RedondearBoton(btnNuevo, 6);
-            RedondearBoton(btnEditar, 6);
-            RedondearBoton(btnCambiarEstado, 6);
-            RedondearBoton(btnEliminar, 6);
+            // RedondearBoton(btnNuevo, 6);
+            // RedondearBoton(btnEditar, 6);
+            // RedondearBoton(btnCambiarEstado, 6);
+            // RedondearBoton(btnEliminar, 6);
         }
 
-        // ── TEMA MINIMALISTA ───
         private void AplicarTema()
         {
             this.BackColor = Color.White;

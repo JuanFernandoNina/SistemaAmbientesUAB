@@ -1,3 +1,5 @@
+using System;
+
 namespace SistemaAmbientesUAB
 {
     partial class FormAmbientes
@@ -32,8 +34,8 @@ namespace SistemaAmbientesUAB
 
             // FORM
             this.Text = "Gestión de Ambientes";
-            this.Size = new System.Drawing.Size(940, 600);
-            this.MinimumSize = new System.Drawing.Size(860, 540);
+            this.Size = new System.Drawing.Size(1120, 650); // Se amplía el ancho inicial para acomodar la barra superior completa
+            this.MinimumSize = new System.Drawing.Size(1040, 540);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.BackColor = System.Drawing.Color.White;
             this.Font = new System.Drawing.Font("Segoe UI", 9.5F);
@@ -44,9 +46,8 @@ namespace SistemaAmbientesUAB
             this.lblTitulo.Location = new System.Drawing.Point(20, 18);
             this.lblTitulo.Size = new System.Drawing.Size(380, 36);
             this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
-            this.lblTitulo.ForeColor = TemaManager.TextoPrincipal;
 
-            // BARRA DE FILTROS (yF movido a 78 para solucionar definitivamente los textos cortados)
+            // BARRA DE FILTROS Y BUSCADOR (Alineación Y = 78)
             int yF = 78; int h = 30;
 
             this.lblBloque.Text = "Bloque";
@@ -55,94 +56,76 @@ namespace SistemaAmbientesUAB
             this.lblBloque.Font = new System.Drawing.Font("Segoe UI", 8F);
 
             this.cmbBloque.Location = new System.Drawing.Point(20, yF);
-            this.cmbBloque.Size = new System.Drawing.Size(140, h);
+            this.cmbBloque.Size = new System.Drawing.Size(130, h);
             this.cmbBloque.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbBloque.Font = new System.Drawing.Font("Segoe UI", 9.5F);
 
             this.lblTipo.Text = "Tipo";
-            this.lblTipo.Location = new System.Drawing.Point(172, yF - 18);
+            this.lblTipo.Location = new System.Drawing.Point(162, yF - 18);
             this.lblTipo.Size = new System.Drawing.Size(60, 16);
             this.lblTipo.Font = new System.Drawing.Font("Segoe UI", 8F);
 
-            this.cmbTipo.Location = new System.Drawing.Point(172, yF);
-            this.cmbTipo.Size = new System.Drawing.Size(150, h);
+            this.cmbTipo.Location = new System.Drawing.Point(162, yF);
+            this.cmbTipo.Size = new System.Drawing.Size(130, h);
             this.cmbTipo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbTipo.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.cmbTipo.Items.AddRange(new object[] { "Todos", "aula", "laboratorio", "auditorio", "coliseo" });
             this.cmbTipo.SelectedIndex = 0;
 
-            // BUSCADOR INTEGRADO
-            this.txtBuscar.Location = new System.Drawing.Point(336, yF);
-            this.txtBuscar.Size = new System.Drawing.Size(220, h);
+            this.txtBuscar.Location = new System.Drawing.Point(304, yF);
+            this.txtBuscar.Size = new System.Drawing.Size(170, h);
             this.txtBuscar.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.txtBuscar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtBuscar.Text = "Buscar ambiente...";
-            this.txtBuscar.ForeColor = TemaManager.TextoMuted;
             this.txtBuscar.TextChanged += new System.EventHandler(this.txtBuscar_TextChanged);
             this.txtBuscar.Enter += new System.EventHandler(this.txtBuscar_Enter);
             this.txtBuscar.Leave += new System.EventHandler(this.txtBuscar_Leave);
 
             this.btnFiltrar.Text = "Filtrar";
-            this.btnFiltrar.Location = new System.Drawing.Point(568, yF);
-            this.btnFiltrar.Size = new System.Drawing.Size(90, h);
-            this.btnFiltrar.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.btnFiltrar.Location = new System.Drawing.Point(484, yF);
+            this.btnFiltrar.Size = new System.Drawing.Size(80, h);
             this.btnFiltrar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnFiltrar.Click += new System.EventHandler(this.btnFiltrar_Click);
 
-            // DATAGRIDVIEW (Ajustada posición Y por cambio de filtros)
-            this.dgvAmbientes.Location = new System.Drawing.Point(20, 122);
-            this.dgvAmbientes.Size = new System.Drawing.Size(892, 380);
-            this.dgvAmbientes.BackgroundColor = System.Drawing.Color.White;
-            this.dgvAmbientes.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.dgvAmbientes.RowHeadersVisible = false;
-            this.dgvAmbientes.AllowUserToAddRows = false;
-            this.dgvAmbientes.AllowUserToDeleteRows = false;
-            this.dgvAmbientes.ReadOnly = true;
-            this.dgvAmbientes.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvAmbientes.MultiSelect = false;
-            this.dgvAmbientes.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dgvAmbientes.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.dgvAmbientes.EnableHeadersVisualStyles = false;
-            this.dgvAmbientes.RowTemplate.Height = 36;
-            this.dgvAmbientes.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
-            this.dgvAmbientes.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvAmbientes_CellPainting);
-            this.dgvAmbientes.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvAmbientes_CellMouseDown);
-
-            // BOTONES INFERIORES REDONDEADOS
-            int yB = 516;
+            // ── BOTONES DE ACCIÓN (MOVIDOS ARRIBA AL LADO DE FILTRAR) ──
             this.btnNuevo.Text = "➕ Nuevo";
-            this.btnNuevo.Location = new System.Drawing.Point(20, yB);
-            this.btnNuevo.Size = new System.Drawing.Size(120, 36);
-            this.btnNuevo.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.btnNuevo.Location = new System.Drawing.Point(584, yF);
+            this.btnNuevo.Size = new System.Drawing.Size(100, h);
             this.btnNuevo.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnNuevo.Click += new System.EventHandler(this.btnNuevo_Click);
 
             this.btnEditar.Text = "✏️ Editar";
-            this.btnEditar.Location = new System.Drawing.Point(152, yB);
-            this.btnEditar.Size = new System.Drawing.Size(120, 36);
-            this.btnEditar.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.btnEditar.Location = new System.Drawing.Point(694, yF);
+            this.btnEditar.Size = new System.Drawing.Size(100, h);
             this.btnEditar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnEditar.Click += new System.EventHandler(this.btnEditar_Click);
 
-            this.btnCambiarEstado.Text = "🔄 Cambiar Estado";
-            this.btnCambiarEstado.Location = new System.Drawing.Point(284, yB);
-            this.btnCambiarEstado.Size = new System.Drawing.Size(165, 36);
-            this.btnCambiarEstado.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.btnCambiarEstado.Text = "🔄 Estado"; // Texto optimizado para mantener coherencia estética
+            this.btnCambiarEstado.Location = new System.Drawing.Point(804, yF);
+            this.btnCambiarEstado.Size = new System.Drawing.Size(110, h);
             this.btnCambiarEstado.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnCambiarEstado.Click += new System.EventHandler(this.btnCambiarEstado_Click);
 
             this.btnEliminar.Text = "❌ Eliminar";
-            this.btnEliminar.Location = new System.Drawing.Point(464, yB);
-            this.btnEliminar.Size = new System.Drawing.Size(120, 36);
-            this.btnEliminar.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.btnEliminar.Location = new System.Drawing.Point(924, yF);
+            this.btnEliminar.Size = new System.Drawing.Size(100, h);
             this.btnEliminar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnEliminar.Click += new System.EventHandler(this.btnEliminar_Click);
 
+            // ── DATAGRIDVIEW TOTALMENTE RESPONSIVO ──
+            this.dgvAmbientes.Location = new System.Drawing.Point(20, 130);
+            this.dgvAmbientes.Size = new System.Drawing.Size(1064, 420);
+            // El Anchor en los 4 ejes permite que se estire al maximizar la pantalla
+            this.dgvAmbientes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgvAmbientes.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvAmbientes_CellPainting);
+            this.dgvAmbientes.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvAmbientes_CellMouseDown);
+
+            // ── LBLMENSAJE (Abajo a la derecha) ──
             this.lblMensaje.Text = "";
-            this.lblMensaje.Location = new System.Drawing.Point(600, yB + 8);
-            this.lblMensaje.Size = new System.Drawing.Size(312, 22);
-            this.lblMensaje.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblMensaje.ForeColor = System.Drawing.Color.DarkGray;
+            this.lblMensaje.Location = new System.Drawing.Point(770, 565);
+            this.lblMensaje.Size = new System.Drawing.Size(314, 22);
+            this.lblMensaje.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblMensaje.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 
             // AGREGAR AL FORM CONTROLS
             this.Controls.Add(this.lblTitulo);
