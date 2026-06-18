@@ -13,127 +13,135 @@ namespace SistemaAmbientesUAB
 
         private void InitializeComponent()
         {
-            this.lblTitulo        = new System.Windows.Forms.Label();
-            this.lblBloque        = new System.Windows.Forms.Label();
-            this.cmbBloque        = new System.Windows.Forms.ComboBox();
-            this.lblTipo          = new System.Windows.Forms.Label();
-            this.cmbTipo          = new System.Windows.Forms.ComboBox();
-            this.txtBuscar        = new System.Windows.Forms.TextBox();
-            this.btnFiltrar       = new System.Windows.Forms.Button();
-            this.dgvAmbientes     = new System.Windows.Forms.DataGridView();
-            this.btnNuevo         = new System.Windows.Forms.Button();
-            this.btnEditar        = new System.Windows.Forms.Button();
+            this.lblTitulo = new System.Windows.Forms.Label();
+            this.lblBloque = new System.Windows.Forms.Label();
+            this.cmbBloque = new System.Windows.Forms.ComboBox();
+            this.lblTipo = new System.Windows.Forms.Label();
+            this.cmbTipo = new System.Windows.Forms.ComboBox();
+            this.txtBuscar = new System.Windows.Forms.TextBox();
+            this.btnFiltrar = new System.Windows.Forms.Button();
+            this.dgvAmbientes = new System.Windows.Forms.DataGridView();
+            this.btnNuevo = new System.Windows.Forms.Button();
+            this.btnEditar = new System.Windows.Forms.Button();
             this.btnCambiarEstado = new System.Windows.Forms.Button();
-            this.lblMensaje       = new System.Windows.Forms.Label();
+            this.btnEliminar = new System.Windows.Forms.Button();
+            this.lblMensaje = new System.Windows.Forms.Label();
 
             ((System.ComponentModel.ISupportInitialize)(this.dgvAmbientes)).BeginInit();
             this.SuspendLayout();
 
             // FORM
-            this.Text            = "Gestión de Ambientes";
-            this.Size            = new System.Drawing.Size(940, 600);
-            this.MinimumSize     = new System.Drawing.Size(860, 540);
-            this.StartPosition   = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.BackColor       = System.Drawing.Color.White;
-            this.Font            = new System.Drawing.Font("Segoe UI", 9.5F);
-            this.Load           += new System.EventHandler(this.FormAmbientes_Load);
+            this.Text = "Gestión de Ambientes";
+            this.Size = new System.Drawing.Size(940, 600);
+            this.MinimumSize = new System.Drawing.Size(860, 540);
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.BackColor = System.Drawing.Color.White;
+            this.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.Load += new System.EventHandler(this.FormAmbientes_Load);
 
             // TÍTULO
-            this.lblTitulo.Text      = "Gestión de Ambientes";
-            this.lblTitulo.Location  = new System.Drawing.Point(20, 18);
-            this.lblTitulo.Size      = new System.Drawing.Size(380, 36);
-            this.lblTitulo.Font      = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
+            this.lblTitulo.Text = "Gestión de Ambientes";
+            this.lblTitulo.Location = new System.Drawing.Point(20, 18);
+            this.lblTitulo.Size = new System.Drawing.Size(380, 36);
+            this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
             this.lblTitulo.ForeColor = TemaManager.TextoPrincipal;
 
             // BARRA DE FILTROS (y = 66)
             int yF = 66; int h = 30;
 
-            this.lblBloque.Text     = "Bloque";
+            this.lblBloque.Text = "Bloque";
             this.lblBloque.Location = new System.Drawing.Point(20, yF - 18);
-            this.lblBloque.Size     = new System.Drawing.Size(60, 16);
-            this.lblBloque.Font     = new System.Drawing.Font("Segoe UI", 8F);
+            this.lblBloque.Size = new System.Drawing.Size(60, 16);
+            this.lblBloque.Font = new System.Drawing.Font("Segoe UI", 8F);
 
-            this.cmbBloque.Location     = new System.Drawing.Point(20, yF);
-            this.cmbBloque.Size         = new System.Drawing.Size(140, h);
+            this.cmbBloque.Location = new System.Drawing.Point(20, yF);
+            this.cmbBloque.Size = new System.Drawing.Size(140, h);
             this.cmbBloque.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbBloque.Font         = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.cmbBloque.Font = new System.Drawing.Font("Segoe UI", 9.5F);
 
-            this.lblTipo.Text     = "Tipo";
+            this.lblTipo.Text = "Tipo";
             this.lblTipo.Location = new System.Drawing.Point(172, yF - 18);
-            this.lblTipo.Size     = new System.Drawing.Size(60, 16);
-            this.lblTipo.Font     = new System.Drawing.Font("Segoe UI", 8F);
+            this.lblTipo.Size = new System.Drawing.Size(60, 16);
+            this.lblTipo.Font = new System.Drawing.Font("Segoe UI", 8F);
 
-            this.cmbTipo.Location     = new System.Drawing.Point(172, yF);
-            this.cmbTipo.Size         = new System.Drawing.Size(150, h);
+            this.cmbTipo.Location = new System.Drawing.Point(172, yF);
+            this.cmbTipo.Size = new System.Drawing.Size(150, h);
             this.cmbTipo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbTipo.Font         = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.cmbTipo.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.cmbTipo.Items.AddRange(new object[] { "Todos", "aula", "laboratorio", "auditorio", "coliseo" });
             this.cmbTipo.SelectedIndex = 0;
 
             // Buscador
-            this.txtBuscar.Location    = new System.Drawing.Point(336, yF);
-            this.txtBuscar.Size        = new System.Drawing.Size(220, h);
-            this.txtBuscar.Font        = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.txtBuscar.Location = new System.Drawing.Point(336, yF);
+            this.txtBuscar.Size = new System.Drawing.Size(220, h);
+            this.txtBuscar.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.txtBuscar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtBuscar.Text        = "Buscar ambiente...";
-            this.txtBuscar.ForeColor   = TemaManager.TextoMuted;
+            this.txtBuscar.Text = "Buscar ambiente...";
+            this.txtBuscar.ForeColor = TemaManager.TextoMuted;
             this.txtBuscar.TextChanged += new System.EventHandler(this.txtBuscar_TextChanged);
-            this.txtBuscar.Enter       += new System.EventHandler(this.txtBuscar_Enter);
-            this.txtBuscar.Leave       += new System.EventHandler(this.txtBuscar_Leave);
+            this.txtBuscar.Enter += new System.EventHandler(this.txtBuscar_Enter);
+            this.txtBuscar.Leave += new System.EventHandler(this.txtBuscar_Leave);
 
-            this.btnFiltrar.Text     = "Filtrar";
+            this.btnFiltrar.Text = "Filtrar";
             this.btnFiltrar.Location = new System.Drawing.Point(568, yF);
-            this.btnFiltrar.Size     = new System.Drawing.Size(90, h);
-            this.btnFiltrar.Font     = new System.Drawing.Font("Segoe UI", 9.5F);
-            this.btnFiltrar.Cursor   = System.Windows.Forms.Cursors.Hand;
-            this.btnFiltrar.Click   += new System.EventHandler(this.btnFiltrar_Click);
+            this.btnFiltrar.Size = new System.Drawing.Size(90, h);
+            this.btnFiltrar.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.btnFiltrar.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnFiltrar.Click += new System.EventHandler(this.btnFiltrar_Click);
 
             // DATAGRIDVIEW
-            this.dgvAmbientes.Location           = new System.Drawing.Point(20, 112);
-            this.dgvAmbientes.Size               = new System.Drawing.Size(892, 390);
-            this.dgvAmbientes.BackgroundColor     = System.Drawing.Color.White;
-            this.dgvAmbientes.BorderStyle         = System.Windows.Forms.BorderStyle.None;
-            this.dgvAmbientes.RowHeadersVisible   = false;
-            this.dgvAmbientes.AllowUserToAddRows  = false;
+            this.dgvAmbientes.Location = new System.Drawing.Point(20, 112);
+            this.dgvAmbientes.Size = new System.Drawing.Size(892, 390);
+            this.dgvAmbientes.BackgroundColor = System.Drawing.Color.White;
+            this.dgvAmbientes.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.dgvAmbientes.RowHeadersVisible = false;
+            this.dgvAmbientes.AllowUserToAddRows = false;
             this.dgvAmbientes.AllowUserToDeleteRows = false;
-            this.dgvAmbientes.ReadOnly            = true;
-            this.dgvAmbientes.SelectionMode       = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvAmbientes.MultiSelect         = false;
+            this.dgvAmbientes.ReadOnly = true;
+            this.dgvAmbientes.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvAmbientes.MultiSelect = false;
             this.dgvAmbientes.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dgvAmbientes.Font                = new System.Drawing.Font("Segoe UI", 9F);
+            this.dgvAmbientes.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.dgvAmbientes.EnableHeadersVisualStyles = false;
-            this.dgvAmbientes.RowTemplate.Height  = 36;
-            this.dgvAmbientes.CellBorderStyle     = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
-            this.dgvAmbientes.CellPainting       += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvAmbientes_CellPainting);
+            this.dgvAmbientes.RowTemplate.Height = 36;
+            this.dgvAmbientes.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
+            this.dgvAmbientes.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvAmbientes_CellPainting);
 
             // BOTONES INFERIORES
             int yB = 516;
-            this.btnNuevo.Text     = "➕ Nuevo";
+            this.btnNuevo.Text = "➕ Nuevo";
             this.btnNuevo.Location = new System.Drawing.Point(20, yB);
-            this.btnNuevo.Size     = new System.Drawing.Size(120, 36);
-            this.btnNuevo.Font     = new System.Drawing.Font("Segoe UI", 9.5F);
-            this.btnNuevo.Cursor   = System.Windows.Forms.Cursors.Hand;
-            this.btnNuevo.Click   += new System.EventHandler(this.btnNuevo_Click);
+            this.btnNuevo.Size = new System.Drawing.Size(120, 36);
+            this.btnNuevo.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.btnNuevo.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnNuevo.Click += new System.EventHandler(this.btnNuevo_Click);
 
-            this.btnEditar.Text     = "✏️ Editar";
+            this.btnEditar.Text = "✏️ Editar";
             this.btnEditar.Location = new System.Drawing.Point(152, yB);
-            this.btnEditar.Size     = new System.Drawing.Size(120, 36);
-            this.btnEditar.Font     = new System.Drawing.Font("Segoe UI", 9.5F);
-            this.btnEditar.Cursor   = System.Windows.Forms.Cursors.Hand;
-            this.btnEditar.Click   += new System.EventHandler(this.btnEditar_Click);
+            this.btnEditar.Size = new System.Drawing.Size(120, 36);
+            this.btnEditar.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.btnEditar.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnEditar.Click += new System.EventHandler(this.btnEditar_Click);
 
-            this.btnCambiarEstado.Text     = "🔄 Cambiar Estado";
+            this.btnCambiarEstado.Text = "🔄 Cambiar Estado";
             this.btnCambiarEstado.Location = new System.Drawing.Point(284, yB);
-            this.btnCambiarEstado.Size     = new System.Drawing.Size(165, 36);
-            this.btnCambiarEstado.Font     = new System.Drawing.Font("Segoe UI", 9.5F);
-            this.btnCambiarEstado.Cursor   = System.Windows.Forms.Cursors.Hand;
-            this.btnCambiarEstado.Click   += new System.EventHandler(this.btnCambiarEstado_Click);
+            this.btnCambiarEstado.Size = new System.Drawing.Size(165, 36);
+            this.btnCambiarEstado.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.btnCambiarEstado.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnCambiarEstado.Click += new System.EventHandler(this.btnCambiarEstado_Click);
 
-            this.lblMensaje.Text      = "";
-            this.lblMensaje.Location  = new System.Drawing.Point(464, yB + 8);
-            this.lblMensaje.Size      = new System.Drawing.Size(440, 22);
-            this.lblMensaje.Font      = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblMensaje.ForeColor = TemaManager.TextoMuted;
+            this.btnEliminar.Text = "❌ Eliminar";
+            this.btnEliminar.Location = new System.Drawing.Point(464, yB);
+            this.btnEliminar.Size = new System.Drawing.Size(120, 36);
+            this.btnEliminar.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.btnEliminar.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnEliminar.Click += new System.EventHandler(this.btnEliminar_Click);
+
+            this.lblMensaje.Text = "";
+            this.lblMensaje.Location = new System.Drawing.Point(600, yB + 8);
+            this.lblMensaje.Size = new System.Drawing.Size(312, 22);
+            this.lblMensaje.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.lblMensaje.ForeColor = System.Drawing.Color.DarkGray;
 
             // AGREGAR AL FORM
             this.Controls.Add(this.lblTitulo);
@@ -147,6 +155,7 @@ namespace SistemaAmbientesUAB
             this.Controls.Add(this.btnNuevo);
             this.Controls.Add(this.btnEditar);
             this.Controls.Add(this.btnCambiarEstado);
+            this.Controls.Add(this.btnEliminar);
             this.Controls.Add(this.lblMensaje);
 
             ((System.ComponentModel.ISupportInitialize)(this.dgvAmbientes)).EndInit();
@@ -164,6 +173,7 @@ namespace SistemaAmbientesUAB
         private System.Windows.Forms.Button btnNuevo;
         private System.Windows.Forms.Button btnEditar;
         private System.Windows.Forms.Button btnCambiarEstado;
+        private System.Windows.Forms.Button btnEliminar;
         private System.Windows.Forms.Label lblMensaje;
     }
 }

@@ -32,7 +32,7 @@ namespace SistemaAmbientesUAB
             lblTitulo.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
 
             lblBloque.ForeColor = TemaManager.TextoSecundario;
-            lblTipo.ForeColor   = TemaManager.TextoSecundario;
+            lblTipo.ForeColor = TemaManager.TextoSecundario;
             lblMensaje.ForeColor = TemaManager.TextoMuted;
 
             AplicarEstiloTabla(dgvAmbientes);
@@ -49,46 +49,51 @@ namespace SistemaAmbientesUAB
             EstiloBotonOutline(btnFiltrar, TemaManager.Acento);
 
             // Botones de acción
-            EstiloBotonSolido(btnNuevo,        Color.FromArgb(40, 120, 40));
-            EstiloBotonSolido(btnEditar,       Color.FromArgb(40, 80, 160));
+            EstiloBotonSolido(btnNuevo, Color.FromArgb(40, 120, 40));
+            EstiloBotonSolido(btnEditar, Color.FromArgb(40, 80, 160));
             EstiloBotonSolido(btnCambiarEstado, Color.FromArgb(160, 100, 0));
+            EstiloBotonSolido(btnEliminar, TemaManager.Peligro);
         }
 
         private static void AplicarEstiloTabla(DataGridView dgv)
         {
             dgv.EnableHeadersVisualStyles = false;
-            dgv.BackgroundColor           = Color.White;
-            dgv.GridColor                 = Color.FromArgb(230, 235, 243);
-            dgv.BorderStyle               = BorderStyle.None;
-            dgv.RowHeadersVisible         = false;
-            dgv.AllowUserToAddRows        = false;
-            dgv.AllowUserToDeleteRows     = false;
-            dgv.ReadOnly                  = true;
-            dgv.SelectionMode             = DataGridViewSelectionMode.FullRowSelect;
-            dgv.MultiSelect               = false;
-            dgv.AutoSizeColumnsMode       = DataGridViewAutoSizeColumnsMode.Fill;
-            dgv.RowTemplate.Height        = 36;
-            dgv.CellBorderStyle           = DataGridViewCellBorderStyle.SingleHorizontal;
+            dgv.BackgroundColor = Color.White;
+            dgv.GridColor = Color.FromArgb(230, 235, 243);
+            dgv.BorderStyle = BorderStyle.None;
+            dgv.RowHeadersVisible = false;
+            dgv.AllowUserToAddRows = false;
+            dgv.AllowUserToDeleteRows = false;
+            dgv.ReadOnly = true;
+            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgv.MultiSelect = false;
+            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgv.RowTemplate.Height = 36;
+            dgv.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
 
-            // Filas
-            dgv.DefaultCellStyle.BackColor           = Color.White;
-            dgv.DefaultCellStyle.ForeColor           = TemaManager.TextoPrincipal;
-            dgv.DefaultCellStyle.SelectionBackColor  = Color.White;
-            dgv.DefaultCellStyle.SelectionForeColor  = TemaManager.TextoPrincipal;
-            dgv.DefaultCellStyle.Font                = new Font("Segoe UI", 9F);
-            dgv.DefaultCellStyle.Padding             = new Padding(9, 0, 9, 0);
+            // Color para fila seleccionada (Azul pastel suave)
+            Color colorSeleccion = Color.FromArgb(226, 238, 253);
 
-            dgv.AlternatingRowsDefaultCellStyle.BackColor          = Color.FromArgb(247, 249, 252);
-            dgv.AlternatingRowsDefaultCellStyle.SelectionBackColor = Color.FromArgb(247, 249, 252);
-            dgv.AlternatingRowsDefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal;
+            // Filas Normales
+            dgv.DefaultCellStyle.BackColor = Color.White;
+            dgv.DefaultCellStyle.ForeColor = TemaManager.TextoPrincipal;
+            dgv.DefaultCellStyle.SelectionBackColor = colorSeleccion; // ◄── CORREGIDO
+            dgv.DefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal; // ◄── CORREGIDO
+            dgv.DefaultCellStyle.Font = new Font("Segoe UI", 9F);
+            dgv.DefaultCellStyle.Padding = new Padding(9, 0, 9, 0);
+
+            // Filas Alternas
+            dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(247, 249, 252);
+            dgv.AlternatingRowsDefaultCellStyle.SelectionBackColor = colorSeleccion; // ◄── CORREGIDO
+            dgv.AlternatingRowsDefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal; // ◄── CORREGIDO
 
             // Cabecera
-            dgv.ColumnHeadersDefaultCellStyle.BackColor          = Color.FromArgb(239, 243, 248);
-            dgv.ColumnHeadersDefaultCellStyle.ForeColor          = Color.FromArgb(145, 155, 177);
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(239, 243, 248);
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.FromArgb(145, 155, 177);
             dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(239, 243, 248);
             dgv.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.FromArgb(145, 155, 177);
-            dgv.ColumnHeadersDefaultCellStyle.Font               = new Font("Segoe UI Semibold", 8.5F, FontStyle.Bold);
-            dgv.ColumnHeadersDefaultCellStyle.Padding            = new Padding(9, 0, 9, 0);
+            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 8.5F, FontStyle.Bold);
+            dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(9, 0, 9, 0);
             dgv.ColumnHeadersHeight = 36;
             dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
         }
@@ -99,7 +104,7 @@ namespace SistemaAmbientesUAB
             btn.ForeColor = color;
             btn.FlatStyle = FlatStyle.Flat;
             btn.FlatAppearance.BorderColor = color;
-            btn.FlatAppearance.BorderSize  = 1;
+            btn.FlatAppearance.BorderSize = 1;
             btn.Cursor = Cursors.Hand;
         }
 
@@ -142,11 +147,11 @@ namespace SistemaAmbientesUAB
                 using (SqlConnection con = Conexion.ObtenerConexion())
                 {
                     con.Open();
-                    string buscar      = ObtenerTextoBusqueda();
+                    string buscar = ObtenerTextoBusqueda();
                     string filtroBuscar = !string.IsNullOrWhiteSpace(buscar)
                         ? "AND (a.codigo LIKE @buscar OR b.nombre LIKE @buscar OR a.tipo LIKE @buscar OR a.estado LIKE @buscar)" : "";
                     string filtroBloque = idBloque > 0 ? "AND a.id_bloque = @idBloque" : "";
-                    string filtroTipo   = tipo != "Todos" ? "AND a.tipo = @tipo" : "";
+                    string filtroTipo = tipo != "Todos" ? "AND a.tipo = @tipo" : "";
 
                     string query = $@"
                         SELECT
@@ -165,8 +170,8 @@ namespace SistemaAmbientesUAB
                         ORDER BY b.nombre, a.codigo";
 
                     SqlCommand cmd = new SqlCommand(query, con);
-                    if (idBloque > 0)                       cmd.Parameters.AddWithValue("@idBloque", idBloque);
-                    if (tipo != "Todos")                    cmd.Parameters.AddWithValue("@tipo", tipo);
+                    if (idBloque > 0) cmd.Parameters.AddWithValue("@idBloque", idBloque);
+                    if (tipo != "Todos") cmd.Parameters.AddWithValue("@tipo", tipo);
                     if (!string.IsNullOrWhiteSpace(buscar)) cmd.Parameters.AddWithValue("@buscar", "%" + buscar + "%");
 
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
@@ -179,6 +184,7 @@ namespace SistemaAmbientesUAB
                         dgvAmbientes.Columns["ID"].Visible = false;
 
                     lblMensaje.Text = $"Total: {dt.Rows.Count} ambiente(s)";
+                    lblMensaje.ForeColor = TemaManager.TextoMuted;
                 }
             }
             catch (Exception ex) { MessageBox.Show("Error al cargar ambientes: " + ex.Message); }
@@ -195,6 +201,8 @@ namespace SistemaAmbientesUAB
         private void PintarBadgeEstadoAmbiente(DataGridViewCellPaintingEventArgs e)
         {
             e.Handled = true;
+
+            // MODIFICADO: Pintar el fondo respetando si la fila está seleccionada o no
             PintarFondoCelda(e);
 
             string estado = Convert.ToString(e.Value);
@@ -207,7 +215,7 @@ namespace SistemaAmbientesUAB
                 case "mantenimiento":
                     fondo = Color.FromArgb(254, 243, 199); texto = Color.FromArgb(245, 158, 11); break;
                 default: // inhabilitado
-                    fondo = Color.FromArgb(254, 226, 226); texto = Color.FromArgb(239, 68, 68);  break;
+                    fondo = Color.FromArgb(254, 226, 226); texto = Color.FromArgb(239, 68, 68); break;
             }
 
             Size ts = TextRenderer.MeasureText(estado, new Font("Segoe UI Semibold", 8F, FontStyle.Bold));
@@ -229,7 +237,17 @@ namespace SistemaAmbientesUAB
 
         private void PintarFondoCelda(DataGridViewCellPaintingEventArgs e)
         {
-            Color fondo = e.RowIndex % 2 == 0 ? Color.White : Color.FromArgb(247, 249, 252);
+            // MODIFICADO: Si la celda está seleccionada, pintamos con el color de selección
+            Color fondo;
+            if ((e.State & DataGridViewElementStates.Selected) == DataGridViewElementStates.Selected)
+            {
+                fondo = Color.FromArgb(226, 238, 253);
+            }
+            else
+            {
+                fondo = e.RowIndex % 2 == 0 ? Color.White : Color.FromArgb(247, 249, 252);
+            }
+
             using (var br = new SolidBrush(fondo))
                 e.Graphics.FillRectangle(br, e.CellBounds);
             using (var pen = new Pen(Color.FromArgb(230, 235, 243)))
@@ -241,10 +259,10 @@ namespace SistemaAmbientesUAB
         {
             int d = radio;
             var gp = new GraphicsPath();
-            gp.AddArc(r.X,           r.Y,            d, d, 180, 90);
-            gp.AddArc(r.Right - d,   r.Y,            d, d, 270, 90);
-            gp.AddArc(r.Right - d,   r.Bottom - d,   d, d, 0,   90);
-            gp.AddArc(r.X,           r.Bottom - d,   d, d, 90,  90);
+            gp.AddArc(r.X, r.Y, d, d, 180, 90);
+            gp.AddArc(r.Right - d, r.Y, d, d, 270, 90);
+            gp.AddArc(r.Right - d, r.Bottom - d, d, d, 0, 90);
+            gp.AddArc(r.X, r.Bottom - d, d, d, 90, 90);
             gp.CloseFigure();
             return gp;
         }
@@ -316,10 +334,10 @@ namespace SistemaAmbientesUAB
                 return;
             }
 
-            int    id           = Convert.ToInt32(dgvAmbientes.SelectedRows[0].Cells["ID"].Value);
+            int id = Convert.ToInt32(dgvAmbientes.SelectedRows[0].Cells["ID"].Value);
             string estadoActual = dgvAmbientes.SelectedRows[0].Cells["Estado"].Value?.ToString();
-            string codigo       = dgvAmbientes.SelectedRows[0].Cells["Código"].Value?.ToString();
-            string nuevoEstado  = estadoActual == "disponible"   ? "mantenimiento"
+            string codigo = dgvAmbientes.SelectedRows[0].Cells["Código"].Value?.ToString();
+            string nuevoEstado = estadoActual == "disponible" ? "mantenimiento"
                                 : estadoActual == "mantenimiento" ? "inhabilitado"
                                 : "disponible";
 
@@ -338,11 +356,75 @@ namespace SistemaAmbientesUAB
                     cmd.Parameters.AddWithValue("@id", id);
                     cmd.ExecuteNonQuery();
                 }
-                lblMensaje.Text      = $"✅ Estado actualizado a '{nuevoEstado}'";
+                lblMensaje.Text = $"✅ Estado actualizado a '{nuevoEstado}'";
                 lblMensaje.ForeColor = TemaManager.Exito;
                 CargarAmbientes();
             }
             catch (Exception ex) { MessageBox.Show("Error: " + ex.Message); }
+        }
+
+        private void btnEliminar_Click(object sender, EventArgs e)
+        {
+            if (dgvAmbientes.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Por favor, selecciona un ambiente de la tabla para poder eliminarlo.", "Aviso",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int idAmbiente = Convert.ToInt32(dgvAmbientes.SelectedRows[0].Cells["ID"].Value);
+            string codigoAmbiente = dgvAmbientes.SelectedRows[0].Cells["Código"].Value?.ToString() ?? "Desconocido";
+
+            try
+            {
+                using (SqlConnection con = Conexion.ObtenerConexion())
+                {
+                    con.Open();
+
+                    // Comprobar integridad referencial (si posee reservas vinculadas)
+                    string queryCheck = "SELECT COUNT(*) FROM Reserva WHERE id_ambiente = @idAmbiente";
+                    using (SqlCommand cmdCheck = new SqlCommand(queryCheck, con))
+                    {
+                        cmdCheck.Parameters.AddWithValue("@idAmbiente", idAmbiente);
+                        int conteoReservas = Convert.ToInt32(cmdCheck.ExecuteScalar());
+
+                        if (conteoReservas > 0)
+                        {
+                            MessageBox.Show($"No se puede eliminar el ambiente '{codigoAmbiente}' porque cuenta con {conteoReservas} reserva(s) registrada(s) en el sistema.\n\n" +
+                                            $"💡 Sugerencia: Si el ambiente ya no se utilizará, cámbielo a estado 'inhabilitado'.",
+                                "Eliminación Denegada", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                            return;
+                        }
+                    }
+
+                    // Confirmación de seguridad
+                    string mensajeConfirmacion = $"¿Está seguro de que desea eliminar permanentemente el ambiente '{codigoAmbiente}' de la base de datos?";
+                    if (MessageBox.Show(mensajeConfirmacion, "Confirmar Eliminación",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+
+                    // Borrado físico
+                    string queryDelete = "DELETE FROM Ambiente WHERE id_ambiente = @idAmbiente";
+                    using (SqlCommand cmdDelete = new SqlCommand(queryDelete, con))
+                    {
+                        cmdDelete.Parameters.AddWithValue("@idAmbiente", idAmbiente);
+                        cmdDelete.ExecuteNonQuery();
+                    }
+
+                    lblMensaje.Text = $"❌ Ambiente '{codigoAmbiente}' eliminado.";
+                    lblMensaje.ForeColor = TemaManager.Peligro;
+
+                    // Refrescar grilla respetando los filtros seleccionados
+                    int idBloqueActual = 0;
+                    dynamic sel = cmbBloque.SelectedItem;
+                    if (sel != null) idBloqueActual = (int)sel.id;
+                    CargarAmbientes(idBloqueActual, cmbTipo.SelectedItem?.ToString() ?? "Todos");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ocurrió un error inesperado al intentar eliminar el ambiente:\n" + ex.Message,
+                    "Error de Operación", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
