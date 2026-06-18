@@ -30,7 +30,6 @@
             this.btnPagina2 = new System.Windows.Forms.Button();
             this.btnPagina3 = new System.Windows.Forms.Button();
             this.btnSiguiente = new System.Windows.Forms.Button();
-            this.btnEditar = new System.Windows.Forms.Button();
             this.btnCancelarReserva = new System.Windows.Forms.Button();
             this.btnEliminar = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReservas)).BeginInit();
@@ -93,41 +92,28 @@
             this.panelBuscar.Controls.Add(this.txtBuscar);
             this.panelBuscar.Paint += new System.Windows.Forms.PaintEventHandler(this.panelBuscar_Paint);
 
-            // BOTÓN: EDITAR (Azul Sólido)
-            this.btnEditar.Location = new System.Drawing.Point(232, yBarra);
-            this.btnEditar.Name = "btnEditar";
-            this.btnEditar.Size = new System.Drawing.Size(100, hBarra);
-            this.btnEditar.Text = "Editar";
-            this.btnEditar.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular);
-            this.btnEditar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnEditar.FlatAppearance.BorderSize = 0;
-            this.btnEditar.BackColor = System.Drawing.Color.FromArgb(39, 85, 166); // Azul institucional
-            this.btnEditar.ForeColor = System.Drawing.Color.White;
-            this.btnEditar.UseVisualStyleBackColor = false;
-            this.btnEditar.Click += new System.EventHandler(this.btnEditar_Click);
-
-            // BOTÓN: CANCELAR RESERVA (Ocre)
-            this.btnCancelarReserva.Location = new System.Drawing.Point(342, yBarra);
+            // BOTÓN: CANCELAR RESERVA (Ocre) - Reubicado a la izquierda
+            this.btnCancelarReserva.Location = new System.Drawing.Point(232, yBarra);
             this.btnCancelarReserva.Name = "btnCancelarReserva";
             this.btnCancelarReserva.Size = new System.Drawing.Size(110, hBarra);
             this.btnCancelarReserva.Text = "Cancelar";
             this.btnCancelarReserva.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular);
             this.btnCancelarReserva.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancelarReserva.FlatAppearance.BorderSize = 0;
-            this.btnCancelarReserva.BackColor = System.Drawing.Color.FromArgb(161, 110, 13); // Tono ocre
+            this.btnCancelarReserva.BackColor = System.Drawing.Color.FromArgb(161, 110, 13);
             this.btnCancelarReserva.ForeColor = System.Drawing.Color.White;
             this.btnCancelarReserva.UseVisualStyleBackColor = false;
             this.btnCancelarReserva.Click += new System.EventHandler(this.btnCancelarReserva_Click);
 
-            // BOTÓN: ELIMINAR (Rojo Sólido)
-            this.btnEliminar.Location = new System.Drawing.Point(462, yBarra);
+            // BOTÓN: ELIMINAR (Rojo Sólido) - Reubicado al lado de Cancelar
+            this.btnEliminar.Location = new System.Drawing.Point(352, yBarra);
             this.btnEliminar.Name = "btnEliminar";
             this.btnEliminar.Size = new System.Drawing.Size(100, hBarra);
             this.btnEliminar.Text = "Eliminar";
             this.btnEliminar.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular);
             this.btnEliminar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnEliminar.FlatAppearance.BorderSize = 0;
-            this.btnEliminar.BackColor = System.Drawing.Color.FromArgb(186, 31, 37); // Rojo sólido
+            this.btnEliminar.BackColor = System.Drawing.Color.FromArgb(186, 31, 37);
             this.btnEliminar.ForeColor = System.Drawing.Color.White;
             this.btnEliminar.UseVisualStyleBackColor = false;
             this.btnEliminar.Click += new System.EventHandler(this.btnEliminar_Click);
@@ -166,7 +152,7 @@
             this.btnActualizar.UseVisualStyleBackColor = false;
             this.btnActualizar.Click += new System.EventHandler(this.btnActualizar_Click);
 
-            // ── PANEL CONTENEDOR DE LA TABLA (CRÍTICO FIX) ──────────────────────────
+            // PANEL CONTENEDOR DE LA TABLA
             this.panelTabla.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -194,14 +180,9 @@
             this.dgvReservas.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgvReservas.RowTemplate.Height = 38;
 
-            // Colores por defecto de selección celeste
-            this.dgvReservas.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(226, 236, 247); // Celeste claro
-            this.dgvReservas.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(28, 37, 58);
-
             this.dgvReservas.SelectionChanged += new System.EventHandler(this.dgvReservas_SelectionChanged);
             this.dgvReservas.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvReservas_CellPainting);
 
-            // AGREGAR LA TABLA AL PANEL CONTENEDOR (Esto soluciona que no se viera)
             this.panelTabla.Controls.Add(this.dgvReservas);
 
             // PANEL ACCIONES INFERIORES / PAGINACIÓN
@@ -212,7 +193,7 @@
             this.panelAcciones.Name = "panelAcciones";
             this.panelAcciones.Size = new System.Drawing.Size(1062, 45);
 
-            this.lblEstado.Text = "Showing 0 reservas";
+            this.lblEstado.Text = "Mostrando 0 reservas";
             this.lblEstado.Location = new System.Drawing.Point(0, 10);
             this.lblEstado.Size = new System.Drawing.Size(350, 24);
             this.lblEstado.Font = new System.Drawing.Font("Segoe UI", 9F);
@@ -281,11 +262,10 @@
             this.panelAcciones.Controls.Add(this.btnPagina3);
             this.panelAcciones.Controls.Add(this.btnSiguiente);
 
-            // AGREGAR TODO AL FORMULARIO BASE
+            // AGREGAR CONTROLES AL FORM
             this.Controls.Add(this.lblTitulo);
             this.Controls.Add(this.lblLinea);
             this.Controls.Add(this.panelBuscar);
-            this.Controls.Add(this.btnEditar);
             this.Controls.Add(this.btnCancelarReserva);
             this.Controls.Add(this.btnEliminar);
             this.Controls.Add(this.lblFiltro);
@@ -320,7 +300,6 @@
         private System.Windows.Forms.Button btnPagina2;
         private System.Windows.Forms.Button btnPagina3;
         private System.Windows.Forms.Button btnSiguiente;
-        private System.Windows.Forms.Button btnEditar;
         private System.Windows.Forms.Button btnCancelarReserva;
         private System.Windows.Forms.Button btnEliminar;
     }
