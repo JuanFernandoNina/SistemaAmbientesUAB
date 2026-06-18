@@ -3,9 +3,10 @@
     partial class FormReportes
     {
         private System.ComponentModel.IContainer components = null;
+
         protected override void Dispose(bool disposing)
         {
-            if (disposing && components != null) components.Dispose();
+            if (disposing && (components != null)) components.Dispose();
             base.Dispose(disposing);
         }
 
@@ -31,32 +32,42 @@
             this.btnExportarExcel = new System.Windows.Forms.Button();
             this.btnExportarPdf = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReporte)).BeginInit();
+            this.panelFiltroFecha.SuspendLayout();
+            this.panelBotones.SuspendLayout();
             this.SuspendLayout();
 
             // ── FORM ─────────────────────────────────────────
             this.Text = "Reportes y Estadísticas";
-            this.Size = new System.Drawing.Size(950, 650);
+            this.Size = new System.Drawing.Size(960, 650);
+            this.MinimumSize = new System.Drawing.Size(940, 580);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.BackColor = System.Drawing.Color.FromArgb(245, 245, 245);
+            this.BackColor = System.Drawing.Color.White;
             this.Load += new System.EventHandler(this.FormReportes_Load);
 
             // ── TÍTULO ────────────────────────────────────────
-            this.lblTitulo.Text = "📊 Reportes y Estadísticas";
+            this.lblTitulo.Text = "Reportes y Estadísticas";
             this.lblTitulo.Location = new System.Drawing.Point(20, 15);
             this.lblTitulo.Size = new System.Drawing.Size(400, 35);
             this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
-            this.lblTitulo.ForeColor = System.Drawing.Color.FromArgb(40, 40, 40);
 
-            // ── PANEL BOTONES ─────────────────────────────────
+            // ── PANEL BOTONES (Ancho expandible) ──────────────
             this.panelBotones.Location = new System.Drawing.Point(20, 60);
-            this.panelBotones.Size = new System.Drawing.Size(900, 60);
-            this.panelBotones.BackColor = System.Drawing.Color.FromArgb(245, 245, 245);
+            this.panelBotones.Size = new System.Drawing.Size(904, 60);
+            this.panelBotones.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
 
-            ConfigurarBotonReporte(this.btnAmbientesMasUsados, "🏆 Ambientes más usados", 0);
-            ConfigurarBotonReporte(this.btnReservasCanceladas, "❌ Cancelaciones", 185);
-            ConfigurarBotonReporte(this.btnDisponibilidad, "📅 Disponibilidad hoy", 370);
-            ConfigurarBotonReporte(this.btnUsoPorCarrera, "🎓 Uso por carrera", 555);
-            ConfigurarBotonReporte(this.btnTodasReservas, "📋 Todas las reservas", 740);
+            ConfigurarBotonReporte(this.btnAmbientesMasUsados, "Ambientes más usados", 0);
+            ConfigurarBotonReporte(this.btnReservasCanceladas, "Cancelaciones", 181);
+            ConfigurarBotonReporte(this.btnDisponibilidad, "Disponibilidad hoy", 362);
+            ConfigurarBotonReporte(this.btnUsoPorCarrera, "Uso por carrera", 543);
+            ConfigurarBotonReporte(this.btnTodasReservas, "Todas las reservas", 724);
+
+            // Permitir que los botones se estiren proporcionalmente al cambiar el tamaño
+            this.btnAmbientesMasUsados.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left;
+            this.btnReservasCanceladas.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left;
+            this.btnDisponibilidad.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left;
+            this.btnUsoPorCarrera.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left;
+            this.btnTodasReservas.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 
             this.btnAmbientesMasUsados.Click += new System.EventHandler(this.btnAmbientesMasUsados_Click);
             this.btnReservasCanceladas.Click += new System.EventHandler(this.btnReservasCanceladas_Click);
@@ -70,57 +81,51 @@
             this.panelBotones.Controls.Add(this.btnUsoPorCarrera);
             this.panelBotones.Controls.Add(this.btnTodasReservas);
 
-            // ── PANEL FILTRO DE FECHA ──────────────────────────
+            // ── PANEL FILTRO DE FECHA (Responsive) ───────────
             this.panelFiltroFecha.Location = new System.Drawing.Point(20, 128);
-            this.panelFiltroFecha.Size = new System.Drawing.Size(900, 36);
-            this.panelFiltroFecha.BackColor = System.Drawing.Color.White;
+            this.panelFiltroFecha.Size = new System.Drawing.Size(904, 36);
+            this.panelFiltroFecha.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
 
             this.lblFiltroFecha.Text = "Rango de fechas:";
             this.lblFiltroFecha.Location = new System.Drawing.Point(0, 10);
-            this.lblFiltroFecha.Size = new System.Drawing.Size(130, 20);
-            this.lblFiltroFecha.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblFiltroFecha.ForeColor = System.Drawing.Color.FromArgb(100, 110, 130);
+            this.lblFiltroFecha.Size = new System.Drawing.Size(110, 20);
 
-            this.dtpDesde.Location = new System.Drawing.Point(135, 5);
+            this.dtpDesde.Location = new System.Drawing.Point(115, 5);
             this.dtpDesde.Size = new System.Drawing.Size(110, 27);
             this.dtpDesde.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpDesde.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.dtpDesde.Value = System.DateTime.Today.AddMonths(-1);
 
             this.lblFiltroFechaGuion.Text = "—";
-            this.lblFiltroFechaGuion.Location = new System.Drawing.Point(250, 10);
+            this.lblFiltroFechaGuion.Location = new System.Drawing.Point(230, 10);
             this.lblFiltroFechaGuion.Size = new System.Drawing.Size(15, 20);
-            this.lblFiltroFechaGuion.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblFiltroFechaGuion.ForeColor = System.Drawing.Color.FromArgb(100, 110, 130);
 
-            this.dtpHasta.Location = new System.Drawing.Point(270, 5);
+            this.dtpHasta.Location = new System.Drawing.Point(250, 5);
             this.dtpHasta.Size = new System.Drawing.Size(110, 27);
             this.dtpHasta.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpHasta.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.dtpHasta.Value = System.DateTime.Today;
 
             this.btnAplicarFiltroFecha.Text = "Aplicar";
-            this.btnAplicarFiltroFecha.Location = new System.Drawing.Point(395, 3);
+            this.btnAplicarFiltroFecha.Location = new System.Drawing.Point(370, 3);
             this.btnAplicarFiltroFecha.Size = new System.Drawing.Size(85, 30);
-            this.btnAplicarFiltroFecha.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.btnAplicarFiltroFecha.Click += new System.EventHandler(this.btnAplicarFiltroFecha_Click);
 
             this.btnQuitarFiltroFecha.Text = "Quitar filtro";
-            this.btnQuitarFiltroFecha.Location = new System.Drawing.Point(488, 3);
+            this.btnQuitarFiltroFecha.Location = new System.Drawing.Point(461, 3);
             this.btnQuitarFiltroFecha.Size = new System.Drawing.Size(110, 30);
-            this.btnQuitarFiltroFecha.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.btnQuitarFiltroFecha.Click += new System.EventHandler(this.btnQuitarFiltroFecha_Click);
 
+            // Botones de exportación alineados a la derecha de forma responsiva
             this.btnExportarExcel.Text = "📊 Excel (CSV)";
-            this.btnExportarExcel.Location = new System.Drawing.Point(640, 3);
+            this.btnExportarExcel.Location = new System.Drawing.Point(663, 3);
             this.btnExportarExcel.Size = new System.Drawing.Size(115, 30);
-            this.btnExportarExcel.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnExportarExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExportarExcel.Click += new System.EventHandler(this.btnExportarExcel_Click);
 
             this.btnExportarPdf.Text = "🖨️ PDF";
-            this.btnExportarPdf.Location = new System.Drawing.Point(765, 3);
-            this.btnExportarPdf.Size = new System.Drawing.Size(95, 30);
-            this.btnExportarPdf.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnExportarPdf.Location = new System.Drawing.Point(784, 3);
+            this.btnExportarPdf.Size = new System.Drawing.Size(120, 30);
+            this.btnExportarPdf.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExportarPdf.Click += new System.EventHandler(this.btnExportarPdf_Click);
 
             this.panelFiltroFecha.Controls.Add(this.lblFiltroFecha);
@@ -132,40 +137,26 @@
             this.panelFiltroFecha.Controls.Add(this.btnExportarExcel);
             this.panelFiltroFecha.Controls.Add(this.btnExportarPdf);
 
-            // ── SUBTÍTULO reporte activo ──────────────────────
+            // ── SUBTÍTULO ─────────────────────────────────────
             this.lblSubtitulo.Text = "Selecciona un reporte arriba";
-            this.lblSubtitulo.Location = new System.Drawing.Point(20, 174);
+            this.lblSubtitulo.Location = new System.Drawing.Point(20, 178);
             this.lblSubtitulo.Size = new System.Drawing.Size(600, 28);
             this.lblSubtitulo.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.lblSubtitulo.ForeColor = System.Drawing.Color.FromArgb(40, 80, 160);
 
-            // ── DATAGRIDVIEW ──────────────────────────────────
-            this.dgvReporte.Location = new System.Drawing.Point(20, 210);
-            this.dgvReporte.Size = new System.Drawing.Size(900, 360);
-            this.dgvReporte.BackgroundColor = System.Drawing.Color.White;
-            this.dgvReporte.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.dgvReporte.RowHeadersVisible = false;
-            this.dgvReporte.AllowUserToAddRows = false;
-            this.dgvReporte.AllowUserToDeleteRows = false;
-            this.dgvReporte.ReadOnly = true;
-            this.dgvReporte.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvReporte.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dgvReporte.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.dgvReporte.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(40, 40, 40);
-            this.dgvReporte.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
-            this.dgvReporte.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.dgvReporte.EnableHeadersVisualStyles = false;
-            this.dgvReporte.RowTemplate.Height = 35;
-            this.dgvReporte.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(235, 240, 255);
-            this.dgvReporte.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
+            // ── DATAGRIDVIEW (Abarca todo el ancho y alto del Form de forma adaptativa) ──
+            this.dgvReporte.Location = new System.Drawing.Point(20, 212);
+            this.dgvReporte.Size = new System.Drawing.Size(904, 348);
+            this.dgvReporte.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvReporte.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvReporte_CellPainting);
 
-            // ── LABEL TOTAL ───────────────────────────────────
+            // ── LABEL TOTAL (Fijado al pie de página) ──────────
             this.lblTotal.Text = "";
-            this.lblTotal.Location = new System.Drawing.Point(20, 580);
-            this.lblTotal.Size = new System.Drawing.Size(700, 25);
-            this.lblTotal.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.lblTotal.ForeColor = System.Drawing.Color.FromArgb(40, 120, 40);
+            this.lblTotal.Location = new System.Drawing.Point(20, 575);
+            this.lblTotal.Size = new System.Drawing.Size(904, 25);
+            this.lblTotal.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Italic);
+            this.lblTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 
             // ── AGREGAR CONTROLES ─────────────────────────────
             this.Controls.Add(this.lblTitulo);
@@ -176,6 +167,8 @@
             this.Controls.Add(this.lblTotal);
 
             ((System.ComponentModel.ISupportInitialize)(this.dgvReporte)).EndInit();
+            this.panelFiltroFecha.ResumeLayout(false);
+            this.panelBotones.ResumeLayout(false);
             this.ResumeLayout(false);
         }
 
@@ -183,10 +176,8 @@
         {
             btn.Text = texto;
             btn.Location = new System.Drawing.Point(posX, 10);
-            btn.Size = new System.Drawing.Size(175, 40);
+            btn.Size = new System.Drawing.Size(176, 40);
             btn.Font = new System.Drawing.Font("Segoe UI", 9F);
-            btn.BackColor = System.Drawing.Color.FromArgb(40, 40, 40);
-            btn.ForeColor = System.Drawing.Color.White;
             btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             btn.FlatAppearance.BorderSize = 0;
             btn.Cursor = System.Windows.Forms.Cursors.Hand;

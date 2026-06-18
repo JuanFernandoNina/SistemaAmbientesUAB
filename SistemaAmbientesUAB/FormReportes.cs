@@ -36,7 +36,7 @@ namespace SistemaAmbientesUAB
             CargarReporte("ambientes");
         }
 
-        // ── TEMA MINIMALISTA ──────────────────────────────────
+        // ── TEMA MINIMALISTA MANTENIDO ────────────────────────
         private void AplicarTema()
         {
             this.BackColor = Color.White;
@@ -44,15 +44,15 @@ namespace SistemaAmbientesUAB
 
             lblTitulo.ForeColor = TemaManager.TextoPrincipal;
             lblTitulo.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
-            lblSubtitulo.ForeColor = TemaManager.TextoSecundario;
-            lblSubtitulo.Font = new Font("Segoe UI", 9.5F);
+            lblSubtitulo.ForeColor = TemaManager.TextoPrincipal;
+            lblSubtitulo.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             lblTotal.ForeColor = TemaManager.TextoMuted;
 
             AplicarEstiloTabla(dgvReporte);
 
             // Botones de reporte como tabs/pills
             Button[] bots = { btnAmbientesMasUsados, btnReservasCanceladas,
-                               btnDisponibilidad, btnUsoPorCarrera, btnTodasReservas };
+                               this.btnDisponibilidad, btnUsoPorCarrera, btnTodasReservas };
             foreach (var b in bots)
                 EstiloBotonTab(b, false);
 
@@ -105,13 +105,13 @@ namespace SistemaAmbientesUAB
 
             dgv.DefaultCellStyle.BackColor = Color.White;
             dgv.DefaultCellStyle.ForeColor = TemaManager.TextoPrincipal;
-            dgv.DefaultCellStyle.SelectionBackColor = Color.White;
+            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(219, 234, 254);
             dgv.DefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal;
             dgv.DefaultCellStyle.Font = new Font("Segoe UI", 9F);
             dgv.DefaultCellStyle.Padding = new Padding(9, 0, 9, 0);
 
             dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(247, 249, 252);
-            dgv.AlternatingRowsDefaultCellStyle.SelectionBackColor = Color.FromArgb(247, 249, 252);
+            dgv.AlternatingRowsDefaultCellStyle.SelectionBackColor = Color.FromArgb(219, 234, 254);
             dgv.AlternatingRowsDefaultCellStyle.SelectionForeColor = TemaManager.TextoPrincipal;
 
             dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(239, 243, 248);
@@ -151,92 +151,90 @@ namespace SistemaAmbientesUAB
             _tipoActual = tipo;
             string query = "", subtitulo = "";
 
-            // El reporte de disponibilidad es una "foto" del momento actual
-            // (ambientes libres AHORA); el filtro de rango de fechas no le aplica.
             bool aplicaFiltroFecha = tipo != "disponibilidad";
             bool filtroActivo = aplicaFiltroFecha && _fechaDesde.HasValue && _fechaHasta.HasValue;
 
             switch (tipo)
             {
                 case "ambientes":
-                    subtitulo = "Ambientes más utilizados";
+                    subtitulo = "🏆 Ambientes más utilizados";
                     query = $@"SELECT a.codigo AS Código, b.nombre AS Bloque, a.tipo AS Tipo,
-                                     a.capacidad AS Capacidad, COUNT(r.id_reserva) AS [Total Reservas]
-                              FROM Reserva r
-                              INNER JOIN Ambiente a ON r.id_ambiente=a.id_ambiente
-                              INNER JOIN Bloque b ON a.id_bloque=b.id_bloque
-                              WHERE r.estado<>'cancelada'
-                                {(filtroActivo ? "AND r.fecha_inicio BETWEEN @desde AND @hasta" : "")}
-                              GROUP BY a.codigo,b.nombre,a.tipo,a.capacidad
-                              ORDER BY [Total Reservas] DESC";
+                                      a.capacidad AS Capacidad, COUNT(r.id_reserva) AS [Total Reservas]
+                               FROM Reserva r
+                               INNER JOIN Ambiente a ON r.id_ambiente=a.id_ambiente
+                               INNER JOIN Bloque b ON a.id_bloque=b.id_bloque
+                               WHERE r.estado<>'cancelada'
+                                 {(filtroActivo ? "AND r.fecha_inicio BETWEEN @desde AND @hasta" : "")}
+                               GROUP BY a.codigo,b.nombre,a.tipo,a.capacidad
+                               ORDER BY [Total Reservas] DESC";
                     break;
 
                 case "cancelaciones":
-                    subtitulo = "Historial de cancelaciones";
+                    subtitulo = "❌ Historial de cancelaciones";
                     query = $@"SELECT r.id_reserva AS [ID Reserva], u.nombre_completo AS Solicitante,
-                                     a.codigo AS Ambiente, CONVERT(VARCHAR,r.fecha_inicio,103) AS Fecha,
-                                     r.motivo AS Motivo, uc.nombre_completo AS [Cancelado por],
-                                     CONVERT(VARCHAR,c.fecha_cancelacion,103) AS [Fecha Cancelación],
-                                     c.motivo_cancelacion AS [Motivo Cancelación]
-                              FROM Cancelacion c
-                              INNER JOIN Reserva r  ON c.id_reserva=r.id_reserva
-                              INNER JOIN Usuario u  ON r.id_usuario=u.id_usuario
-                              INNER JOIN Ambiente a ON r.id_ambiente=a.id_ambiente
-                              INNER JOIN Usuario uc ON c.id_usuario_cancela=uc.id_usuario
-                              WHERE 1=1
-                                {(filtroActivo ? "AND CAST(c.fecha_cancelacion AS DATE) BETWEEN @desde AND @hasta" : "")}
-                              ORDER BY c.fecha_cancelacion DESC";
+                                      a.codigo AS Ambiente, CONVERT(VARCHAR,r.fecha_inicio,103) AS Fecha,
+                                      r.motivo AS Motivo, uc.nombre_completo AS [Cancelado por],
+                                      CONVERT(VARCHAR,c.fecha_cancelacion,103) AS [Fecha Cancelación],
+                                      c.motivo_cancelacion AS [Motivo Cancelación]
+                               FROM Cancelacion c
+                               INNER JOIN Reserva r  ON c.id_reserva=r.id_reserva
+                               INNER JOIN Usuario u  ON r.id_usuario=u.id_usuario
+                               INNER JOIN Ambiente a ON r.id_ambiente=a.id_ambiente
+                               INNER JOIN Usuario uc ON c.id_usuario_cancela=uc.id_usuario
+                               WHERE 1=1
+                                 {(filtroActivo ? "AND CAST(c.fecha_cancelacion AS DATE) BETWEEN @desde AND @hasta" : "")}
+                               ORDER BY c.fecha_cancelacion DESC";
                     break;
 
                 case "disponibilidad":
-                    subtitulo = "Ambientes disponibles hoy";
+                    subtitulo = "📅 Ambientes disponibles hoy";
                     query = @"SELECT a.codigo AS Código, b.nombre AS Bloque, a.tipo AS Tipo,
-                                     a.capacidad AS Capacidad,
-                                     CASE WHEN a.tiene_proyector=1 THEN '✅' ELSE '❌' END AS Proyector,
-                                     CASE WHEN a.tiene_computadoras=1 THEN '✅' ELSE '❌' END AS Computadoras,
-                                     a.estado AS Estado
-                              FROM Ambiente a
-                              INNER JOIN Bloque b ON a.id_bloque=b.id_bloque
-                              WHERE a.estado='disponible'
-                                AND a.id_ambiente NOT IN (
-                                    SELECT id_ambiente FROM Reserva
-                                    WHERE estado='activa'
-                                      AND fecha_inicio<=CAST(GETDATE() AS DATE)
-                                      AND fecha_fin>=CAST(GETDATE() AS DATE))
-                              ORDER BY b.nombre, a.codigo";
+                                      a.capacidad AS Capacidad,
+                                      CASE WHEN a.tiene_proyector=1 THEN '✅' ELSE '❌' END AS Proyector,
+                                      CASE WHEN a.tiene_computadoras=1 THEN '✅' ELSE '❌' END AS Computadoras,
+                                      a.estado AS Estado
+                               FROM Ambiente a
+                               INNER JOIN Bloque b ON a.id_bloque=b.id_bloque
+                               WHERE a.estado='disponible'
+                                 AND a.id_ambiente NOT IN (
+                                     SELECT id_ambiente FROM Reserva
+                                     WHERE estado='activa'
+                                       AND fecha_inicio<=CAST(GETDATE() AS DATE)
+                                       AND fecha_fin>=CAST(GETDATE() AS DATE))
+                               ORDER BY b.nombre, a.codigo";
                     break;
 
                 case "carrera":
-                    subtitulo = "Uso de ambientes por carrera/área";
+                    subtitulo = "🎓 Uso de ambientes por carrera/área";
                     query = $@"SELECT ISNULL(u.carrera_area,'Sin especificar') AS [Carrera/Área],
-                                     u.tipo_usuario AS [Tipo Usuario],
-                                     COUNT(r.id_reserva) AS [Total Reservas],
-                                     COUNT(DISTINCT r.id_ambiente) AS [Ambientes distintos]
-                              FROM Reserva r
-                              INNER JOIN Usuario u ON r.id_usuario=u.id_usuario
-                              WHERE r.estado<>'cancelada'
-                                {(filtroActivo ? "AND r.fecha_inicio BETWEEN @desde AND @hasta" : "")}
-                              GROUP BY u.carrera_area, u.tipo_usuario
-                              ORDER BY [Total Reservas] DESC";
+                                      u.tipo_usuario AS [Tipo Usuario],
+                                      COUNT(r.id_reserva) AS [Total Reservas],
+                                      COUNT(DISTINCT r.id_ambiente) AS [Ambientes distintos]
+                               FROM Reserva r
+                               INNER JOIN Usuario u ON r.id_usuario=u.id_usuario
+                               WHERE r.estado<>'cancelada'
+                                 {(filtroActivo ? "AND r.fecha_inicio BETWEEN @desde AND @hasta" : "")}
+                               GROUP BY u.carrera_area, u.tipo_usuario
+                               ORDER BY [Total Reservas] DESC";
                     break;
 
                 case "todas":
-                    subtitulo = "Todas las reservas del sistema";
+                    subtitulo = "📋 Todas las reservas del sistema";
                     query = $@"SELECT r.id_reserva AS ID, u.nombre_completo AS Solicitante,
-                                     a.codigo AS Ambiente, b.nombre AS Bloque,
-                                     CONVERT(VARCHAR,r.fecha_inicio,103) AS [Fecha Inicio],
-                                     CONVERT(VARCHAR(5),r.hora_inicio,108) AS [Hora Ini],
-                                     CONVERT(VARCHAR(5),r.hora_fin,108) AS [Hora Fin],
-                                     r.motivo AS Motivo, r.cantidad_asistentes AS Asistentes,
-                                     CASE WHEN r.es_recurrente=1 THEN '✅' ELSE '❌' END AS Recurrente,
-                                     r.estado AS Estado
-                              FROM Reserva r
-                              INNER JOIN Usuario u  ON r.id_usuario=u.id_usuario
-                              INNER JOIN Ambiente a ON r.id_ambiente=a.id_ambiente
-                              INNER JOIN Bloque b   ON a.id_bloque=b.id_bloque
-                              WHERE 1=1
-                                {(filtroActivo ? "AND r.fecha_inicio BETWEEN @desde AND @hasta" : "")}
-                              ORDER BY r.fecha_inicio DESC, r.hora_inicio";
+                                      a.codigo AS Ambiente, b.nombre AS Bloque,
+                                      CONVERT(VARCHAR,r.fecha_inicio,103) AS [Fecha Inicio],
+                                      CONVERT(VARCHAR(5),r.hora_inicio,108) AS [Hora Ini],
+                                      CONVERT(VARCHAR(5),r.hora_fin,108) AS [Hora Fin],
+                                      r.motivo AS Motivo, r.cantidad_asistentes AS Asistentes,
+                                      CASE WHEN r.es_recurrente=1 THEN '✅' ELSE '❌' END AS Recurrente,
+                                      r.estado AS Estado
+                               FROM Reserva r
+                               INNER JOIN Usuario u  ON r.id_usuario=u.id_usuario
+                               INNER JOIN Ambiente a ON r.id_ambiente=a.id_ambiente
+                               INNER JOIN Bloque b   ON a.id_bloque=b.id_bloque
+                               WHERE 1=1
+                                 {(filtroActivo ? "AND r.fecha_inicio BETWEEN @desde AND @hasta" : "")}
+                               ORDER BY r.fecha_inicio DESC, r.hora_inicio";
                     break;
             }
 
@@ -270,7 +268,6 @@ namespace SistemaAmbientesUAB
             catch (Exception ex) { MessageBox.Show("Error al cargar reporte: " + ex.Message); }
         }
 
-        // ── HABILITAR/DESHABILITAR FILTRO SEGÚN EL REPORTE ────
         private void ActualizarEstadoFiltroFecha(string tipo)
         {
             bool aplica = tipo != "disponibilidad";
@@ -282,7 +279,7 @@ namespace SistemaAmbientesUAB
 
             lblFiltroFecha.Text = aplica
                 ? "Rango de fechas:"
-                : "El filtro de fecha no aplica (este reporte siempre muestra el estado actual)";
+                : "Filtro no aplicable (Muestra estado actual)";
         }
 
         private void ActualizarBotonesTab(string tipoActivo)
@@ -294,7 +291,7 @@ namespace SistemaAmbientesUAB
             EstiloBotonTab(btnTodasReservas, tipoActivo == "todas");
         }
 
-        // ── PINTURA DE CELDAS ─────────────────────────────────
+        // ── PINTURA DE CELDAS (BADGES RE-ESTILIZADOS) ─────────
         private void dgvReporte_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0) return;
@@ -362,14 +359,14 @@ namespace SistemaAmbientesUAB
             return gp;
         }
 
-        // ── EVENTOS BOTONES ───────────────────────────────────
+        // ── EVENTOS DE BOTONES MÓDULOS ───────────────────────
         private void btnAmbientesMasUsados_Click(object sender, EventArgs e) => CargarReporte("ambientes");
         private void btnReservasCanceladas_Click(object sender, EventArgs e) => CargarReporte("cancelaciones");
         private void btnDisponibilidad_Click(object sender, EventArgs e) => CargarReporte("disponibilidad");
         private void btnUsoPorCarrera_Click(object sender, EventArgs e) => CargarReporte("carrera");
         private void btnTodasReservas_Click(object sender, EventArgs e) => CargarReporte("todas");
 
-        // ── FILTRO DE RANGO DE FECHAS ──────────────────────────
+        // ── FILTRO FECHAS LÓGICA ─────────────────────────────
         private void btnAplicarFiltroFecha_Click(object sender, EventArgs e)
         {
             if (dtpDesde.Value.Date > dtpHasta.Value.Date)
@@ -391,9 +388,7 @@ namespace SistemaAmbientesUAB
             CargarReporte(_tipoActual);
         }
 
-        // ══════════════════════════════════════════════════════
-        // EXPORTAR A EXCEL (CSV)
-        // ══════════════════════════════════════════════════════
+        // ── EXPORTACIÓN CSV (EXCEL) ──────────────────────────
         private void btnExportarExcel_Click(object sender, EventArgs e)
         {
             if (_dtReporteActual == null || _dtReporteActual.Rows.Count == 0)
@@ -429,27 +424,21 @@ namespace SistemaAmbientesUAB
         private void ExportarCsv(DataTable dt, string ruta)
         {
             var sb = new StringBuilder();
+            sb.AppendLine(string.Join(";", dt.Columns.Cast<DataColumn>().Select(c => EscaparCsv(c.ColumnName))));
 
-            // Encabezados
-            sb.AppendLine(string.Join(";",
-                dt.Columns.Cast<DataColumn>().Select(c => EscaparCsv(c.ColumnName))));
-
-            // Filas
             foreach (DataRow fila in dt.Rows)
             {
                 var valores = fila.ItemArray.Select(v => EscaparCsv(Convert.ToString(v)));
                 sb.AppendLine(string.Join(";", valores));
             }
 
-            // BOM UTF-8 para que Excel muestre tildes/ñ correctamente
             File.WriteAllText(ruta, sb.ToString(), new UTF8Encoding(true));
         }
 
         private string EscaparCsv(string valor)
         {
             if (valor == null) return "";
-            bool necesitaComillas = valor.Contains(";") || valor.Contains("\"")
-                                  || valor.Contains("\n") || valor.Contains("\r");
+            bool necesitaComillas = valor.Contains(";") || valor.Contains("\"") || valor.Contains("\n") || valor.Contains("\r");
             if (necesitaComillas)
                 valor = "\"" + valor.Replace("\"", "\"\"") + "\"";
             return valor;
@@ -460,9 +449,7 @@ namespace SistemaAmbientesUAB
             return $"Reporte_{_tipoActual}_{DateTime.Now:yyyyMMdd_HHmm}";
         }
 
-        // ══════════════════════════════════════════════════════
-        // EXPORTAR A PDF (vía impresión a "Microsoft Print to PDF")
-        // ══════════════════════════════════════════════════════
+        // ── IMPRESIÓN DIRECTA DIGITAL A PDF ──────────────────
         private void btnExportarPdf_Click(object sender, EventArgs e)
         {
             if (_dtReporteActual == null || _dtReporteActual.Rows.Count == 0)
@@ -479,13 +466,9 @@ namespace SistemaAmbientesUAB
                 pd.DocumentName = NombreArchivoSugerido();
                 pd.PrintPage += PrintDocument_PrintPage;
 
-                try { pd.DefaultPageSettings.Landscape = true; }
-                catch { /* algunos drivers no soportan el cambio; se ignora */ }
+                try { pd.DefaultPageSettings.Landscape = true; } catch { }
+                try { pd.DefaultPageSettings.Margins = new Margins(40, 40, 50, 40); } catch { }
 
-                try { pd.DefaultPageSettings.Margins = new Margins(40, 40, 50, 40); }
-                catch { /* idem */ }
-
-                // Preseleccionar "Microsoft Print to PDF" si está instalada
                 foreach (string impresora in PrinterSettings.InstalledPrinters)
                 {
                     if (impresora.IndexOf("PDF", StringComparison.OrdinalIgnoreCase) >= 0)
@@ -528,7 +511,6 @@ namespace SistemaAmbientesUAB
             Font fuenteEncabezado = new Font("Segoe UI", 9F, FontStyle.Bold);
             Font fuenteCelda = new Font("Segoe UI", 8.5F);
 
-            // Título y resumen solo en la primera página
             if (_printRowIndex == 0)
             {
                 g.DrawString("Reportes y Estadísticas — " + lblSubtitulo.Text, fuenteTitulo, Brushes.Black, area.Left, y);
@@ -540,7 +522,6 @@ namespace SistemaAmbientesUAB
             int colCount = _dtReporteActual.Columns.Count;
             float anchoCol = area.Width / (float)colCount;
 
-            // Encabezados de columna
             float x = area.Left;
             for (int c = 0; c < colCount; c++)
             {
@@ -552,7 +533,6 @@ namespace SistemaAmbientesUAB
             g.DrawLine(Pens.Black, area.Left, y, area.Right, y);
             y += 4;
 
-            // Filas de datos (con paginación)
             while (_printRowIndex < _dtReporteActual.Rows.Count)
             {
                 if (y + 18 > area.Bottom)
