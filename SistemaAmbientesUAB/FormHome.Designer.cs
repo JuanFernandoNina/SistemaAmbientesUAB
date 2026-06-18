@@ -3,9 +3,13 @@
     partial class FormHome
     {
         private System.ComponentModel.IContainer components = null;
+
         protected override void Dispose(bool disposing)
         {
-            if (disposing && components != null) components.Dispose();
+            if (disposing && components != null)
+            {
+                components.Dispose();
+            }
             base.Dispose(disposing);
         }
 
@@ -19,15 +23,16 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvActividad)).BeginInit();
             this.SuspendLayout();
 
+            // ── PROPIEDADES DEL FORM ─────────────────────────
             this.Text = "Inicio";
             this.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.BackColor = System.Drawing.Color.FromArgb(239, 244, 251);
             this.Load += new System.EventHandler(this.FormHome_Load);
             this.Resize += new System.EventHandler(this.FormHome_Resize);
 
-            int L = 28; // margen izquierdo
+            int L = 28; // Margen izquierdo consistente
 
-            // ── TÍTULO ────────────────────────────────────────
+            // ── LBL TITULO ───────────────────────────────────
             this.lblTitulo.Text = "Panel de Inicio";
             this.lblTitulo.Location = new System.Drawing.Point(L, 22);
             this.lblTitulo.Size = new System.Drawing.Size(600, 36);
@@ -35,7 +40,7 @@
             this.lblTitulo.ForeColor = System.Drawing.Color.FromArgb(12, 30, 62);
             this.lblTitulo.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left;
 
-            // ── FECHA ─────────────────────────────────────────
+            // ── LBL FECHA ────────────────────────────────────
             this.lblFecha.Text = "";
             this.lblFecha.Location = new System.Drawing.Point(L, 60);
             this.lblFecha.Size = new System.Drawing.Size(500, 20);
@@ -51,7 +56,7 @@
                                          | System.Windows.Forms.AnchorStyles.Left
                                          | System.Windows.Forms.AnchorStyles.Right;
 
-            // ── LABEL SECCIÓN ─────────────────────────────────
+            // ── LBL ACTIVIDAD (SUBTÍTULO SECCIÓN) ─────────────
             this.lblActividad.Text = "Últimas reservas registradas";
             this.lblActividad.Location = new System.Drawing.Point(L, 240);
             this.lblActividad.Size = new System.Drawing.Size(500, 26);
@@ -59,7 +64,7 @@
             this.lblActividad.ForeColor = System.Drawing.Color.FromArgb(12, 30, 62);
             this.lblActividad.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left;
 
-            // ── GRID ──────────────────────────────────────────
+            // ── DATAGRIDVIEW ──────────────────────────────────
             this.dgvActividad.Location = new System.Drawing.Point(L, 272);
             this.dgvActividad.Size = new System.Drawing.Size(880, 300);
             this.dgvActividad.BackgroundColor = System.Drawing.Color.White;
@@ -70,7 +75,6 @@
             this.dgvActividad.ReadOnly = true;
             this.dgvActividad.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvActividad.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dgvActividad.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.dgvActividad.EnableHeadersVisualStyles = false;
             this.dgvActividad.RowTemplate.Height = 34;
             this.dgvActividad.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
@@ -79,6 +83,7 @@
                                                      | System.Windows.Forms.AnchorStyles.Right
                                                      | System.Windows.Forms.AnchorStyles.Bottom;
 
+            // ── AGREGAR CONTROLES AL FORM ────────────────────
             this.Controls.Add(this.lblTitulo);
             this.Controls.Add(this.lblFecha);
             this.Controls.Add(this.panelTarjetas);

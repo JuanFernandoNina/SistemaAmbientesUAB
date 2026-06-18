@@ -12,7 +12,7 @@ namespace SistemaAmbientesUAB
         private int _idUsuario;
         private string _nombre;
 
-        // definición de las 4 tarjetas del diseño
+        // Definición de las 4 tarjetas del diseño
         private struct CardDef
         {
             public string Titulo;
@@ -69,16 +69,18 @@ namespace SistemaAmbientesUAB
         private void FormHome_Load(object sender, EventArgs e)
         {
             AplicarTema();
+            FormatearGridEstiloModerno();
+
             lblFecha.Text = DateTime.Now.ToString(
                 "dddd, dd 'de' MMMM 'de' yyyy",
                 new System.Globalization.CultureInfo("es-ES"));
+
             CrearTarjetas();
             CargarUltimasReservas();
         }
 
         private void FormHome_Resize(object sender, EventArgs e)
         {
-            // Redibujar tarjetas cuando cambia el tamaño del form
             if (panelTarjetas != null && panelTarjetas.Width > 0)
                 CrearTarjetas();
         }
@@ -101,7 +103,29 @@ namespace SistemaAmbientesUAB
             TemaManager.AplicarGrid(dgvActividad);
         }
 
-        // ── TARJETAS MINIMALISTAS (estilo propuesta HTML) ─────
+        // ── DISEÑO DE TABLA ESTILO WEB/PROYECTO ───────────────
+        private void FormatearGridEstiloModerno()
+        {
+            // Estilos generales del DataGridView para que coincida con las demás vistas
+            dgvActividad.BackgroundColor = Color.White;
+            dgvActividad.GridColor = Color.FromArgb(231, 235, 240); // Líneas divisoras suaves
+            dgvActividad.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvActividad.MultiSelect = false;
+
+            // Encabezados planos y estilizados
+            dgvActividad.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(12, 53, 106); // Azul Corporativo
+            dgvActividad.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgvActividad.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            dgvActividad.ColumnHeadersHeight = 40;
+
+            // Filas alternas y fuentes
+            dgvActividad.DefaultCellStyle.Font = new Font("Segoe UI", 9.5F);
+            dgvActividad.DefaultCellStyle.SelectionBackColor = Color.FromArgb(230, 242, 255);
+            dgvActividad.DefaultCellStyle.SelectionForeColor = Color.FromArgb(12, 53, 106);
+            dgvActividad.RowTemplate.Height = 38;
+        }
+
+        // ── TARJETAS MINIMALISTAS ──────────────────────────────
         private void CrearTarjetas()
         {
             panelTarjetas.Controls.Clear();
@@ -121,7 +145,6 @@ namespace SistemaAmbientesUAB
                 Color bg = oscuro ? def.BgDark : def.BgLight;
                 Color acc = oscuro ? def.AccDark : def.AccLight;
 
-                // Panel con borde redondeado y borde izquierdo de color
                 var card = new Panel
                 {
                     Size = new Size(w, h),
@@ -136,22 +159,18 @@ namespace SistemaAmbientesUAB
                     int rad = 10;
                     pe.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-                    // Fondo redondeado
                     using (var gp = RoundedRect(rc, rad))
                     using (var br = new SolidBrush(bg))
                         pe.Graphics.FillPath(br, gp);
 
-                    // Borde sutil
                     using (var gp = RoundedRect(rc, rad))
                     using (var pen = new Pen(borderCol, 1f))
                         pe.Graphics.DrawPath(pen, gp);
 
-                    // Borde izquierdo acento (3px)
                     using (var pen = new Pen(acc, 3f))
                         pe.Graphics.DrawLine(pen, rc.X + 1, rc.Y + rad, rc.X + 1, rc.Bottom - rad);
                 };
 
-                // Número grande
                 var lblVal = new Label
                 {
                     Text = valor.ToString(),
@@ -164,7 +183,6 @@ namespace SistemaAmbientesUAB
                     TextAlign = ContentAlignment.MiddleLeft
                 };
 
-                // Título debajo
                 var lblTit = new Label
                 {
                     Text = def.Titulo,
@@ -207,7 +225,7 @@ namespace SistemaAmbientesUAB
             catch { return 0; }
         }
 
-        // ── GRID ÚLTIMAS RESERVAS ─────────────────────────────
+        // ── DATA FETCH ÚLTIMAS RESERVAS ───────────────────────
         private void CargarUltimasReservas()
         {
             try
@@ -237,16 +255,19 @@ namespace SistemaAmbientesUAB
                     da.Fill(dt);
                     dgvActividad.DataSource = dt;
 
-                    // Colores de estado por fila
+                    // Manejo dinámico seguro de colores de fila
                     foreach (DataGridViewRow row in dgvActividad.Rows)
                     {
-                        string st = row.Cells["Estado"].Value?.ToString();
-                        if (st == "cancelada")
-                            row.DefaultCellStyle.ForeColor = TemaManager.Peligro;
-                        else if (st == "finalizada")
-                            row.DefaultCellStyle.ForeColor = TemaManager.TextoMuted;
-                        else
-                            row.DefaultCellStyle.ForeColor = TemaManager.Acento;
+                        if (row.Cells["Estado"].Value != null)
+                        {
+                            string st = row.Cells["Estado"].Value.ToString().ToLower();
+                            if (st == "cancelada")
+                                row.DefaultCellStyle.ForeColor = TemaManager.Peligro;
+                            else if (st == "finalizada")
+                                row.DefaultCellStyle.ForeColor = TemaManager.TextoMuted;
+                            else
+                                row.DefaultCellStyle.ForeColor = TemaManager.Acento;
+                        }
                     }
                 }
             }
